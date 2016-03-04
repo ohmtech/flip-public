@@ -10,6 +10,26 @@ Flip is a data model library, designed as a framework, real-time collaboration-o
 
 The supported C++ dialect are C++11 or later.
 
+## Testing
+
+`flip` can be built to run regression tests.
+
+To do so it is adviced to have a [`python`](https://www.python.org/downloads/) installation with minimum version `2.7`.
+[`gyp`](https://code.google.com/p/gyp/source/checkout) is then required to generate projects file for IDEs.
+
+When this is set up, run `configure.py`. This will create a `projects` at the root of your `flip` repository with the native project type for your platform (a Visual Studio Solution or an Xcode Project).
+
+## Integrating
+
+The following distribution of `flip` comes as headers in the `include` directory as well as
+precompiled platform specific binaries in the `bin` directory.
+
+The directory `include` must be part of your header paths.
+See [`regress_public.gypi`](/test/regress/regress_public.gypi) gyp file as an example for your IDE configuration.
+
+This distribution comes with the default configuration of precompiler flags except for `flip_FATAL_MODE` which is set to `flip_FATAL_MODE_THROW` to allow the regression tests to run.
+See [Flip Configuration Guide](/documentation/markdown/config/README.md) for more details.
+
 ## Documentation
 
 An extensive number of guides and references are available in different documentation formats :
