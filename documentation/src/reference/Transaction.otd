@@ -1,0 +1,107 @@
+/*****************************************************************************
+
+        Transaction.otd
+        Copyright (c) 2015 Ohm Force
+
+*****************************************************************************/
+
+
+
+\class {Transaction}
+\header {flip/Transaction.h}
+\declaration ***
+class Transaction;
+***
+
+\code {flip::Transaction} is a type that allows signalling of flip objects
+in a type safe way.
+
+
+
+/*\\\ PARAMETERS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\parameter {TYPE} {A \code {uint32_t} unique number for the class of the object
+that represents the signal type}
+\parameter {Args...} {A variable number of arguments that compose the parameters
+of the signal}
+
+
+
+/*\\\ METHODS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\constructor {}
+\brief {Constructs the \code {Transaction}}
+
+\codeblock [language=c++] ***
+Transaction ();                                    (1)
+Transaction (const Transaction & rhs);             (2)
+Transaction (Transaction && rhs);                  (3)
+Transaction (const std::vector <uint8_t> & data);  (4)
+***
+
+\enumerate {
+\item {Default constructor, constructs an empty transaction.}
+\item {Copy constructor. Constructs the transaction with copy of \code {other}.}
+\item {Move constructor. Constructs the transaction by moving \code {other}.}
+\item {Constructor. Constructs the transaction from data previously produce by \code {serialize}.}
+}
+
+//----------------------------------------------------------------------------
+
+\destructor {}
+\brief {Destructs the \code {Transaction}}
+
+\codeblock [language=c++] ***
+~Transaction ();
+***
+
+Destructor.
+
+//----------------------------------------------------------------------------
+
+\method {clear}
+\brief {Empty the transaction}
+
+\codeblock [language=c++] ***
+void  clear ();
+***
+
+Empty the transaction and its metadata.
+
+//----------------------------------------------------------------------------
+
+\method {empty}
+\brief {Returns \code {true} \emph {iff} the transaction contains at least one instruction}
+
+\codeblock [language=c++] ***
+bool  empty () const;
+***
+
+Returns \code {true} \emph {iff} the transaction contains at least one instruction.
+
+//----------------------------------------------------------------------------
+
+\method {serialize}
+\brief {Generate data from the transaction}
+
+\codeblock [language=c++] ***
+std::vector <uint8_t>   serialize () const;
+***
+
+Generate data from the transaction. This data can be stored everywhere or send
+over a network. The data contains the transaction instructions as well as metadata.
+
+//----------------------------------------------------------------------------
+
+\method {push}
+\brief {Concatenate a transaction to this transaction}
+
+\codeblock [language=c++] ***
+Transaction &  push (Transaction && tx);
+***
+
+Concatenate transaction \code {tx} to this transaction by moving \code {tx}.
+
+
+
+

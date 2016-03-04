@@ -1,0 +1,137 @@
+
+\chapter [id=organize] {Organizing your Code}
+
+Now that you know how to declare a model, but before we go further into Flip code,
+now is the time to expose strategies to organize your code to use Flip.
+
+Ohm Force has been using its Flip framework for years, to make, among other
+internal programs, its Ohm Studio application.
+
+Over the years, we have developed a robust workflow to work with Flip. This chapter
+describes how you should organize your code in the first place, to avoid big refactors
+or headaches at a late stage of development.
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=layout] {Code Layout}
+
+You should separate the model, client and server code in 3 separate folders, and 3 separate namespaces.
+
+Typically you should create a folder named \code {model} in which all classes are in the namespace \code {model} .
+The model is going to be used in both the client code and the server code. Since the server code is generally
+going to be running on linux, you want to avoid avoid dependencies between your model and code that wouldn’t
+compile on linux, and would be unnecessary for the server.
+
+Typically your folder client and server and their associated namespaces will have a dependency on model .
+
+\codeblock ***
+your_company/
+   your_product/
+      model/
+         ... model classes ...
+      client/
+         ... client classes ...
+      server/
+         ... server classes ...
+***
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=converters] {Converters}
+
+Your \code {model} folder should contain a \code {conv} folder. It will contains all your format version changes in a single
+place. Since Flip format conversion system is rather flexible, it is very easy to make document format
+changes, so you are very likely to make a lot of them.
+
+To avoid polluting the model folder, having it separated in a different folder is a good solution.
+
+You should name your conversion classes \code {Converter#1_#2} where \code {#1} would be the initial revision,
+according to your version source control naming. In the same fashion, \code {#2} would be your destination revision.
+
+If you are working with many people on a Flip project, many people might modify the model simulatenously.
+This is not an issue when developping, as the server is bundled in the client, and because you can generally
+start on a fresh document to test your changes.
+
+However when your application is running in a production environment, conversion will be need to be done,
+somehow like migrating a database. The model changes are therefore scattered over all the Flip classes which
+might be not easy when trying to gather all the changes to write a converter.
+
+Therefore you should maintain a \code {Converter.txt} text file, typically in your conv where you will sum up all the
+changes needed for the next conversion, and maybe some directions on how to convert the document.
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=class] {Classes Naming Conventions}
+
+You should name your classes like \code {your_company.your_product.ClassName}
+where ClassName would be the name of your class.
+
+For example a typical class name would be \code {ohm.studio.Root}.
+It is defined when declaring the class as for example in the following code :
+
+\codeblock [language=c++] ***
+Model::declare <Root> ()
+   .name ("ohm.studio.Root")
+***
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=enum] {Enums Naming Conventions}
+
+You should name your classes like \code {your_company.your_product.ClassName.EnumName}
+where ClassName would be the name of your class.
+
+For example a typical class name would be \code {ohm.studio.ViewMetrics.Lod}.
+It is defined when declaring the class as for example in the following code :
+
+\codeblock [language=c++] ***
+Model::declare <Lod> ()
+   .name ("ohm.studio.ViewMetrics.Lod")
+***
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=declaration] {Declaration Conventions}
+
+Finally your \code {model} should contain a function that will at least handle the declaration of the model.
+Each Flip class should have a \code {static} function member called \code {declare}.
+Typically it would look like :
+
+\codeblock [language=c++] ***
+void  declare ()
+{
+   ObjectRef::declare ();
+   Selection::declare ();
+   
+   ... code skipped ...
+   
+   Root::declare ();
+}
+***
+
+The dependency system makes it easier to declare all the classes in the right order in a single function
+when a project becomes complex.
+
+The next chapter, \link [id=control] {Controlling the Model} will guide you through the task of controlling the model.
+
+

@@ -1,0 +1,209 @@
+
+\chapter [id=dll] {Using Flip as a Dynamic Linked Library (DLL)}
+
+This chapter explains how to set up your build environment to
+use the Flip framework in a Dynamic Linked Library (dll).
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=overview] {Overview}
+
+Integrating the Flip framework as a Dynamic Linked Library consists
+on exporting, importing or changing the visibility of symbols.
+Those changes are platform specific.
+
+Even when not using the \code {gyp} build system, the \code {gyp} and
+\code {gypi} makes a good reference for the necessary tasks to
+execute to integrate the Flip framework.
+
+The following sections will describe tasks to achieve.
+
+
+/*
+==============================================================================
+*/
+
+\section [id=gyp] {Using the \code {gyp} build system}
+
+This section describes how to use the Flip framework as a Dynamic Linked Library
+when using the \code {gyp} build system.
+
+It consists of two parts :
+
+\itemize {
+\item {Setting up the options in the DLL target}
+\item {Setting up the options in the target using the DLL target}
+}
+
+The following two subsections will describe those two tasks.
+
+\subsection [id=dll] {In the DLL target}
+
+From the DLL target point of view, one will need to :
+
+\itemize {
+\item {Set the type of the target to \code {shared_library}}
+\item {Enable the type registry}
+\item {On XCode, put the visibility of symbol to \code {default}}
+\item {On Visual Studio, set the decl specifications to \code {dllexport}}
+}
+
+The following block of code shows how this is done in a \code {gypi} file.
+
+\codeblock ***
+{
+   'target_name': 'my_dll_target',
+   'type': 'shared_library',
+
+   'xcode_settings': {
+      'OTHER_CFLAGS': [
+         '-fvisibility=default',
+      ],
+   },
+
+   'defines': [
+      'flip_TYPE_REGISTRY_MODE=flip_TYPE_REGISTRY_ENABLED',
+   ],
+
+   'conditions': [
+      ['OS=="win"', {
+         'defines': [
+            'flip_API=__declspec(dllexport)',
+            'flip_API_EXPORT=__declspec(dllexport)',
+         ],
+      }],
+   ],
+
+   'includes' : [
+      'relative/path/to/flip_src.gypi',
+   ],
+}
+***
+
+
+
+\subsection [id=main] {In the target using the DLL target}
+
+From the target using the DLL target point of view, one will need to :
+
+\itemize {
+\item {Enable the type registry}
+\item {On XCode, put the visibility of symbol to \code {default}}
+\item {On Visual Studio, set the decl specifications to
+   \code {dllimport} or \code {dllexport} accordingly}
+}
+
+The following block of code shows how this is done in a \code {gypi} file.
+
+\codeblock ***
+{
+   'target_name': 'my_main_target',
+
+   'xcode_settings': {
+      'OTHER_CFLAGS': [
+         '-fvisibility=default',
+      ],
+   },
+
+   'dependencies': [
+      'my_dll_target',
+   ],
+
+   'defines': [
+      'flip_TYPE_REGISTRY_MODE=flip_TYPE_REGISTRY_ENABLED',
+   ],
+
+   'conditions': [
+      ['OS=="win"', {
+         'defines': [
+            'flip_API=__declspec(dllimport)',
+            'flip_API_EXPORT=__declspec(dllexport)',
+         ],
+      }],
+   ],
+
+   'include_dirs': [
+      'relative/path/to/include',
+   ],
+
+   ...your sources and everything else...
+}
+***
+
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=manual] {Doing it Manually}
+
+This section describes how to integrate the Flip framework as a Dynamic Linked Library
+manually in your build system.
+
+It consists of two parts :
+
+\itemize {
+\item {Setting up the options in the DLL target}
+\item {Setting up the options in the target using the DLL target}
+}
+
+The following two subsections will describe those two tasks
+for each platform.
+
+\subsection [id=xcode] {XCode DLL Target}
+
+On XCode, one will need to set up a dynamic linked library like a bundle.
+
+All Flip framework core and optionnaly contribution files must be added
+to the target.
+
+The XCode setting "Other C Flags" (\code {OTHER_CFLAGS}) should add the line
+\code {-fvisibility=default}
+
+The XCode setting "Preprocessor Macros" (\code {GCC_PREPROCESSOR_DEFINITIONS})
+should add the line
+\code {flip_TYPE_REGISTRY_MODE=flip_TYPE_REGISTRY_ENABLED}
+
+\subsection [id=visual] {Visual Studio DLL Target}
+
+On Visual Studio, one will need to set up a dynamic linked library.
+
+All Flip framework core and optionnaly contribution files must be added
+to the target.
+
+The Visual Studio Configuration Properties for C/C++ for Preprocessor
+should add to the Preprocessor Definitions the following element :
+
+\itemize {
+\item {\code {flip_TYPE_REGISTRY_MODE=flip_TYPE_REGISTRY_ENABLED}}
+\item {\code {flip_API=__declspec(dllexport)}}
+\item {\code {flip_API_EXPORT=__declspec(dllexport)}}
+}
+
+\subsection [id=xcode2] {XCode using the DLL Target}
+
+The XCode setting "Other C Flags" (\code {OTHER_CFLAGS}) should add the line
+\code {-fvisibility=default}
+
+The XCode setting "Preprocessor Macros" (\code {GCC_PREPROCESSOR_DEFINITIONS})
+should add the line
+\code {flip_TYPE_REGISTRY_MODE=flip_TYPE_REGISTRY_ENABLED}
+
+\subsection [id=visual2] {Visual Studio using the DLL Target}
+
+The Visual Studio Configuration Properties for C/C++ for Preprocessor
+should add to the Preprocessor Definitions the following element :
+
+\itemize {
+\item {\code {flip_TYPE_REGISTRY_MODE=flip_TYPE_REGISTRY_ENABLED}}
+\item {\code {flip_API=__declspec(dllimport)}}
+\item {\code {flip_API_EXPORT=__declspec(dllexport)}}
+}
+
+\note {the declspec for flip_API_EXPORT must be dllexport and not dllimport.}

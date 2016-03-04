@@ -1,0 +1,61 @@
+##############################################################################
+#
+#     flip.gypi
+#     Copyright (c) 2014 Raphael DINGE
+#
+#Tab=3########################################################################
+
+
+
+{
+   'sources':
+   [
+      'Array.h',
+      'Array.hpp',
+      'BackEndBinary.h',
+      'BackEndIR.h',
+      'BackEndIR.hpp',
+      'BackEndMl.h',
+      'Blob.h',
+      'Bool.h',
+      'Class.h',
+      'Class.hpp',
+      'Collection.h',
+      'Collection.hpp',
+      'config.h',
+      'Controller.h',
+      'DataConsumerMemory.h',
+      'DataModel.h',
+      'DataModel.hpp',
+      'DataProviderMemory.h',
+      'Default.h',
+      'Document.h',
+      'DocumentHub.h',
+      'DocumentObserver.h',
+      'DocumentObserver.hpp',
+      'DocumentObserverLambda.h',
+      'DocumentObserverLambda.hpp',
+      'DocumentObserverVoid.h',
+      'DocumentServer.h',
+      'DocumentServer.hpp',
+      'DocumentValidator.h',
+      'DocumentValidator.hpp',
+      'DocumentValidatorVoid.h',
+      'Entity.h',
+      'Entity.hpp',
+      'Float.h',
+      'History.h',
+      'Int.h',
+      'Mold.h',
+      'Mold.hpp',
+      'Object.h',
+      'ObjectRef.h',
+      'ObjectRef.hpp',
+      'Ref.h',
+      'Signal.h',
+      'Signal.hpp',
+      'SignalConnection.h',
+      'String.h',
+      'Transaction.h',
+   ]
+}

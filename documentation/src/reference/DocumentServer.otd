@@ -1,0 +1,99 @@
+/*****************************************************************************
+
+        DocumentServer.otd
+        Copyright (c) 2015 Ohm Force
+
+*****************************************************************************/
+
+
+
+\class {DocumentServer}
+\header {flip/DocumentServer.h}
+\declaration ***
+class DocumentServer;
+***
+
+\code {flip::DocumentServer} is a type that represents a flip document
+on the server side.
+
+
+
+/*\\\ METHODS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\constructor {}
+\brief {Constructs the \code {DocumentServer}}
+
+\codeblock [language=c++] ***
+DocumentServer (const DataModelBase & data_model, DocumentValidatorBase & validator, uint64_t session_id);
+***
+
+Constructs the document from a data model and a validator using unique session
+identifier.
+
+The data model represents the blueprint or template the document is going to
+rely on. The data model is previously defined and used for the document.
+
+The session identifier represents a unique number accross documents uniquely
+identifying this document. When the document is changed on the server side,
+the session identifier is used as a way to identify the server acting as
+a user.
+
+//----------------------------------------------------------------------------
+
+\destructor {}
+\brief {Destructs the \code {DocumentServer}}
+
+\codeblock [language=c++] ***
+~DocumentServer ();
+***
+
+Destructor.
+
+//----------------------------------------------------------------------------
+
+\method {add}
+\brief {Attach a new client to the server}
+
+\codeblock [language=c++] ***
+void  add (TransportBase & transport);
+***
+
+Attach a new client to the server through its transport representation.
+
+//----------------------------------------------------------------------------
+
+\method {remove}
+\brief {Detach a new client to the server}
+
+\codeblock [language=c++] ***
+void  remove (TransportBase & transport);
+***
+
+Detach a new client to the server through its transport representation.
+
+//----------------------------------------------------------------------------
+
+\method {send_tx_if}
+\brief {Send a transaction to every client meeting a condition}
+
+\codeblock [language=c++] ***
+template <class UnaryPredicate>  void  send_tx_if (const Transaction & tx, UnaryPredicate p);
+***
+
+Send transaction \code {tx} to every client meeting condition using unary
+function \code {p}.
+
+Example:
+
+\codeblock [language=c++] ***
+// DocumentServer server;
+// Transaction tx;
+
+server.send_tx_if (tx, [](TransportBase &){return true;});
+***
+
+Sends the transaction to all attached clients.
+
+//----------------------------------------------------------------------------
+
+#include "DocumentBase.methods.otd"

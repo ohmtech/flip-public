@@ -1,0 +1,67 @@
+
+\chapter [id=simple] {Handling a Simple Modification}
+
+This chapter shows to implement a simple undo, that is an undo step that
+relates to a single commit of the document.
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=overview] {Overview}
+
+Some common modifications of the document are one-shot. That is, the actual
+modification of the document, its commit and publication to the outside world
+happens once in a row.
+
+Example of such modifications are :
+
+\itemize {
+\item {Toggling a parameter value}
+\item {Editing a parameter value textually}
+\item {Modifying a document from a menubar item}
+}
+
+The general idea of the modification is that they are punctual events,
+that is they don't span over time. An example of modification that does
+not fall in this category would be for example modification that comes
+from a mouse gesture, where the document is modified gradually as the
+gesture is performed.
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=impl] {Implementation}
+
+The following code illustrates a modification of the document such
+as a menu item used to insert a track in a song.
+
+\codeblock [language=c++] ***
+Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+History <HistoryStoreMemory> history (document);
+
+Song & song = document.root <Song> ();
+
+song.tracks.emplace (song.tracks.end ());
+
+auto tx = document.commit ();    (1)
+history.add_undo_step (tx);      (2)
+document.push ();                (3)
+***
+
+\enumerate {
+\item {In this case, the modification is simply a single commit}
+\item {Add this modification as an undo step}
+\item {Typically, the client of the library would advertise this document modification to
+      the outside world at that moment}
+}
+
+
+
+The next chapter, \link [id=gesture] {Handling a Gesture} will show a strategy to use
+for undo/redo in the case of a gesture.

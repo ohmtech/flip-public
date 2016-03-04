@@ -1,0 +1,160 @@
+/*****************************************************************************
+
+        ObjectRef.otd
+        Copyright (c) 2015 Ohm Force
+
+*****************************************************************************/
+
+
+
+\class {ObjectRef}
+\inherit {BasicType}
+\header {flip/ObjectRef.h}
+\declaration ***
+template <class T>   class ObjectRef;
+***
+
+\code {flip::ObjectRef} is a type that represents a pointer or reference to
+an actual flip object.
+
+
+
+/*\\\ PARAMETERS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\parameter {T} {The type of the elements. \code {T} must inherit from \code {flip::Object}}
+
+
+
+/*\\\ METHODS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\constructor {}
+\brief {Constructs the \code {ObjectRef}}
+
+\codeblock [language=c++] ***
+ObjectRef ();                          (1)
+ObjectRef (const ObjectRef & other);   (2)
+ObjectRef (T * ptr);                   (3)
+ObjectRef (const Ref & ref);           (4)
+***
+
+\enumerate {
+\item {Default constructor, constructs with a \code {nullptr} value.}
+\item {Copy constructor. Constructs the object with the value of \code {other}.}
+\item {Constructor. Constructs the object with pointer \code {ptr}.}
+\item {Constructor. Constructs the object with a flip unique reference number.}
+}
+
+\warning {Variant 3 and 4 of the constructor cannot be called from the default constructor
+of a flip object.}
+
+//----------------------------------------------------------------------------
+
+\destructor {}
+\brief {Destructs the \code {ObjectRef}}
+
+\codeblock [language=c++] ***
+~ObjectRef ();
+***
+
+Destructor.
+
+//----------------------------------------------------------------------------
+
+\method {operator =}
+\brief {Assigns value}
+
+\codeblock [language=c++] ***
+ObjectRef & operator = (const ObjectRef & other);  (1)
+ObjectRef & operator = (T * ptr);                  (2)
+ObjectRef & operator = (const Ref & ref);          (3)
+***
+
+\enumerate {
+\item {Copy assignment operator.}
+\item {Assignment operator. Assigns the object with pointer \code {ptr}.}
+\item {Assignment operator. Assigns the object with a flip unique reference number.}
+}
+
+
+
+/*\\\ DIVISION \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+#include "Type.methods.otd"
+
+
+
+/*\\\ DIVISION \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\division {Value Access}
+
+\method {operator T *}
+\brief {Returns the current value of the object}
+
+\codeblock [language=c++] ***
+operator T * () const;
+***
+
+Returns the current value of the object or \code {nullptr}, if the referenced
+object does not exist anymore.
+
+//----------------------------------------------------------------------------
+
+\method {get}
+\brief {Returns the current value of the object as a flip unique reference number}
+
+\codeblock [language=c++] ***
+Ref   get () const;
+***
+
+Returns the current value of the object as a flip unique reference number,
+even if the object does not exist anymore.
+
+//----------------------------------------------------------------------------
+
+\method {before}
+\brief {Returns the previous value of the object}
+
+\codeblock [language=c++] ***
+T *  before () const;
+***
+
+Returns the previous value of the object or \code {nullptr}, if the referenced
+object does not exist anymore.
+
+//----------------------------------------------------------------------------
+
+\method {get_before}
+\brief {Returns the previous value of the object as a flip unique reference number}
+
+\codeblock [language=c++] ***
+Ref   get_before () const;
+***
+
+Returns the previous value of the object as a flip unique reference number,
+even if the object does not exist anymore.
+
+
+
+/*\\\ DIVISION \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\division {Comparaison}
+
+\method {operator ==}
+\brief {Returns \code {true} \emph {iff} objects current values are equal}
+
+\codeblock [language=c++] ***
+bool  operator == (const ObjectRef & rhs) const;
+bool  operator == (T * rhs) const;
+***
+
+//----------------------------------------------------------------------------
+
+\method {operator !=}
+\brief {Returns \code {true} \emph {iff} objects current values are different}
+
+\codeblock [language=c++] ***
+bool  operator != (const ObjectRef & rhs) const;
+bool  operator != (T * rhs) const;
+***
+
+

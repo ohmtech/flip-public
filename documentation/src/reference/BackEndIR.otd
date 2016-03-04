@@ -1,0 +1,345 @@
+/*****************************************************************************
+
+        BackEndIR.otd
+        Copyright (c) 2015 Ohm Force
+
+*****************************************************************************/
+
+
+
+\class {BackEndIR}
+\header {flip/BackEndIR.h}
+\declaration ***
+class BackEndIR;
+***
+
+\code {flip::BackEndIR} represents an intermediate representation of
+the document. Instead of directly to matching to flip class members,
+this objects holds class and attribute names as strings, allowing
+to modify this representation before it is fed to the document.
+
+The object holds the full document in memory.
+
+This class is used to :
+
+\itemize {
+\item {Read and write a document stored on a media}
+\item {Convert from one revision of the document model to another one}
+\item {Make the difference between two documents and make a transaction out of it,
+   which allows to produce 3-way merges}
+}
+
+
+
+/*\\\ TYPES \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\type {Type} {A generic flip Type representation}
+
+
+
+/*\\\ METHODS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\constructor {}
+\brief {Constructs the \code {BackEndIR}}
+
+\codeblock [language=c++] ***
+BackEndIR ();                       (1)
+BackEndIR (const BackEndIR & rhs);  (2)
+BackEndIR (BackEndIR && rhs);       (3)
+***
+
+\enumerate {
+\item {Default constructor. Constructs an empty representation}
+\item {Copy constructor. Constructs as a copy of \code {rhs}}
+\item {Move constructor. Constructs by moving \code {rhs}}
+}
+
+//----------------------------------------------------------------------------
+
+\destructor {}
+\brief {Destructs the \code {BackEndIR}}
+
+\codeblock [language=c++] ***
+~BackEndIR ();
+***
+
+Destructor.
+
+//----------------------------------------------------------------------------
+
+\method {clear}
+\brief {Empty the representation}
+
+\codeblock [language=c++] ***
+void  clear ();
+***
+
+Empty the representation.
+
+//----------------------------------------------------------------------------
+
+\method {empty}
+\brief {Returns \code {true} \emph {iff} the representation is empty}
+
+\codeblock [language=c++] ***
+bool  empty () const;
+***
+
+Returns \code {true} \emph {iff} the representation is empty.
+
+
+
+/*\\\ DIVISION \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\division {BackEnd format to/from Intermediate Representation}
+
+\method {register_backend}
+\brief {Registers a concrete format backend for reading}
+
+\codeblock [language=c++] ***
+template <class BackEnd>
+void  register_backend ();
+***
+
+Register a concrete format backend such as \link [id=BackEndBinary] {\code {BackEndBinary}}
+or \link [id=BackEndMl] {\code {BackEndMl}}. Registering will allow this object to
+guess the format of the backend and do proper parsing.
+
+The subsequent call to \code {read} will use all backends registered to this object.
+
+Example:
+
+\codeblock [language=c++] ***
+// DataProviderMemory provider;
+
+BackEndIR backend;
+backend.register_backend <BackEndBinary> (); (1)
+backend.read (provider);                     (2)
+***
+
+\enumerate {
+\item {Add \code {BackEndBinary} to the list of registered back end types to consider for reading}
+\item {Read document given provider. In this case the backend will only use \code {BackEndBinary} for reading}
+}
+
+//----------------------------------------------------------------------------
+
+\method {read}
+\brief {Reads from the provider and fill this object. Returns \code {true} \emph {iff} the operation was successful}
+
+\codeblock [language=c++] ***
+bool  read (DataProviderBase & provider);
+***
+
+Reads from the provider and fill the intermediate representation of the document
+stored in this object.
+
+Returns \code {true} \emph {iff} the operation was successful.
+
+//----------------------------------------------------------------------------
+
+\method {write}
+\brief {Writes to the consumer using the specified backend in the template parameter}
+
+\codeblock [language=c++] ***
+template <class BackEnd>
+void  write (DataConsumerBase & consumer);
+***
+
+Writes the intermediate representation of the document to the consumer
+using the specified backend in the template parameter.
+
+Example:
+
+\codeblock [language=c++] ***
+// DataConsumerMemory consumer;
+
+backend.write <BackEndBinary> (consumer);
+***
+
+
+
+/*\\\ DIVISION \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\division {Intermediate Representation to/from Document}
+
+\method {read}
+\brief {Reads from this object and fill the document}
+
+\codeblock [language=c++] ***
+void  read (DocumentBase & document);
+***
+
+Reads from this object and fill the document. It will modify the document
+exactly as if executing a transaction. Changed made to the document should
+then be commited.
+
+//----------------------------------------------------------------------------
+
+\method {write}
+\brief {Writes to this object from the document}
+
+\codeblock [language=c++] ***
+void  write (DocumentBase & document);
+***
+
+Writes to this object from the document.
+
+
+
+/*\\\ DIVISION \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\variable {version}
+\brief {Version string as passed in the data model}
+
+\codeblock [language=c++] ***
+std::string version;
+***
+
+This variable represents the version string as passed in the data model
+when declaring it.
+
+//----------------------------------------------------------------------------
+
+\variable {root}
+\brief {Variable representing the root of the whole document model tree}
+
+\codeblock [language=c++] ***
+Type  root;
+***
+
+This variable represents the root of the whole document model tree.
+
+Typically, converting a document to one model revision to another consists
+of manipulating the data stored in that tree. The members of \code {Type}
+are exposed below.
+
+\codeblock [language=c++] ***
+class Type
+{
+public:
+   Ref                                          ref;
+   std::string                                  type_name;
+   std::list <std::pair <std::string, Type>>    members;
+   Value                                        value;
+   std::map <KeyRandom, Type>                   collection;
+   std::map <KeyFloat, Type>                    array;
+};
+***
+
+The details of each variable members of type are exposed below.
+
+//----------------------------------------------------------------------------
+
+\variable {member_names}
+\brief {Set of all member names in the document}
+
+\codeblock [language=c++] ***
+Names member_names;
+***
+
+This variable represents the set of all member names in the document. It
+is used by some backend format to provide symbolic compression of names.
+
+//----------------------------------------------------------------------------
+
+\variable {typenames}
+\brief {Set of all type names in the document}
+
+\codeblock [language=c++] ***
+Names typenames;
+***
+
+This variable represents the set of all type names in the document. It
+is used by some backend format to provide symbolic compression of names.
+
+
+
+/*\\\ DIVISION \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\division {Type}
+
+\variable {Type::ref}
+\brief {Unique reference number of object}
+
+\codeblock [language=c++] ***
+Ref ref;
+***
+
+This variable represents the unique reference number of the object.
+
+\warning {When converting a document and adding a member to a flip class, caution
+should be taken for the reference number not to collide.}
+
+//----------------------------------------------------------------------------
+
+\variable {Type::type_name}
+\brief {Type name as declared in the data model}
+
+\codeblock [language=c++] ***
+std::string type_name;
+***
+
+This variable represents the type name as declared in the data model.
+
+//----------------------------------------------------------------------------
+
+\variable {Type::members}
+\brief {List of members of the object}
+
+\codeblock [language=c++] ***
+std::list <std::pair <std::string, Type>> members;
+***
+
+\emph {iff} the type represents a flip object, this variable represents
+the list of members of the object. The list itself is a \code {std::pair}
+which first element is the name of the member, and the second element
+a \code {Type}.
+
+//----------------------------------------------------------------------------
+
+\variable {Type::value}
+\brief {Value of the object}
+
+\codeblock [language=c++] ***
+Value value;
+***
+
+\emph {iff} the type represents a flip basic type and not a container, this variable represents
+the value of the object. The \code {Value} type holds value for all basic types.
+
+//----------------------------------------------------------------------------
+
+\variable {Type::collection}
+\brief {Elements of the collection}
+
+\codeblock [language=c++] ***
+std::map <KeyRandom, Type> collection;
+***
+
+\emph {iff} the type represents a collection, this variable represents
+the elements of the object.
+
+\important {For proper tracking of objects for document differentiation, the
+value of \code {KeyRandom} must not be changed.}
+
+//----------------------------------------------------------------------------
+
+\variable {Type::array}
+\brief {Elements of the array}
+
+\codeblock [language=c++] ***
+std::map <KeyFloat, Type>  array;
+***
+
+\emph {iff} the type represents a array, this variable represents
+the elements of the object.
+
+\important {For proper tracking of objects for document differentiation, the
+value of \code {KeyFloat} must not be changed.}
+
+
+
+
+
+

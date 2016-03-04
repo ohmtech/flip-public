@@ -1,0 +1,159 @@
+
+\chapter [id=files] {Files Hierarchy}
+
+This chapter describes the files hierarchy or structure of the Flip framework.
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=overview] {Overview}
+
+This section gives the overview of the structure of the Flip framework.
+The following sections will then describe in more details each element
+of that structure.
+
+The Flip framework as the following structure. This structure only
+shows relevant informations for setting up the build environment.
+For example the documentation file structure is hidden for clarity.
+
+
+\codeblock ***
+include/
+   flip/
+      contrib/
+      detail/
+projects/
+src/
+   contrib/
+   detail/
+test/
+   debug/
+   fuzz/
+   perf/
+   regress/
+***
+
+\itemize {
+\item {the \code {include} folder contains only Flip framework headers and code headers files}
+\item {the optional \code {projects} folder is created when using the \code {gyp} tool}
+\item {the \code {src} folder contains only Flip framework source files}
+\item {the \code {test} folder contains source and header files used to test the Flip framework}
+}
+
+The following sections will describe in more details each element
+of the structure above.
+
+
+/*
+==============================================================================
+*/
+
+\section [id=include] {The \code {include} folder}
+
+\codeblock ***
+include/
+   flip/
+      contrib/
+      detail/
+***
+
+The \code {include} folder contains only Flip framework headers and code headers files.
+
+Typically developers will make the \code {include} path available in their header paths
+so that the header file \code {Document} can be reached using \code {#include "flip/Document.h"}
+for example.
+
+The top level \code {flip} files contains every public header files which represent the core of the Flip
+framework. Flip user developers will typically use those files to work with Flip.
+
+The \code {contrib} files contains public header files that can be optionally used to work Flip. They do not belong
+to the core itself, and generally represents specific platform features. For example the
+\code {DataConsumerFile} sits in this directory, whereas the \code {DataConsumerMemory} belongs
+to the Flip framework core.
+
+The \code {detail} files contains private header files used by the Flip framework core. Flip user
+developers should never include those files.
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=src] {The \code {src} folder}
+
+\codeblock ***
+src/
+   contrib/
+   detail/
+***
+
+The \code {src} folder contains only Flip framework source files.
+
+The top level \code {flip} files contains every source files implementing the core of the Flip
+framework.
+
+The \code {contrib} files contains source files that can be optionally used to work Flip.
+They do not belong
+to the core itself, and generally represents specific platform features.
+The flip top level files do not depend on the \code {contrib} files so that those files
+don't necesseraly need to be compiled with Flip.
+
+The \code {detail} files contains private source files used by the Flip framework core.
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=projects] {The \code {projects} folder}
+
+\codeblock ***
+projects/
+***
+
+When using the \code {gyp} tool, the \code {projects} folder will contain
+the generated project or make files to run regression and performance tests.
+
+Typically, when used on Windows, the \code {projects} folder will contain the
+Visual Studio solution as well as all necesserary project files to build tests.
+
+When used on MacOS X, the \code {projects} folder will contain the
+XCode project necesserary to build tests.
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=test] {The \code {test} folder}
+
+\codeblock ***
+test/
+   debug/
+   fuzz/
+   perf/
+   regress/
+***
+
+The \code {test} folder contains all source and header files needed to
+build and run regression and performance tests of the Flip framework.
+
+The \code {debug} folder contains some files used to help the Flip
+framework developer to debug the internals of the Flip framework core.
+
+The \code {fuzz} folder contains fuzzing tests implementation to provide
+automatic bug finding in the Ffip framework core.
+
+The \code {perf} folder contains source and header files used to measure
+the performance of the Flip framework and to track performance regressions.
+
+The \code {regress} folder contains source and header files used to
+detect regressions in the Flip framework.
+
+

@@ -1,0 +1,255 @@
+
+\chapter [id=msvc] {MSVC Warnings Notes}
+
+This chapter gives details on MSVC configuration regarding compiler warnings.
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=overview] {Overview}
+
+To accomodate our customers configurations, we followed a strict policy about
+warnings. Warnings are always treated as errors, so that
+flip must compile without generating any warnings.
+
+To provide that, the following MSVS settings are used for the \code {cl}
+compiler :
+
+\codeblock ***
+WarningLevel: 4
+WarnAsError: true
+AdditionalOptions: /Wall
+***
+
+We \emph {do not} advise using this last warning line. In practice, it will
+activate all possible warnings, and in particular warnings that MSVS turns
+off by default.
+
+Those additional warnings contain informational warnings, but they will also
+trigger warnings in the system headers and in particular in the standard library
+system headers.
+
+As far as MSVS 12.0 is concerned, we decided to silent those warnings at
+a global scope, rather than silenting them in the source code directly.
+
+The next sections will list all disabled warnings and gives a quick note on
+the reason and impact on code.
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=c4251] {Warning C4251}
+
+\link [href=msdn.microsoft.com/en-us/library/esew7y1w.aspx] {MSDN Warning C4251 Reference}
+
+\codeblock ***
+'identifier' : class 'type' needs to have dll-interface to be used by clients of class 'type2'
+***
+
+This warning occurs as a false positive when exporting template code.
+
+The regression tests (flip as a dll) ensure that flip is working correctly.
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=c4265] {Warning C4265}
+
+\link [href=msdn.microsoft.com/en-us/library/wzxffy8c.aspx] {MSDN Warning C4265 Reference}
+
+\codeblock ***
+'class' : class has virtual functions, but destructor is not virtual
+***
+
+While this warning is important, it was disabled because it occurs in standard library
+headers such as \code {<thread>}, \code {<mutex>} or \code {<condition_variable>}.
+
+We rely on the fact that the clang build will catch those problems.
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=c4350] {Warning C4350}
+
+\link [href=msdn.microsoft.com/en-us/library/0eestyah.aspx] {MSDN Warning C4350 Reference}
+
+\codeblock ***
+behavior change: 'member1' called instead of 'member2'
+***
+
+This is treated as an informational warning.
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=c4355] {Warning C4355}
+
+\link [href=msdn.microsoft.com/en-us/3c594ae3.aspx] {MSDN Warning C4355 Reference}
+
+\codeblock ***
+'this' : used in base member initializer list
+***
+
+This is treated as an informational warning. Internally the framework used \code {*this}
+to allow a child object to have access to its parent, when decomposing a big class into
+smaller feature-orthogonal classes.
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=c4365] {Warning C4365}
+
+\link [href=msdn.microsoft.com/en-us/ms173683.aspx] {MSDN Warning C4365 Reference}
+
+\codeblock ***
+'action' : conversion from 'type_1' to 'type_2', signed/unsigned mismatch
+***
+
+While this warning is important, it was disabled because it provides a lot of
+false positive that the standard permits.
+
+We rely on the fact that the clang build will catch those problems.
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=c4435] {Warning C4435}
+
+\link [href=msdn.microsoft.com/en-us/jj155806.aspx] {MSDN Warning C4435 Reference}
+
+\codeblock ***
+'class1' : Object layout under /vd2 will change due to virtual base 'class2'
+***
+
+This is treated as an informational warning.
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=c4514] {Warning C4514}
+
+\link [href=msdn.microsoft.com/en-us/cw9x3tcf.aspx] {MSDN Warning C4514 Reference}
+
+\codeblock ***
+'function' : unreferenced inline function has been removed
+***
+
+This is treated as an informational warning.
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=c4702] {Warning C4702}
+
+\link [href=msdn.microsoft.com/en-us/c26da40e.aspx] {MSDN Warning C4702 Reference}
+
+\codeblock ***
+unreachable code
+***
+
+This is treated as an informational warning.
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=c4571] {Warning C4571}
+
+\link [href=msdn.microsoft.com/en-us/55s8esw4.aspx] {MSDN Warning C4571 Reference}
+
+\codeblock ***
+Informational: catch(...) semantics changed since Visual C++ 7.1;
+structured exceptions (SEH) are no longer caught
+***
+
+This is treated as an informational warning.
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=c4640] {Warning C4640}
+
+\link [href=msdn.microsoft.com/en-us/4f5c8560.aspx] {MSDN Warning C4640 Reference}
+
+\codeblock ***
+'instance' : construction of local static object is not thread-safe
+***
+
+The C++11 standard states (section 6.7):
+
+\note {
+such a variable is initialized the first time control passes through its declaration;
+such a variable is considered initialized upon the completion of its initialization.
+[...] If control enters the declaration concurrently while the variable is being
+initialized, the concurrent execution shall wait for completion of the initialization.
+}
+
+So we ignore this warning. However for compatibility, the cases where this is used
+are for now marked as non-thread-safe, which is acceptable since this is occured
+when declaring models.
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=c4710] {Warning C4710}
+
+\link [href=msdn.microsoft.com/en-us/yd3056cz.aspx] {MSDN Warning C4710 Reference}
+
+\codeblock ***
+'function' : function not inlined
+***
+
+This is treated as an informational warning.
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=c4820] {Warning C4820}
+
+\link [href=msdn.microsoft.com/en-us/t7khkyth.aspx] {MSDN Warning C4820 Reference}
+
+\codeblock ***
+'bytes' bytes padding added after construct 'member_name'
+***
+
+This is treated as an informational warning.
+
+

@@ -1,0 +1,91 @@
+/*****************************************************************************
+
+        Entity.otd
+        Copyright (c) 2015 Ohm Force
+
+*****************************************************************************/
+
+
+
+\class {Entity}
+\header {flip/Entity.h}
+\declaration ***
+class Entity;
+***
+
+\code {flip::Entity} is a generic associative container of any types where
+the key is the key type itself and the value an instance of that type.
+
+\code {Entity}s are used to store custom data in flip \code {Object}s and
+are typically used in observers.
+
+
+
+/*\\\ METHODS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\method {emplace}
+\brief {Constructs in-place a new element}
+
+\codeblock [language=c++] ***
+template <class T, class... Args>   T &   emplace (Args &&... args);
+***
+
+Constructs in-place a new element of type \code {T} by calling \code {T} constructor
+with variadic template parameters \code {args}.
+
+\warning {Only one instance of type \code {T} can exist in the entity.}
+
+Returns a reference to the new in-place constructed element.
+
+Example:
+
+\codeblock [language=c++] ***
+class A
+{
+public:
+   A (double value);
+};
+
+Entity entity;
+entity.emplace <A> (2.5);
+***
+
+//----------------------------------------------------------------------------
+
+\method {erase}
+\brief {Removes an element}
+
+\codeblock [language=c++] ***
+template <class T>   void  erase ();
+***
+
+Removes the element of type \code {T}.
+
+\warning {The element must exist in the entity.}
+
+//----------------------------------------------------------------------------
+
+\method {use}
+\brief {Returns a reference to the element}
+
+\codeblock [language=c++] ***
+template <class T>   T &   use ();
+***
+
+Returns a reference to the element of type \code {T}.
+
+\warning {The element must exist in the entity.}
+
+//----------------------------------------------------------------------------
+
+\method {get}
+\brief {Returns a pointer to the element}
+
+\codeblock [language=c++] ***
+template <class T>   T *   get ();
+***
+
+Returns a pointer to the element of type \code {T} if it exists, \code {nullptr}
+otherwise.
+
+

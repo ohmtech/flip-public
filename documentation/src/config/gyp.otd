@@ -1,0 +1,191 @@
+
+\chapter [id=gyp] {Setting up Using \code {gyp}}
+
+This chapter explains how to set up your build environment using
+the \code {gyp} tool.
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=overview] {Overview}
+
+\code {gyp}, "Generate your project" is a tool made by Google which was
+made for the Chromium project their Google Chrome application.
+The tool allows to have a set of files in editable text format that
+can be used to generate automatically Windows Visual Studio or Apple XCode
+project.
+
+This tool is used by the Flip framework in two ways :
+
+\itemize {
+\item {To provide a convenient way to make IDE projects for automatic testing}
+\item {To allow Flip user developer to quickly setup all needed files to
+   integrate the Flip framework into their build environment}
+}
+
+\code {gyp} requires a proper installation of the \code {python} programming
+language to work.
+
+The \code {gyp} system documentation is outside of the scope of this guide.
+More information on the \code {gyp} tool is available
+\link [href=chromium.googlesource.com/external/gyp/+/master/docs/UserDocumentation.md] {here}.
+
+\codeblock ***
+configure.py
+flip.gyp
+flip_lib.gpyi
+flip_src.gpyi
+src/
+   src.gpyi
+test/
+   test.gypi
+   win.gypi
+   xcode.gypi
+***
+
+
+The following section will describe the purpose of every \code {gyp} and
+\code {gypi} file.
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=top] {Top Level Files}
+
+\subsection [id=configure] {\code {configure.py}}
+
+While not a \code {gyp} file, \code {configure.py} is a \code {python} file
+used to produce projects for regression and performance testing. It requires
+an installation of \code {python} 2.7 or greater.
+
+Executing this \code {python} script will create a \code {projects} folder
+at the top level and will put all required files to build and run tests.
+
+\subsection [id=flip.gyp] {\code {flip.gyp}}
+
+\code {flip.gyp} is a top level \code {gyp} file that produces all the test
+targets to test the Flip framework.
+
+\subsection [id=flip_lib.gypi] {\code {flip_lib.gypi}}
+
+\code {flip_lib.gypi} is a top level \code {gypi} file. When integrating
+the Flip framework to your build system, this is typically the only file
+to include.
+
+It will add all source and header files to integrate the Flip framework core
+and contribution files. It will also set up the include path and makes sure
+that every dependent target have their include path correctly setup.
+
+\important {If including this file to your build system generate errors for XCode, please make sure
+to read the \link [id=headermap] {Troubleshooting XCode header inclusion}}
+
+\subsection [id=flip_src.gypi] {\code {flip_src.gypi}}
+
+\code {flip_src.gypi} is a top level \code {gypi} file. In contains only
+all source and header files and set up include path accordingly.
+
+\important {If including this file to your build system generate errors for XCode, please make sure
+to read the \link [id=headermap] {Troubleshooting XCode header inclusion}}
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=src] {\code {src} Files}
+
+\subsection [id=src.gypi] {\code {src.gypi}}
+
+\code {src/src.gypi} contains only the source and header files of the
+Flip framework core and contribution.
+
+\important {If including this file to your build system generate errors for XCode, please make sure
+to read the \link [id=headermap] {Troubleshooting XCode header inclusion}}
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=test] {\code {test} Files}
+
+The \code {gypi} files in test are only used for regression and performance tests.
+They are typically not included in your build environment. However they provide a
+reference for specific configuration, for example to set up dynamic library linkage.
+
+\subsection [id=test.gypi] {\code {test.gypi}}
+
+\code {test.gypi} contains all targets to produce all tests.
+
+\subsection [id=win.gypi] {\code {win.gypi}}
+
+\code {win.gypi} contains all specific Windows Visual Studio project options.
+It provides debug and release as well as 32-bit and 64-bit configurations.
+
+It provides the only dependency of Flip, which is Winsockets 2 \code {ws2_32.lib}.
+
+Finally it contains the set of disabled warnings necessary for the Flip framework
+to compile without any kind of warning :
+
+\itemize {
+\item {\link [href=msdn.microsoft.com/en-us/library/esew7y1w.aspx] {Warning C4251}}
+}
+
+
+\subsection [id=xcode.gypi] {\code {xcode.gypi}}
+
+\code {xcode.gypi} contains all specific Apple XCode project options.
+It provides debug and release as well as 32-bit and 64-bit configurations.
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=headermap] {Troubleshooting XCode header inclusion}
+
+The default XCode header inclusion rule specifies that headers added to the
+project will be searched directly. This means that the \code {Document.h} file
+could be accessed as :
+
+\codeblock [language=c++] ***
+#include "Document.h"
+***
+
+instead of :
+
+\codeblock [language=c++] ***
+#include "flip/Document.h"
+***
+
+This is problematic on platforms where the HFS filesystem is specified as
+case insensitive. In this case system header files including for example \code {float.h}
+will use \code {flip/Float.h} instead.
+
+On MacOS X, the issue arrises for \code {flip/Float.h} and \code {flip/Signal.h}.
+
+To overcome this problem, the Flip user developer will have to explicitely tell
+XCode not to search those files by specifying \code {USE_HEADERMAP} to \code {NO}.
+
+More information on this matter is available \link [href=www.cocoabuilder.com/archive/xcode/285003-xcode-picks-up-headers-from-the-wrong-location.html]{here}.
+
+An example of this setting can be find in the top level \code {flip.gyp} file :
+
+\codeblock [language=c++] ***
+'xcode_settings': {
+   'USE_HEADERMAP': 'NO',
+},
+***
+
+
+
+

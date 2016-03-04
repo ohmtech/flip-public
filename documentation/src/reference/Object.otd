@@ -1,0 +1,112 @@
+/*****************************************************************************
+
+        Object.otd
+        Copyright (c) 2015 Ohm Force
+
+*****************************************************************************/
+
+
+
+\class {Object}
+\inherit {Type}
+\header {flip/Object.h}
+\declaration ***
+class Object;
+***
+
+\code {flip::Object} is the base type to provide custom flip classes.
+
+
+
+/*\\\ METHODS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\constructor {}
+\brief {Constructs the \code {Object}}
+
+\codeblock [language=c++] ***
+Object ();                    (1)
+Object (const Object & other);   (2)
+***
+
+\enumerate {
+\item {Default constructor, constructs with a \code {0LL} value.}
+\item {Copy constructor. Constructs the object with the value of \code {other}.}
+}
+
+//----------------------------------------------------------------------------
+
+\destructor {}
+\brief {Destructs the \code {Object}}
+
+\codeblock [language=c++] ***
+~Object ();
+***
+
+Destructor.
+
+//----------------------------------------------------------------------------
+
+\method {operator =}
+\brief {Assigns value}
+
+\codeblock [language=c++] ***
+Object & operator = (const Object & other);
+***
+
+Copy assignment operator.
+
+
+
+/*\\\ DIVISION \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+#include "Type.methods.otd"
+
+
+
+/*\\\ DIVISION \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\division {Miscellaneous}
+
+\method {parent}
+\brief {Returns the current or previous parent of the object}
+
+\codeblock [language=c++] ***
+template <class T>   T &   parent ();
+Parent & parent ();
+***
+
+Returns the current or previous parent of the object.
+
+Example:
+
+\codeblock [language=c++] ***
+object.parent <MyClass> ();                  (1)
+object.parent ().ptr <MyClass> ();           (2)
+object.parent ().before <MyClass> ();        (3)
+object.parent ().before_ptr <MyClass> ();    (4)
+***
+
+\enumerate {
+\item {Return the current parent as \code {MyClass}, throws if casting is incorrect}
+\item {Return the current parent as \code {MyClass}, returns \code {nullptr} if casting is incorrect}
+\item {Return the previous parent as \code {MyClass}, throws if casting is incorrect}
+\item {Return the previous parent as \code {MyClass}, returns \code {nullptr} if casting is incorrect}
+}
+
+//----------------------------------------------------------------------------
+
+\method {entity}
+\brief {Returns an entity}
+
+\codeblock [language=c++] ***
+Entity & entity ();
+***
+
+Returns an entity. \code {Entity} are described in details \link [id=Entity] {here}.
+
+\note {
+   Entities can be made available in all types (including all basic types like \code {Int}
+   and \code {Array}) by defining the macro \code {flip_ENTITY_LOCATION}
+   to \code {flip_ENTITY_LOCATION_TYPE}
+}
+

@@ -1,0 +1,64 @@
+\book [id=guide, type=guide] {Flip Basics Programming Guide}
+
+The Programming Guide is a serie of guides intented for flip developers to assist into common tasks when writing a Flip application.
+
+\itemize {
+\item {\link [id=about] {About Flip Basics Programming Guide}}
+\item {\link [id=declare] {Declaring the Model}}
+\item {\link [id=control] {Controlling the Model}}
+\item {\link [id=observe] {Observing the Model}}
+\item {\link [id=remote] {Working with a Remote Server}}
+\item {\link [id=misc] {More Fun with Flip}}
+}
+
+\chapter [id=about] {About Flip Programming Guide}
+
+The Programming Guide is a serie of guides intented for flip developers to assist into common tasks when writing a Flip application.
+
+\section [id=how] {How to Use This Document}
+
+/*If you want to add flip support to your application, first read
+\link [id=flip/overview] {Flip Overview} to have a taste of the features that
+flip can add to your application.*/
+
+You don't necesseraly need to read each chapter of this manual. Chapters are separated in very specific tasks, for a very specific need.
+
+\section [id=requisites] {Prerequisites}
+
+You should be familiar with C++ programming, especially templates. You should be also familiar
+with basic C++ design patterns such as the Singleton or Delegate pattern.
+
+You should be familiar with the MVC design pattern. In a flip managed application,
+flip acts as the Model part of the MVC design pattern. /*The \link [id=flip/overview] {Flip Overview}
+gives the basic idea behind the MVC design pattern and how it is used in Flip.*/
+
+/*You should have read the \link [id=flip/babystep] {Flip Babystep Tutorial} priori to reading this guide.*/
+
+\section [id=seealso] {See Also}
+
+See \link [id=reference] {Flip Framework Reference} for details on Flip classes.
+
+
+\section [id=content] {Content}
+
+This guide presents the following content in a didactic order.
+
+\itemize {
+\item {To use Flip, you will need to declare a model. The chapter \link [id=declare] {Declaring the Model} exposes the basic principles to do so}
+\item {Before going on with manipulating a model, the chapter \link [id=organize] {Organizing the Code} gives a brief overview on how to layout your code for subsequent work}
+\item {Once this is setup, the chapter \link [id=control] {Controlling the Model} exposes the way to control (that is, modify) the model}
+\item {Once you can control the model, the chapter \link [id=observe] {Observing the Model} exposes the way to listen to model modifications}
+\item {Next, the chapter \link [id=remote] {Working with a Remote Server} explains how to interact with a remote server and allow collaboration between multiple clients}
+\item {Finally the chapter \link [id=misc] {More Fun with Flip} leverage the full power of the flip transactional and document model and the problems you can solve with it}
+}
+
+This guide is intended to be read in its natural chapter order. The first chapter, \link [id=declare] {Declaring the Model} will guide you through the task of declaring a model
+to be used with documents.
+
+
+#include "declare.otd"
+#include "organize.otd"
+#include "control.otd"
+#include "observe.otd"
+#include "remote.otd"
+#include "misc.otd"

@@ -1,0 +1,179 @@
+
+\chapter [id=misc] {Miscellaneous Configuration}
+
+This chapter describes several preprocessor macros used to change specific
+behavior of the Flip framework.
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=fatal] {\code {flip_FATAL_MODE}}
+
+When the Flip framework encounters an operation that put its state to
+subsequent undefined behavior, it will general a fatal error.
+The \code {flip_FATAL_MODE} will control how this fatal error is generated.
+It is for example used when the framework is able to detect an incorrect
+use of its API.
+
+\itemize {
+\item {if set to \code {flip_FATAL_MODE_ABORT}, the Flip framework will trigger
+   an abortion on debug and will throw on release, which is most likely desired when developping.
+   \emph {This is the default behavior}}
+\item {if set to \code {flip_FATAL_MODE_THROW}, the Flip framework will throw.
+   This is used in unit testing to ensure that programmers error can be
+   reliably detected}
+\item {if set to \code {flip_FATAL_MODE_USER}, the \code {flip_FATAL} macro
+   has to be defined by the user in some appropriate way.}
+}
+
+One will activate one option or another using the processor macros or definitions.
+For example :
+
+\codeblock ***
+flip_FATAL_MODE=flip_FATAL_MODE_THROW
+***
+
+\code {flip_FATAL} can be defined in a user specific way.  To do this
+define \code {flip_FATAL_MODE} to \code {flip_FATAL_MODE_USER} and provide
+a definition of it using a compiler option.  The best way though is to
+provide a user config file \code {flip_user_config.h} somewhere in the
+header search path of the compiler and define \code
+{flip_HAS_FLIP_USER_CONFIG_H}.
+
+For example such a \code {flip_user_config.h} could look like this:
+
+\codeblock ***
+#pragma once
+
+#include <cassert>
+
+extern void trace_error(char* msg);
+
+#define flip_FATAL { trace_error("FATAL!"); assert(false); throw; }
+***
+
+\important {Since \code {flip_FATAL} is used as a terminate function, the
+implementation must make sure that it is never returning.  The \code
+{throw} in the example above ensures this.}
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=nothing] {\code {flip_NOTHING}}
+
+Values such as \code {Int}, \code {Float} or \code {Blob}
+in the flip framework may have conceptually "no value" at specific
+object life cycles.
+
+\itemize {
+\item {if a value is \code {added} then its \code {before} value is "no value",}
+\item {if a value is \code {removed} then its \code {value} is "no value".}
+}
+
+Flip provides two way to represents this value :
+
+\itemize {
+\item {either by implicitely considering that the "no value"
+   is defined and explicitely \code {0} for numbers or empty for dynamic sized data,
+   using \code {flip_NOTHING_ZERO},
+   \emph {This is the default behavior}, }
+\item {either considering "no value" to be an error
+   and \code {flip_FATAL} when attempting to access it,
+   using \code {flip_NOTHING_FATAL}.}
+}
+
+One will activate one option or another using the processor macros or definitions.
+For example :
+
+\codeblock ***
+flip_NOTHING=flip_NOTHING_FATAL
+***
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=entityuse] {\code {flip_ENTITY_USE}}
+
+The flip Framework \code {Entity} system allows to bind an arbitraty object
+to a flip \code {Object} or \code {Type}.
+The system itself is type safe and memory leak safe. However if one
+does not erase from the \code {Entity} an object it previously emplaced,
+there is no way for the client of the Flip framework to exactly monitor
+when the underlying object is going to be effectively freed.
+
+For this reason, the Flip framework allows to detect those situation and
+may force the developer to erase explicitely the object to ensure it
+has control over the life span of the object.
+
+\itemize {
+\item {if set to \code {flip_ENTITY_USE_RELAXED}, the Flip framework will automatically
+   free any remaining object in the \code {Entity}}
+\item {if set to \code {flip_ENTITY_USE_STRICT}, the Flip framework will trigger
+   a \code {flip_FATAL} if the \code {Entity} is not empty when the underlying Flip type
+   is removed.
+   \emph {This is the default behavior}}
+\item {if set to \code {flip_ENTITY_USE_PEDANTIC}, the Flip framework will trigger
+   a \code {flip_FATAL} as in \code {flip_ENTITY_USE_STRICT} and will also
+   ensure that any entity creation or erase only occurs from an observer
+   notification \code {document_changed}.}
+}
+
+\note {\code {flip_ENTITY_USE} is ignored if \code {flip_ENTITY_LOCATION} is
+   set to \code {flip_ENTITY_LOCATION_NONE}}
+
+
+One will activate one option or another using the processor macros or definitions.
+For example :
+
+\codeblock ***
+flip_ENTITY_USE=flip_ENTITY_USE_RELAXED
+***
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=entityloc] {\code {flip_ENTITY_LOCATION}}
+
+The flip Framework \code {Entity} system allows to bind an arbitraty object
+to a flip \code {Object} (or derived) or \code {Type}.
+While being convenient, its memory usage might be a concern if it is only used
+for object and never for basic types such as \code {Int} or \code {Float},
+or never at all.
+
+For this reason, the Flip framework allows either to have the entity available
+for any kind of Flip object, to restrict only to flip \code {Object}
+(that is, not any basic types), or to remove completely the feature from Flip.
+
+\itemize {
+\item {if set to \code {flip_ENTITY_LOCATION_TYPE}, the Flip framework will make
+   the \code {Entity} system available for all types.
+   \emph {This is the default behavior}}
+\item {if set to \code {flip_ENTITY_LOCATION_OBJECT}, the Flip framework will restrict
+   the use of \code {Entity} to flip \code {Object} only}
+\item {if set to \code {flip_ENTITY_LOCATION_NONE}, the Flip framework will
+   remove the \code {Entity} feature}
+}
+
+\note {\code {flip_ENTITY_USE} is ignored if \code {flip_ENTITY_LOCATION} is
+   set to \code {flip_ENTITY_LOCATION_NONE}}
+
+
+One will activate one option or another using the processor macros or definitions.
+For example :
+
+\codeblock ***
+flip_ENTITY_LOCATION=flip_ENTITY_LOCATION_OBJECT
+***
+

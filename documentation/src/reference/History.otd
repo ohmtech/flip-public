@@ -1,0 +1,186 @@
+/*****************************************************************************
+
+        History.otd
+        Copyright (c) 2015 Ohm Force
+
+*****************************************************************************/
+
+
+
+\class {History}
+\header {flip/History.h}
+\declaration ***
+template <class HistoryStoreImpl>   class History;
+***
+
+\code {flip::History} is a flip compatible undo/redo stack implementation.
+
+
+
+/*\\\ PARAMETERS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\parameter
+   {HistoryStoreImpl}
+   {The type of history store, for example \code {HistoryStoreMemory}
+   or \code {HistoryStoreFile}}
+
+
+
+/*\\\ TYPES \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\type {iterator} {Bidirectional access iterator}
+
+
+
+/*\\\ METHODS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\constructor {}
+\brief {Construct the \code {History}}
+
+\codeblock [language=c++] ***
+template <class... Args>   History (DocumentBase & document, Args &&... args);
+***
+
+Construct the \code {History} by attaching it to the document on which
+it shall operate. \code {args} are passed to the underlying \code {HistoryStoreImpl}.
+
+//----------------------------------------------------------------------------
+
+\method {add_undo_step}
+\brief {Add a new transaction on the undo stack}
+
+\codeblock [language=c++] ***
+void  add_undo_step (Transaction tx);
+***
+
+Add a new transaction on the undo stack.
+The transaction might be empty or have no operations enabled in undo,
+in which case the operation is ignored.
+
+/*\\\ DIVISION \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\division {Iterators}
+
+\method {begin}
+\brief {Returns an iterator to the beginning}
+
+\codeblock [language=c++] ***
+iterator  begin ();
+***
+
+Returns an iterator to the beginning of the history. If the history
+is empty, then the iterator returned is the same as the one returned
+by \code {end}.
+
+//----------------------------------------------------------------------------
+
+\method {end}
+\brief {Returns an iterator to the end}
+
+\codeblock [language=c++] ***
+iterator  end ();
+***
+
+Returns an iterator to the end of the history, that is the element
+past the last element in the history.
+
+//----------------------------------------------------------------------------
+
+\method {last_undo}
+\brief {Returns an iterator to last undo step}
+
+\codeblock [language=c++] ***
+iterator  last_undo ();
+***
+
+Returns an iterator to last undo step of the history. If there is no
+last undo step, then the iterator returned is the same as the one returned
+by \code {end}.
+
+//----------------------------------------------------------------------------
+
+\method {first_redo}
+\brief {Returns an iterator to first redo step}
+
+\codeblock [language=c++] ***
+iterator  first_redo ();
+***
+
+Returns an iterator to first redo step of the history. If there is no
+first redo step, then the iterator returned is the same as the one returned
+by \code {end}.
+
+/*\\\ DIVISION \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\division {Modifiers}
+
+\method {clear}
+\brief {Clears the contents}
+
+\codeblock [language=c++] ***
+void  clear ();
+***
+
+Clears the contents of the history.
+
+//----------------------------------------------------------------------------
+
+\method {erase}
+\brief {Erases element}
+
+\codeblock [language=c++] ***
+iterator  erase (iterator it);
+***
+
+Erases history element at position \code {it}. Returns the \code {iterator} following \code {it}.
+
+//----------------------------------------------------------------------------
+
+\method {execute_undo}
+\brief {Execute last undo step}
+
+\codeblock [language=c++] ***
+bool  execute_undo ();
+***
+
+Executes the last undo step by replaying its associated transaction backward.
+Returns \code {true} if the transaction execution was successful, \code {false} otherwise.
+
+//----------------------------------------------------------------------------
+
+\method {execute_redo}
+\brief {Execute first redo step}
+
+\codeblock [language=c++] ***
+bool  execute_redo ();
+***
+
+Executes the first redo step by replaying its associated transaction forward.
+Returns \code {true} if the transaction execution was successful, \code {false} otherwise.
+
+/*\\\ DIVISION \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\division {Miscellaneous}
+
+\method {version}
+\brief {Returns the history model version}
+
+\codeblock [language=c++] ***
+std::string  version ();
+***
+
+Returns the history data model version at the moment of history creation.
+This is relevant only for history stores that provide persistence of history,
+like \code {HistoryStoreFile}.
+
+
+
+
+
+
+
+
+
+
+
+

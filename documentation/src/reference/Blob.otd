@@ -1,0 +1,126 @@
+/*****************************************************************************
+
+        Blob.otd
+        Copyright (c) 2015 Ohm Force
+
+*****************************************************************************/
+
+
+
+\class {Blob}
+\inherit {BasicType}
+\header {flip/Blob.h}
+\declaration ***
+class Blob;
+***
+
+\code {flip::Blob} is a type that represents a dynamic-sized array of bytes.
+It is used to store opaque data.
+
+
+
+/*\\\ METHODS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\constructor {}
+\brief {Constructs the \code {Blob}}
+
+\codeblock [language=c++] ***
+Blob ();                                     (1)
+Blob (const Blob & other);                   (2)
+Blob (const std::vector <uint8_t> & value);  (3)
+***
+
+\enumerate {
+\item {Default constructor, constructs an empty blob.}
+\item {Copy constructor. Constructs the object with the value of \code {other}.}
+\item {Constructor. Constructs the object with data from \code {value}.}
+}
+
+\warning {Variant 3 of the constructor cannot be called from the default constructor
+of a flip object.}
+
+//----------------------------------------------------------------------------
+
+\destructor {}
+\brief {Destructs the \code {Blob}}
+
+\codeblock [language=c++] ***
+~Blob ();
+***
+
+Destructor.
+
+//----------------------------------------------------------------------------
+
+\method {operator =}
+\brief {Assigns value}
+
+\codeblock [language=c++] ***
+Blob & operator = (const Blob & other);                     (1)
+Blob & operator = (const std::vector <uint8_t> & value);    (2)
+Blob & operator = (std::vector <uint8_t> && value);         (3)
+***
+
+\enumerate {
+\item {Copy assignment operator.}
+\item {Assignment operator. Assigns the object with \code {value}.}
+\item {Assignment operator. Assigns the object by moving \code {value}.}
+}
+
+
+
+/*\\\ DIVISION \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+#include "Type.methods.otd"
+
+
+
+/*\\\ DIVISION \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\division {Value Access}
+
+\method {operator const std::vector <uint8_t> &}
+\brief {Returns the current data of the object}
+
+\codeblock [language=c++] ***
+operator const std::vector <uint8_t> & () const;
+***
+
+Returns the current data of the object.
+
+//----------------------------------------------------------------------------
+
+\method {before}
+\brief {Returns the previous data of the object}
+
+\codeblock [language=c++] ***
+const std::vector <uint8_t> &  before () const;
+***
+
+Returns the previous data of the object.
+
+
+
+/*\\\ DIVISION \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\division {Comparaison}
+
+\method {operator ==}
+\brief {Returns \code {true} \emph {iff} objects current datas are equal}
+
+\codeblock [language=c++] ***
+bool  operator == (const Blob & rhs) const;
+bool  operator == (const std::vector <uint8_t> & rhs) const;
+***
+
+//----------------------------------------------------------------------------
+
+\method {operator !=}
+\brief {Returns \code {true} \emph {iff} objects current datas are different}
+
+\codeblock [language=c++] ***
+bool  operator != (const Blob & rhs) const;
+bool  operator != (const std::vector <uint8_t> & rhs) const;
+***
+
+

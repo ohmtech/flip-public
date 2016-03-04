@@ -1,0 +1,209 @@
+
+\chapter [id=setup] {Setting up the History}
+
+This chapter the basic principle to setup an history for a document.
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=overview] {Overview}
+
+History provides undo/redo features and more advanced ways to manipulate history.
+An history is a record of transactions to modify a document. Each transaction
+added to the history defines an \emph {undo step}.
+
+The \code {History} class provides this feature. It is linked to a document
+on which it will operate, but marking undo steps and manipulating history
+is done programatically.
+
+A document might be managed by multiple \code {History}. An \code {History}
+will store each undo step using an history store. Some stores are volatile
+while some stores are persistent.
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=ctor] {Contructing an \code {History} instance}
+
+\code {History} are constructed by providing the document to which they
+are attached to. The \code {History} itself is a \code {template} and
+takes a template parameter which is the actual implementation of history
+store to use.
+
+The following piece of code defines a volatile history for the
+document.
+
+\codeblock [language=c++] ***
+#include "flip/History.h"
+#include "flip/HistoryStoreMemory.h"
+
+Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+History <HistoryStoreMemory> history (document);
+***
+
+The following piece of code defines a persistent history for the
+document which survives the application life-span. The
+supplementary argument of the constructor is the path to the file
+which will store history.
+
+\codeblock [language=c++] ***
+#include "flip/History.h"
+#include "flip/contrib/HistoryStoreFile.h"
+
+Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+History <HistoryStoreFile> history (document, "path/to/history");
+***
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=basic] {Basic Manipulation}
+
+When you change the document, Flip will know that it was modified.
+Transactions represent the difference between two document states.
+When the document is modified, Flip internally keeps the old and
+new state of the document.
+
+The history itself does not contain the whole state of the document,
+but rather the difference between two document states. In this way
+flip allows for a memory-performant managment of history.
+
+The following piece of code shows how to add an undo step.
+
+\codeblock [language=c++] ***
+Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+History <HistoryStoreMemory> history (document);
+
+Song & song = document.root <Root> ();
+
+song.tracks.emplace (song.tracks.end ());
+
+auto tx = document.commit ();    (1)
+history.add_undo_step (tx);      (2)
+
+history.execute_undo ();         (3)
+document.commit ();              (4)
+
+history.execute_redo ();         (5)
+document.commit ();
+***
+
+\enumerate {
+\item {Commit the document and get the transaction representing the difference of states}
+\item {Add this transaction as an undo step for the history}
+\item {Execute undo, this puts the document back to the state before the first commit}
+\item {The document is modified but not commited. This allows for more changes before commit}
+\item {Execute redo, this puts the document back to the state after the first commit}
+}
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=disable] {Disabling Part of the Document in Undo}
+
+One might want to keep some actions as not part of the undo system. To do so
+one can mark objects to be not part of the undo system, so that Flip won't try
+to rollback their state during an undo.
+
+Additionally, transactions which only contains operations on objects that
+are marked as not being part of the undo system will be ignored by
+the history system.
+
+The following piece of code shows how to disable an object from undo.
+
+\codeblock [language=c++] ***
+class UserData : public Object {
+public:
+   Float scroll_position_x;
+   Float scroll_position_y;
+};
+
+
+Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+History <HistoryStoreMemory> history (document);
+
+Song & song = document.root <Root> ();
+
+song.user_data.disable_in_undo ();        (1)
+
+song.user_data.scroll_position_x = 120;
+song.user_data.scroll_position_y = 140;
+
+auto tx = document.commit ();
+history.add_undo_step (tx);               (2)
+
+song.tracks.emplace (song.tracks.end ());
+song.user_data.scroll_position_x = 100;
+song.user_data.scroll_position_y = 100;
+
+tx = document.commit ();
+history.add_undo_step (tx);               (3)
+
+history.execute_redo ();                  (4)
+document.commit ();
+***
+
+\enumerate {
+\item {Disabling propagates to the object subtree, including \code {scroll_position_x} and \code {scroll_position_y}}
+\item {The transaction is therefore empty as seen from the History point of view. No undo point is created.}
+\item {The transaction is seen as only a track add from the History point of view.}
+\item {Therefore at this stage, the track is removed but the \code {scroll_position_*} value is \code {100}}
+}
+
+Disabling is a property evaluated at \code {commit} time. It is possible to change the
+undo recording state of an object and its subtree dynamically, using the
+respective \code {disable_in_undo} and \code {inherit_in_undo} appropriately.
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=visitor] {Visiting the History}
+
+The \code {History} can be seen as a container of transactions. As such, \code {History}
+provides the functions \code {begin} and \code {end} which allows to iterate
+through the history to discover transactions.
+
+\code {History} also provides the function member \code {last_undo} which points to the
+last undo step, that is the transaction executed when \code {execute_undo} is called.
+
+Similarly, \code {History} also provides the function member \code {first_redo} which points to the
+first redo step, that is the transaction executed when \code {execute_redo} is called.
+
+As such, iterating from \code {begin} to \code {end} will cover the all history,
+and the iterators \code {last_undo} and \code {first_redo} are in the history as long
+as an undo step exists or a redo step exists.
+
+This architecture allows to provide an history browser, but also to modify the transactions
+in the history. This technique can be useful in a variety of situations which will be
+exposed in a later chapter of this book.
+
+
+/*
+==============================================================================
+*/
+
+\section [id=write] {Rewriting History}
+
+\code {History} allows to be rewritten which can be useful in some situations.
+\code {History} provides the function member \code {erase} to remove a specific
+transaction from the history.
+
+The next chapter, \link [id=simple] {Handling a Simple Modification} will show a strategy to use
+for undo/redo in the immediate case.
+
+

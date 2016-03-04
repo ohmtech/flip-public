@@ -1,0 +1,109 @@
+\book [id=reference] {Flip Reference}
+
+This book is the reference of the Flip framework.
+
+It describes all the classes that a framework client might use.
+All classes are part of the flip namespace.
+
+It is to be used as a quick reference for Flip functions, but should not be used to learn flip.
+For that matter,
+please see /*\link [id=flip/overview]{Flip Overview} and*/ \link [id=guide]{Flip Programming Guide}.
+
+The reference only lists the public API of the framework. Private or internal APIs are not listed here.
+
+/*
+==============================================================================
+*/
+
+\section [id=types] {Flip Types}
+
+\itemize {
+\item {\link [id=Array] {\code {Array}}}
+\item {\link [id=Blob] {\code {Blob}}}
+\item {\link [id=Bool] {\code {Bool}}}
+\item {\link [id=Collection] {\code {Collection}}}
+\item {\link [id=Enum] {\code {Enum}}}
+\item {\link [id=Float] {\code {Float}}}
+\item {\link [id=Int] {\code {Int}}}
+\item {\link [id=Message] {\code {Message}}}
+\item {\link [id=Object] {\code {Object}}}
+\item {\link [id=ObjectRef] {\code {ObjectRef}}}
+\item {\link [id=String] {\code {String}}}
+\item {\link [id=Variant] {\code {Variant}}}
+\item {\link [id=Vector] {\code {Vector}}}
+}
+
+/*
+==============================================================================
+*/
+
+\section [id=model] {Data Model Management}
+
+\itemize {
+\item {\link [id=Class]{\code {Class}}}
+\item {\link [id=DataModel]{\code {DataModel}}}
+\item {\link [id=EnumClass]{\code {EnumClass}}}
+}
+
+/*
+==============================================================================
+*/
+
+\section [id=document] {Document Management}
+
+\itemize {
+\item {\link [id=BackEndBinary]{\code {BackEndBinary}}}
+\item {\link [id=BackEndIR]{\code {BackEndIR}}}
+\item {\link [id=BackEndMl]{\code {BackEndMl}}}
+\item {\link [id=Document]{\code {Document}}}
+\item {\link [id=DocumentObserver]{\code {DocumentObserver}}}
+\item {\link [id=DocumentServer]{\code {DocumentServer}}}
+\item {\link [id=DocumentValidator]{\code {DocumentValidator}}}
+\item {\link [id=Entity]{\code {Entity}}}
+\item {\link [id=Mold]{\code {Mold}}}
+\item {\link [id=Ref]{\code {Ref}}}
+\item {\link [id=Signal]{\code {Signal}}}
+\item {\link [id=Transaction]{\code {Transaction}}}
+}
+
+/*
+==============================================================================
+*/
+
+\namespace {flip}
+
+#include "Array.otd"
+#include "Array.iterator.otd"
+#include "array_iterator.otd"
+#include "BackEndBinary.otd"
+#include "BackEndIR.otd"
+#include "BackEndMl.otd"
+#include "Blob.otd"
+#include "Bool.otd"
+#include "Class.otd"
+#include "Collection.otd"
+#include "Collection.iterator.otd"
+#include "collection_iterator.otd"
+#include "DataModel.otd"
+#include "Document.otd"
+#include "DocumentObserver.otd"
+#include "DocumentServer.otd"
+#include "DocumentValidator.otd"
+#include "Entity.otd"
+#include "Enum.otd"
+#include "EnumClass.otd"
+#include "Float.otd"
+#include "History.otd"
+#include "Int.otd"
+#include "Message.otd"
+#include "Mold.otd"
+#include "Object.otd"
+#include "ObjectRef.otd"
+#include "Optional.otd"
+#include "Ref.otd"
+#include "Signal.otd"
+#include "String.otd"
+#include "Transaction.otd"
+#include "Variant.otd"
+#include "Vector.otd"
+

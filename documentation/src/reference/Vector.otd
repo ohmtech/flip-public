@@ -1,0 +1,150 @@
+/*****************************************************************************
+
+        Vector.otd
+        Copyright (c) 2015 Ohm Force
+
+*****************************************************************************/
+
+
+
+\class {Vector}
+\inherit {Blob}
+\header {flip/Vector.h}
+\declaration ***
+template <class T> class Vector;
+***
+
+\code {flip::Vector} is an container of non flip Objects that are continguous in memory.
+
+It is used to store a massive number of objects in a performant way, but is not inherently
+concurrent like \code {Array} or \code {Collection}.
+
+The \code {Vector} itself provides support for modification introspection. When modifying
+the content of the \code {Vector}, the previous representation of the vector is still
+present.
+
+
+
+/*\\\ PARAMETERS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\parameter {T} {The type of the elements. \code {T} \emph {shall not} inherit from \code {flip::Object}}
+
+
+
+/*\\\ TYPES \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\type {value_type} {\code {T}}
+\type {reference} {\code {T &}}
+\type {const_reference} {\code {const T &}}
+\type {pointer} {\code {T *}}
+\type {const_pointer} {\code {const T *}}
+\type {const_iterator} {Constant random access iterator}
+
+
+
+/*\\\ METHODS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\constructor {}
+\brief {Constructs the \code {Vector}}
+
+\codeblock [language=c++] ***
+Vector ();                                (1)
+Vector (const Vector & other);            (2)
+Vector (Vector && other);                 (3)
+Vector (const std::vector <T> & value);   (4)
+***
+
+\enumerate {
+\item {Default constructor, constructs an empty container.}
+\item {Copy constructor. Constructs the container with a copy of elements of \code {other}.}
+\item {Move constructor. Constructs the container by moving the elements of \code {other}.}
+\item {Constructor. Constructs the container with a copy of elements of \code {value}.}
+}
+
+//----------------------------------------------------------------------------
+
+\destructor {}
+\brief {Destructs the \code {Vector}}
+
+\codeblock [language=c++] ***
+~Vector ();
+***
+
+Destructor.
+
+//----------------------------------------------------------------------------
+
+\method {operator =}
+\brief {Assigns values to the container}
+
+\codeblock [language=c++] ***
+Vector & operator = (const Vector & other); (1)
+Vector & operator = (Vector && other); (2)
+Vector & operator = (const std::vector <T> & other); (3)
+Vector & operator = (std::vector <T> && other); (4)
+***
+
+Copy assignment operator.
+
+\enumerate {
+\item {Copy assignment operator.}
+\item {Move assignment operator.}
+\item {Assignment operator by copying the elements of \code {other}.}
+\item {Assignment operator by moving the elements of \code {other}.}
+}
+
+
+
+/*\\\ DIVISION \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+#include "Type.methods.otd"
+
+
+
+/*\\\ DIVISION \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\division {Iterators}
+
+\method {begin cbegin}
+\brief {Returns an iterator to the beginning}
+
+Returns an iterator to the beginning.
+
+//----------------------------------------------------------------------------
+
+\method {end cend}
+\brief {Returns an iterator to the end}
+
+Returns an iterator to the end.
+
+
+
+/*\\\ DIVISION \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\division {Modifiers}
+
+\method {clear}
+\brief {Clears the contents}
+
+\codeblock [language=c++] ***
+void  clear ();
+***
+
+Removes all the elements from the container.
+
+//----------------------------------------------------------------------------
+
+\method {replace}
+\brief {Replace a specified portion of the container}
+
+\codeblock [language=c++] ***
+void  replace (const_iterator it, const_iterator it_end, const std::vector <T> & value); (1)
+template <class InputIterator>
+void  replace (const_iterator it, const_iterator it_end, InputIterator it2, InputIterator it_end2); (2)
+***
+
+Replaces the part of the container indicated by [it, it_end) with new elements.
+
+
+
+

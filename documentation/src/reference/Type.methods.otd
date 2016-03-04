@@ -1,0 +1,147 @@
+/*****************************************************************************
+
+        Type.methods.otd
+        Copyright (c) 2015 Ohm Force
+
+*****************************************************************************/
+
+
+
+/*\\\ DIVISION \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\division {Document Management}
+
+\method {document}
+\brief {Returns the document to which the object is attached to}
+
+\codeblock [language=c++] ***
+DocumentBase & document () const;
+***
+
+Returns the document to which the object is attached to.
+
+\warning {Temporary flip objects are not attached to a document}
+
+//----------------------------------------------------------------------------
+
+\method {ref}
+\brief {Returns the unique reference number of the object}
+
+\codeblock [language=c++] ***
+const Ref & ref () const;
+***
+
+Returns the unique reference number of the object.
+
+//----------------------------------------------------------------------------
+
+\method {added}
+\brief {Returns \code {true} \emph {iff} the object was just attached to the document tree}
+
+\codeblock [language=c++] ***
+bool  added () const;
+***
+
+Returns \code {true} \emph {iff} the object was just attached to the document tree.
+
+//----------------------------------------------------------------------------
+
+\method {removed}
+\brief {Returns \code {true} \emph {iff} the object was just detached from the document tree}
+
+\codeblock [language=c++] ***
+bool  removed () const;
+***
+
+Returns \code {true} \emph {iff} the object was just detached from the document tree.
+
+//----------------------------------------------------------------------------
+
+\method {resident}
+\brief {Returns \code {true} \emph {iff} the object was neither attached nor detached from the document tree}
+
+\codeblock [language=c++] ***
+bool  resident () const;
+***
+
+Returns \code {true} \emph {iff} the object was neither attached nor detached from the document tree.
+
+//----------------------------------------------------------------------------
+
+\method {changed}
+\brief {Returns \code {true} \emph {iff} the object or one of its children was modified}
+
+\codeblock [language=c++] ***
+bool  changed () const;
+***
+
+Returns \code {true} \emph {iff} the object or one of its children was modified.
+
+//----------------------------------------------------------------------------
+
+\method {ancestor}
+\brief {Returns a reference to a parent in the current parent chain of the object}
+
+\codeblock [language=c++] ***
+template <class T>   T &   ancestor ();
+template <class T>   const T &   ancestor () const;
+***
+
+Returns a reference to a parent in the current parent chain of the object.
+
+\note {If an object or its parent is moved from one container to another, this function
+will always return the current parent, that is not the previous one}
+
+//----------------------------------------------------------------------------
+
+\method {disable_in_undo}
+\brief {Disables the record state modification in history}
+
+\codeblock [language=c++] ***
+void   disable_in_undo ();
+***
+
+Disables the record state modification in history of the object and its
+subtree if any.
+
+//----------------------------------------------------------------------------
+
+\method {inherit_in_undo}
+\brief {Inherits the record state modification in history}
+
+\codeblock [language=c++] ***
+void   inherit_in_undo ();
+***
+
+Inherits the record state modification in history of the object and its
+subtree if any, from its parent state. This is the default mode.
+
+\note {If the Root object of the tree is in inherited mode, then it
+is considered as enabled in undo.}
+
+//----------------------------------------------------------------------------
+
+\method {is_in_undo_enabled}
+\brief {Returns \code {true} \emph {iff} this object modifications are recorded in history}
+
+\codeblock [language=c++] ***
+bool  is_in_undo_enabled () const;
+***
+
+Returns \code {true} \emph {iff} this object modifications are recorded in history.
+The function recursively search for disabled state starting from the object itself
+and navigating through the parent objects, if the state is inherited.
+
+//----------------------------------------------------------------------------
+
+\method {revert}
+\brief {Reverts all the changes make to the object and its children if any}
+
+\codeblock [language=c++] ***
+void  revert () const;
+***
+
+Reverts all the changes make to the object and its children if any.
+
+
+

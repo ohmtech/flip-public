@@ -1,0 +1,378 @@
+
+\chapter [id=control] {Controlling the Model}
+
+Now that we can declare a model and we know how to organize it,
+this chapter describes how to manipulate it.
+
+This chapter will use the model declared in the chapter \link [id=declare] {Declaring the Model}.
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=document] {The Document}
+
+To manipulate the model, one must have an instance of the model
+which is called a \emph {document}.
+
+A \code {Document} is therefore described by the model it uses,
+a unique user 64-bit identifier, a manufacturer/product identifier as well
+as a component identifier. The latters only allows to know who is
+the originator of a modification and allows for concurrent modification
+of a document.
+
+\codeblock [language=c++] ***
+#include "flip/DataModel.h"
+#include "flip/Document.h"
+
+class Model : public flip::DataModel <Model> {};
+
+...code skipped...
+
+void  run ()
+{
+   declare ();                                                       (1)
+
+   Document document (Model::use (), 123456789ULL, 'acme', 'gui ');  (2)
+}
+***
+
+\enumerate {
+\item {You must first declare your model before you use it}
+\item {This line will create a \code {Document} which uses \code {Model}, \code {123456789ULL}
+user unique identifier, \code {'acme'} manufacturer/product for the \code {'gui '} component}
+}
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=how] {How it Works}
+
+When you change the document, Flip will know that it was modified.
+Transactions represent the difference between two document states.
+When the document is modified, Flip internally keeps the old and
+new state of the document.
+
+When you have done the necessary changes that represent a logical
+modification of the document, you can then \code {commit}
+the document to apply those changes.
+
+In that sense, a transaction (or modification of the document)
+is always made so that the new document is valid from the model point
+of view.
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=property] {Modifying a Property}
+
+For this example, let's suppose that we want to change the tempo.
+
+\codeblock [language=c++] ***
+#include "flip/DataModel.h"
+#include "flip/Document.h"
+
+class Model : public flip::DataModel <Model> {};
+
+...code skipped...
+
+void  run ()
+{
+   declare ();
+
+   Document document (Model::use (), 123456789ULL, 'acme', 'gui ');
+
+   Song & song = document.root <Song> ();                            (1)
+
+   song.tempo = 120.0;                                               (2)
+
+   document.commit ();                                               (3)
+}
+***
+
+
+/*In the above example, there are no observer attached to the document, and we do nothing
+about the transaction. This will be adressed in the next chapter.*/
+
+\enumerate {
+\item {This extract the unique \code {Song}, the root of the document.}
+\item {This sets the tempo of the song to 120 beats per minutes, now the document is marked as modified.}
+\item {This will apply the change to the document.}
+}
+
+Commiting a document marks the boundary of the document change, which is computed into a transaction.
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=array] {Working with \code {Array}s}
+
+For this example, let's suppose that we want to insert a new track into the song.
+We suppose here that the document is already set up.
+
+\codeblock [language=c++] ***
+class Song : public flip::Object
+{
+public:
+   static void    declare ();
+
+   Track &        add_track ();
+
+   flip::Float    tempo;
+   flip::Array <Track>
+                  tracks;
+};
+
+Track &  Song::add_track ()
+{
+   auto it = tracks.emplace (tracks.end ());    (1)
+
+   return *it;                                  (2)
+}
+***
+
+\enumerate {
+\item {Emplace a new track constructed in-place before the \code {end ()} \code {iterator}. This is similar to push a new element at the back of the \code {Array}}
+\item {Dereference the returned \code {iterator}}
+}
+
+\note {One should note that in the above example, the modification is not commited to the document.}
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=collection] {Working with \code {Collection}s}
+
+For this example, let's suppose that we want to insert a new clip into the track.
+
+\codeblock [language=c++] ***
+class Clip : public flip::Object
+{
+public:
+   static void    declare ();
+
+                  Clip () = default;
+                  Clip (double position, double duration);
+
+   flip::Float    position;
+   flip::Float    duration;
+};
+
+class Track : public flip::Object
+{
+public:
+   static void    declare ();
+
+   Clip &         add_clip (double position, double duration);
+
+   flip::Collection <Clip>
+                  clips;
+};
+
+Clip &   Track::add_clip (double position, double duration)
+{
+   auto it = clips.emplace (clips.end (), position, duration);    (1)
+
+   return *it;
+}
+***
+
+\enumerate {
+\item {Emplace a new clip constructed in-place with the second constructor of \code {Clip}}
+\item {Dereference the returned \code {iterator}}
+}
+
+\note {One should note that in the above example, the modification is not commited to the document.}
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=variant] {Working with \code {Variant}s}
+
+For this example, let's suppose that the clip has some content which can
+be either audio or midi content. Let also suppose that no content is
+not permitted.
+
+To do that, you would typically use a \code {Variant}.
+
+\codeblock [language=c++] ***
+class Content : public flip::Object
+{
+public:
+   static void    declare ();
+};
+
+class ContentAudio : public Content
+{
+public:
+   static void    declare ();
+
+   flip::String   url;
+};
+
+class ContentMidi : public Content
+{
+public:
+   static void    declare ();
+
+   flip::Blob     midi_events;
+};
+
+
+class Clip : public flip::Object
+{
+public:
+   static void    declare ();
+
+                  Clip () = default;
+                  Clip (double position, double duration);
+
+   flip::Float    position;
+   flip::Float    duration;
+   Variant <Content>
+                  content;
+};
+
+class Track : public flip::Object
+{
+public:
+   static void    declare ();
+
+   Clip &         add_clip_audio (double position, double duration);
+
+   flip::Collection <Clip>
+                  clips;
+};
+
+Clip &   Track::add_clip_audio (double position, double duration, std::string url)
+{
+   auto it = clips.emplace (clips.end (), position, duration);
+
+   auto & clip = *it;
+
+   clip.content.reset <ContentAudio> ().url = url;    (1)
+
+   return clip;
+}
+***
+
+\enumerate {
+\item {Set the content of the clip to be an audio content with its url}
+}
+
+\note {One should note that in the above example,
+failure to provide an initial value to the variant at commit time
+will trigger a flip validation failure.}
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=optional] {Working with \code {Optional}s}
+
+For this example, let's suppose that the clip has some content which can
+be either audio or midi content. Let also suppose that no content is
+allowed this time.
+
+To do that, you would typically use a \code {Optional}.
+
+\codeblock [language=c++] ***
+class Content : public flip::Object
+{
+public:
+   static void    declare ();
+};
+
+class ContentAudio : public Content
+{
+public:
+   static void    declare ();
+
+   flip::String   url;
+};
+
+class ContentMidi : public Content
+{
+public:
+   static void    declare ();
+
+   flip::Blob     midi_events;
+};
+
+
+class Clip : public flip::Object
+{
+public:
+   static void    declare ();
+
+                  Clip () = default;
+                  Clip (double position, double duration);
+
+   flip::Float    position;
+   flip::Float    duration;
+   Optional <Content>
+                  content;
+};
+
+class Track : public flip::Object
+{
+public:
+   static void    declare ();
+
+   Clip &         add_clip_audio (double position, double duration);
+
+   flip::Collection <Clip>
+                  clips;
+};
+
+Clip &   Track::add_clip_audio (double position, double duration, std::string url)
+{
+   auto it = clips.emplace (clips.end (), position, duration);
+
+   auto & clip = *it;
+
+   clip.content.reset <ContentAudio> ().url = url;                      (1)
+
+   return clip;
+}
+
+Clip &   Track::add_clip_no_content (double position, double duration)  (2)
+{
+   auto it = clips.emplace (clips.end (), position, duration);
+
+   return *it;
+}
+***
+
+\enumerate {
+\item {Set the content of the clip to be an audio content with its url}
+\item {Set the content of the clip to none}
+}
+
+
+
+Now that we know how to modify the model in different situations, the next part will be about observing those changes with an observer, and is
+covered in the next chapter \link [id=observe] {Observing the Model}.
+
+
+
+

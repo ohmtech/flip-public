@@ -1,0 +1,96 @@
+/*****************************************************************************
+
+        Class.otd
+        Copyright (c) 2015 Ohm Force
+
+*****************************************************************************/
+
+
+
+\class {Class}
+\header {flip/Class.h}
+\declaration ***
+class Class;
+***
+
+\code {flip::Class} is a type that represents a declaration of a flip Class.
+A concrete instance of this class is acquired using an instance of the
+\link [id=DataModel] {\code {DataModel}}
+
+
+
+/*\\\ METHODS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\division {Declaring}
+
+\method {name}
+\brief {Set the name of the class}
+
+\codeblock [language=c++] ***
+Class &  name (const char * name_0);
+***
+
+Set the name of the class. The name must be in the \code {ascii-7} character
+set, with exception of spaces, control characters as well as \code {del} character.
+
+Names starting with \code {flip} are reserved.
+
+This function returns a reference to the \code {Class} to allow call chaining.
+
+//----------------------------------------------------------------------------
+
+\method {inherit}
+\brief {Inherit from a class}
+
+\codeblock [language=c++] ***
+template <class U>   Class &  inherit ();
+***
+
+Inherits from class \code {U} passed as a template parameter.
+
+This function returns a reference to the \code {Class} to allow call chaining.
+
+//----------------------------------------------------------------------------
+
+\method {member}
+\brief {Declare a member of the class}
+
+\codeblock [language=c++] ***
+template <class U, U T::*ptr_to_member>   Class &  member (const char * name_0);
+***
+
+Declare a member of the class. The name must be in the \code {ascii-7} character
+set, with exception of spaces, control characters as well as \code {del} character.
+
+\warning {flip Member declaration must follow the same order as in the C++ class declaration.}
+
+This function returns a reference to the \code {Class} to allow call chaining.
+
+
+
+/*\\\ DIVISION \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\division {Accessing}
+
+\method {name}
+\brief {Returns the name of the class}
+
+\codeblock [language=c++] ***
+const char *   name () const
+***
+
+Returns the name of the class.
+
+//----------------------------------------------------------------------------
+
+\method {members}
+\brief {Returns information on the members of the class}
+
+\codeblock [language=c++] ***
+const Members &   members () const
+***
+
+Returns information on the members of the class. This allows for automatic
+introspection of an instance of the class.
+
+

@@ -1,0 +1,58 @@
+/*****************************************************************************
+
+        DocumentValidator.otd
+        Copyright (c) 2015 Ohm Force
+
+*****************************************************************************/
+
+
+
+\class {DocumentValidator}
+\header {flip/DocumentValidator.h}
+\declaration ***
+template <class T>   class DocumentValidator;
+***
+
+\code {flip::DocumentValidator} is the base of document validators.
+
+
+
+/*\\\ PARAMETERS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\parameter {T} {The root class to validate. \code {T} must inherit from \code {flip::Object}}
+
+
+
+/*\\\ METHODS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\method {validate}
+\brief {Receives document validation request notification}
+
+\codeblock [language=c++] ***
+virtual void   validate (T & root) = 0;
+***
+
+To receive document change notification, one will inherit from this class
+and implement this function.
+
+When a validation error is encountered, the function must throw to
+notify the flip system that validation failed. The macro
+\code {flip_VALIDATION_FAILED} is provided for convenience.
+
+Example:
+
+\codeblock [language=c++] ***
+class MyValidator : public flip::DocumentValidator <MyRootClass>
+{
+public:
+   virtual void   document_changed (MyRootClass & root) override;
+};
+
+void  MyValidator::document_changed (MyRootClass & root)
+{
+   if (root.changed ())
+   {
+      if (root.tempo < 20.0) flip_VALIDATION_FAILED ("incorrect tempo");
+   }
+}
+***

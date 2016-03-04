@@ -1,0 +1,66 @@
+\book [id=config, type=guide] {Flip Configuration Guide}
+
+The Configuration Guide is a serie of guides intented for flip
+developers to assist into setting up their building environment,
+build options as well as specific feature options.
+
+\itemize {
+\item {\link [id=about] {About Configuration Guide}}
+\item {\link [id=files] {Files Hierarchy}}
+\item {\link [id=gyp] {Setting up Using \code {gyp}}}
+\item {\link [id=manual] {Setting up Manually}}
+\item {\link [id=dll] {Using Flip as a Dynamic Linked Library (DLL)}}
+\item {\link [id=misc] {Miscellaneous Configuration}}
+\item {\link [id=msvc] {MSVC Warnings Notes}}
+}
+
+\chapter [id=about] {About Flip Configuration Guide}
+
+The Configuration Guide is a serie of guides intented for flip
+developers to assist into setting up their building environment.
+
+\section [id=how] {How to Use This Document}
+
+You don't necesseraly need to read each chapter of this manual.
+Chapters are separated in very specific tasks, for a very specific need.
+
+\section [id=requisites] {Prerequisites}
+
+You should be familiar with C++ programming. You should be also familiar
+with \code {gyp} tool, but this is not a strict requirement.
+
+
+/*\section [id=seealso] {See Also}
+
+See \link [id=reference] {Flip Framework Reference} for details on Flip classes.*/
+
+
+\section [id=content] {Content}
+
+This guide presents the following content in a didactic order.
+
+\itemize {
+\item {The first chapter, \link [id=files] {Files Hierarchy} will expose the file hierarchy of the Flip framework}
+\item {If you are using the \code {gyp} build system tool, the chapter \link [id=gyp] {Setting up Using \code {gyp}}
+   will assist you into integrating Flip \code {gyp} files into your build system}
+\item {On the contrary, if you are using a different build system, the chapter \link [id=manual] {Setting up Manually}
+   will assist you into integrating Flip manually into your projects IDE or give you hint to integrate Flip
+   into your automatic build system}
+\item {If your build system uses dynamic linked library to speedup development, the chapter
+   \link [id=dll] {Using Flip as a Dynamic Linked Library (DLL)} will expose the needed changes to apply
+   to your project}
+\item {The next chapter, \link [id=misc] {Miscellaneous Configuration} will expose
+   specific precompilation
+   flags used to change specific feature behavior
+   of flip such as fatal error handling and \code {Entity} use}
+\item {Finally, \link [id=msvc] {MSVC Warnings Notes} explains the MSVC warning configuration
+   and its details}
+}
+
+
+#include "files.otd"
+#include "gyp.otd"
+#include "manual.otd"
+#include "dll.otd"
+#include "misc.otd"
+#include "msvc.otd"

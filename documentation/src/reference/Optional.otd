@@ -1,0 +1,180 @@
+/*****************************************************************************
+
+        Optional.otd
+        Copyright (c) 2015 Ohm Force
+
+*****************************************************************************/
+
+
+
+\class {Optional}
+\inherit {BasicType}
+\header {flip/Optional.h}
+\declaration ***
+template <class T> class Optional;
+***
+
+\code {flip::Optional} is a zero or one element constrained container.
+
+The \code {Optional} itself provides support for modification introspection. When modifying
+the content of the \code {Optional}, the previous representation of the optional is still
+present.
+
+Internally the \code {Optional} is just a \code {Collection} with a constraint on size.
+
+
+
+/*\\\ PARAMETERS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\parameter {T} {The type of the elements. \code {T} must inherit from \code {flip::Object}}
+
+
+
+/*\\\ TYPES \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\type {value_type} {\code {T}}
+\type {reference} {\code {T &}}
+\type {const_reference} {\code {const T &}}
+\type {pointer} {\code {T *}}
+\type {const_pointer} {\code {const T *}}
+
+
+
+/*\\\ METHODS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\constructor {}
+\brief {Constructs the \code {Optional}}
+
+\codeblock [language=c++] ***
+Optional ();                       (1)
+Optional (const Optional & other);  (2)
+***
+
+\enumerate {
+\item {Default constructor, constructs an empty optional.}
+\item {Copy constructor. Constructs the container with copy of elements of \code {other}.}
+}
+
+//----------------------------------------------------------------------------
+
+\destructor {}
+\brief {Destructs the \code {Optional}}
+
+\codeblock [language=c++] ***
+~Optional ();
+***
+
+Destructor.
+
+//----------------------------------------------------------------------------
+
+\method {operator =}
+\brief {Assigns values to the container}
+
+\codeblock [language=c++] ***
+Optional & operator = (const Optional & other);
+template <class U>
+Optional & operator = (const U & other);
+***
+
+Copy assignment operator.
+
+
+
+/*\\\ DIVISION \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+#include "Type.methods.otd"
+
+
+
+/*\\\ DIVISION \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\division {Element Access}
+
+\method {operator T &}
+\brief {Access element}
+
+\codeblock [language=c++] ***
+operator T & () const;
+***
+
+Returns a reference to the element.
+
+\method {use}
+\brief {Access element}
+
+\codeblock [language=c++] ***
+template <class U>
+U &      use () const;
+***
+
+Returns a reference to the element as type \code {U}.
+
+\method {before}
+\brief {Access previous version of element}
+
+\codeblock [language=c++] ***
+T &   before () const;
+template <class U>
+U &      before () const;
+***
+
+Returns a reference to previous version of the element.
+
+
+
+/*\\\ DIVISION \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\division {Modifiers}
+
+\method {reset}
+\brief {Resets element in-place}
+
+\codeblock [language=c++] ***
+void     reset (None);                (1)
+
+template <class... Args>
+T &      reset (Args &&... args);     (2)
+
+template <class U, class... Args>
+U &      reset (Args &&... args);     (3)
+
+T &      reset (const Mold & mold);   (4)
+
+template <class U>
+U &      reset (const Mold & mold);   (5)
+***
+
+\enumerate {
+\item {Resets to empty by writing \code {optional.reset (flip::None)}}
+\item {Resets to a new element constructed in-place with arguments \code {args}.}
+\item {Resets to a new element of type \code {U} constructed in-place with arguments \code {args}.}
+\item {Resets to a new element casted from \code {mold}.}
+\item {Resets to a new element of type \code {U} casted from \code {mold}.}
+}
+
+
+
+/*\\\ DIVISION \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\division {Observers}
+
+\method {empty}
+\brief {Returns true \emph {iff} empty}
+
+\codeblock [language=c++] ***
+bool     empty () const;
+***
+
+Returns true \emph {iff} empty.
+
+\method {operator bool}
+\brief {Returns true \emph {iff} empty}
+
+\codeblock [language=c++] ***
+explicit operator bool () const;
+***
+
+Returns true \emph {iff} the optional contains an element.
+
+

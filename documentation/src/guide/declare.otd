@@ -1,0 +1,363 @@
+
+\chapter [id=declare] {Declaring the Model}
+
+When building a Flip compatible application, the first task is defining your model.
+The \code {Model} is a set of declarations that will be used together in
+a concrete \code {Document}. In this sense, the Model can be seen as a blueprint
+or template of the actual Documents you will make with.
+
+To help you understand the Flip principles, this guide considers the
+following application :
+
+\itemize {
+\item {Your company is called \code {acme} and is making the application \code {product}}
+\item {The application is a simple audio application}
+\item {The application manipulates songs}
+\item {A song has a global tempo value, representing the number of beats per minutes}
+\item {A song has an ordered list of tracks}
+\item {Each track has a set of clips, which are implicitely ordered through their position}
+\item {Each clip has a position and a duration, expressed in beats}
+\item {They are two kind of clips : audio clips which contain an audio sample and "MIDI" clips which contain musical events}
+}
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=model] {Declaring the Model}
+
+Every class managed by flip needs to be part of a \emph {model}. Therefore you first begin by declaring
+this model in your header files, and defines its revision string.
+The revision string represents a particular revision of the model itself, and is used
+when converting documents from one version to another.
+
+\codeblock [language=c++] ***
+#include "flip/DataModel.h"
+
+class Model : public flip::DataModel <Model> {};
+
+void  declare ()
+{
+   Model::version ("1.0");
+}
+***
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=class] {Declaring a Class}
+
+Every class managed by flip will need to inherit from \code {flip::Object},
+so the first thing is to inherit from it.
+
+We will also need to declare the class before we can use it,
+so that we will add a \code {static} \code {declare} member.
+
+Every model has exactly one root class. We could say that the root class, which
+represents the top level document class, is the song, and modelize this like
+the following example.
+
+\codeblock [language=c++] ***
+#include "flip/Object.h"
+
+class Song : public flip::Object
+{
+public:
+   static void    declare ();
+};
+
+void  Song::declare ()
+{
+   Model::declare <Song> ().name ("acme.product.Song");
+}
+***
+
+Finally the function \code {declare} in the section above would now look like :
+
+\codeblock [language=c++] ***
+void  declare ()
+{
+   Model::version ("1.0");
+
+   Song::declare ();
+}
+***
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=member1] {Adding the first Flip Member}
+
+In our example, the tempo is a global property of the song. To modelize
+that, we can simply make the tempo a floating point member of the song
+and write this like in the following example.
+
+\codeblock [language=c++] ***
+#include "flip/Float.h"
+#include "flip/Object.h"
+
+class Song : public flip::Object
+{
+public:
+   static void    declare ();
+
+   flip::Float    tempo;
+};
+
+void  Song::declare ()
+{
+   Model::declare <Song> ()
+      .name ("acme.product.Song")
+      .member <flip::Float, &Song::tempo> ("tempo");     (1)
+}
+***
+
+\enumerate {
+\item {Add the typed \code {Float}, \code {tempo} \code {Song} member, and give it the name \code {"tempo"}}
+}
+
+\important {Names are used for document writing, and are also used in conversions. As such,
+carefull naming of members is important.}
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=member2] {Adding the Flip Containers}
+
+Flip provides different kinds of containers.
+
+\itemize {
+\item {One is a strictly
+linearly ordered sequence container, called \code {Array} which is
+a template class. It is similar to the C++ standard library container \code {std::list} or \code {std::vector}}
+\item {Another one is an unordered container, called \code {Collection} which is a template class.
+It is similar to the C++ standard library container \code {std::set}}
+\item {Another is a one element polymorphic container, called \code {Variant}
+which is a template class.
+It is similar to the boost template class \code {boost::variant}}
+\item {Another is a zero or one element polymorphic container, called \code {Optional}
+which is a template class.
+It is similar to the boost template class \code {boost::optional}}
+}
+
+In our example, the Tracks are explicitely specified as an ordered list
+so we will use an \code {Array} container.
+
+The clips are implictely specified as implicitely ordered by their position.
+In this case, an \code {Array} or \code {Collection} could be used, but
+generally implicitely ordered elements are better modelized using
+a \code {Collection}.
+
+We then will modelize the track using a \code {Track} class, and the clip
+using a \code {Clip} class. The song contains tracks, and a track contains clips.
+This can be modelized as in the following example.
+
+\codeblock [language=c++] ***
+#include "flip/Array.h"
+#include "flip/Collection.h"
+#include "flip/Float.h"
+#include "flip/Object.h"
+
+class Clip : public flip::Object
+{
+public:
+   static void    declare ();
+
+   flip::Float    position;
+   flip::Float    duration;
+};
+
+class Track : public flip::Object
+{
+public:
+   static void    declare ();
+
+   flip::Collection <Clip>
+                  clips;
+};
+
+class Song : public flip::Object
+{
+public:
+   static void    declare ();
+
+   flip::Float    tempo;
+   flip::Array <Track>
+                  tracks;
+};
+
+void  Clip::declare ()
+{
+   Model::declare <Clip> ()
+      .name ("acme.product.Clip")
+      .member <flip::Float, &Clip::position> ("position")
+      .member <flip::Float, &Clip::duration> ("duration");
+}
+
+void  Track::declare ()
+{
+   Model::declare <Track> ()
+      .name ("acme.product.Track")
+      .member <flip::Collection <Clip>, &Track::clips> ("clips");
+}
+
+void  Song::declare ()
+{
+   Model::declare <Song> ()
+      .name ("acme.product.Song")
+      .member <flip::Float, &Song::tempo> ("tempo")
+      .member <flip::Array <Track>, &Song::tracks> ("tracks");
+}
+***
+
+Finally the whole model declaration, the function \code {declare} in the section above, would now look like :
+
+\codeblock [language=c++] ***
+void  declare ()
+{
+   Model::version ("1.0");
+
+   Clip::declare ();
+   Track::declare ();
+   Song::declare ();
+}
+***
+
+
+
+/*
+==============================================================================
+*/
+
+\section  [id=inheritance] {Inheritance}
+
+Flip provides inheritance features. It allows you to declare a Flip class
+as inherited from another Flip class. Inheritance provides parent class members
+importing as well as C++ polymorphism.
+
+In our example, the clip is specified as being one of two kind : either
+a clip containing audio or a clip containing musical events.
+
+Both type of clips share the same main clip properties position and duration.
+In the case of the example, we can introduce \code {ClipAudio} and \code {ClipMidi}
+which allows to support those two behaviors.
+
+\codeblock [language=c++] ***
+class ClipAudio : public Clip             (1)
+{
+public:
+   static void    declare ();
+
+   flip::String   sample_url;
+};
+
+void  ClipAudio::declare ()
+{
+   Model::declare <MySubClass> ()
+      .name ("acme.product.MySubClass")
+      .inherit <MyClass> ()               (2)
+      .member <flip::String, &ClipAudio::sample_url> ("sample_url");
+}
+***
+
+Then declaring the flip class will look like the following example.
+
+\codeblock [language=c++] ***
+void  declare ()
+{
+   Model::version ("1.0");
+
+   Clip::declare ();
+   ClipAudio::declare ();
+   ClipMidi::declare ();
+
+   ... code skipped ...
+}
+***
+
+\important {Make sure that the base class is declared \emph {before}.}
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=types] {Flip Types}
+
+Every class managed by flip may contain an unlimited number of either Flip basic types or your own custom Flip classes.
+
+Flip offers categories of basic types :
+
+\itemize {
+\item {Value types that hold a value}
+\item {Container types}
+\item {Reference type}
+\item {Signaling type}
+}
+
+
+\subsection [id=value] {Value Types}
+
+\itemize {
+\item {\code {flip::Bool} holds a boolean value}
+\item {\code {flip::Int} holds a 64-bit integer value}
+\item {\code {flip::Float} holds a 64-bit floating point value}
+\item {\code {flip::Enum} holds an \code {enum} value}
+\item {\code {flip::Blob} holds a dynamic-sized opaque blob of data}
+}
+
+\subsection [id=container] {Container Types}
+
+\itemize {
+\item {\code {flip::Array} is a strictly linear ordered sequence container similar to \code {std::list} or \code {std::vector}}
+\item {\code {flip::Collection} is an unordered container similar to \code {std::set}}
+\item {\code {flip::Variant} is an one element container similar to \code {boost::variant}}
+}
+
+\subsection [id=reference] {Reference Type}
+
+\itemize {
+\item {\code {flip::ObjectRef} holds a reference to another object in the model tree. It is similar to a pointer}
+}
+
+\subsection [id=signal] {Signaling Type}
+
+\itemize {
+\item {\code {flip::Cue} allows to signal an object with arbitrary non-persistent data}
+}
+
+
+
+/*
+==============================================================================
+*/
+
+/*\section [id=design] {Designing your own Model}
+
+Designing your own model is not as easy as this example. However over the
+years, we found some basic rules that makes at least a good start to
+work with.
+
+If you're starting a new project or migrating*/
+
+
+The next chapter, \link [id=organize] {Organizing your Code} will guide you through the task of organizing the model
+code.
+
+
+
+
+
+

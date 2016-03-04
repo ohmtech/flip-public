@@ -1,0 +1,136 @@
+/*****************************************************************************
+
+        Enum.otd
+        Copyright (c) 2015 Ohm Force
+
+*****************************************************************************/
+
+
+
+\class {Enum}
+\inherit {BasicType}
+\header {flip/Enum.h}
+\declaration ***
+template <class T> class Enum;
+***
+
+\code {flip::Enum} is a type that represents an enumeration.
+The enumeration must start from the value 0.
+
+
+
+/*\\\ PARAMETERS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\parameter {T} {The enumeration type. \code {T} must be an \code {enum} or \code {enum class}}
+
+
+
+/*\\\ TYPES \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\type {value_type} {\code {T}}
+
+
+
+/*\\\ METHODS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\constructor {}
+\brief {Constructs the \code {Enum}}
+
+\codeblock [language=c++] ***
+Enum ();                      (1)
+Enum (const Enum & other);    (2)
+Enum (T value);               (3)
+***
+
+\enumerate {
+\item {Default constructor, constructs with a \code {0} value.}
+\item {Copy constructor. Constructs the object with the value of \code {other}.}
+\item {Constructor. Constructs the object with \code {value}.}
+}
+
+\warning {Variant 3 of the constructor cannot be called from the default constructor
+of a flip object.}
+
+//----------------------------------------------------------------------------
+
+\destructor {}
+\brief {Destructs the \code {Enum}}
+
+\codeblock [language=c++] ***
+~Enum ();
+***
+
+Destructor.
+
+//----------------------------------------------------------------------------
+
+\method {operator =}
+\brief {Assigns value}
+
+\codeblock [language=c++] ***
+Enum & operator = (const Enum & other);   (1)
+Enum & operator = (T value);              (2)
+***
+
+\enumerate {
+\item {Copy assignment operator.}
+\item {Assignment operator. Assigns the object with \code {value}.}
+}
+
+
+
+/*\\\ DIVISION \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+#include "Type.methods.otd"
+
+
+
+/*\\\ DIVISION \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\division {Value Access}
+
+\method {operator T}
+\brief {Returns the current value of the object}
+
+\codeblock [language=c++] ***
+operator T () const;
+***
+
+Returns the current value of the object.
+
+//----------------------------------------------------------------------------
+
+\method {before}
+\brief {Returns the previous value of the object}
+
+\codeblock [language=c++] ***
+T  before () const;
+***
+
+Returns the previous value of the object.
+
+
+
+/*\\\ DIVISION \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\division {Comparaison}
+
+\method {operator ==}
+\brief {Returns \code {true} \emph {iff} objects current values are equal}
+
+\codeblock [language=c++] ***
+bool  operator == (const Enum & rhs) const;
+bool  operator == (T rhs) const;
+***
+
+//----------------------------------------------------------------------------
+
+\method {operator !=}
+\brief {Returns \code {true} \emph {iff} objects current values are different}
+
+\codeblock [language=c++] ***
+bool  operator != (const Enum & rhs) const;
+bool  operator != (T rhs) const;
+***
+
+

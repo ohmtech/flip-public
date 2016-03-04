@@ -1,0 +1,302 @@
+/*****************************************************************************
+
+        DocumentBase.methods.otd
+        Copyright (c) 2015 Ohm Force
+
+*****************************************************************************/
+
+
+
+/*\\\ DIVISION \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\division {Manipulating}
+
+\method {set_label}
+\brief {Sets the label of the current modifications of the document}
+
+\codeblock [language=c++] ***
+void  set_label (std::string label);
+***
+
+Sets the label (ie. name) of the current modifications of the document.
+This metadata will be added to the transaction at \code {commit} stage.
+
+If called multiple times before \code {commit},
+only the last state of the metadata is taken into account at \code {commit} stage.
+
+//----------------------------------------------------------------------------
+
+\method {set_metadata}
+\brief {Sets the metadata of the current modifications of the document}
+
+\codeblock [language=c++] ***
+void  set_metadata (std::string key, std::string value);
+***
+
+Sets the metadata \code {value} for \code {key} of the current modifications of the document.
+This metadata will be added to the transaction at \code {commit} stage.
+
+If called multiple times before \code {commit},
+only the last state of the metadata is taken into account at \code {commit} stage.
+
+//----------------------------------------------------------------------------
+
+\method {commit}
+\brief {Commits the current modifications of the document}
+
+\codeblock [language=c++] ***
+Transaction commit ();
+***
+
+Commits the current modifications of the document and returns the resulting
+transaction. The modifications are validated through the validator if the
+document has one, and will throw if the document state is invalid.
+
+Once the function returns, the document is valid from a validation point of
+view and the transaction is put on the push stack for later upstream
+synchronization.
+
+//----------------------------------------------------------------------------
+
+\method {revert}
+\brief {Reverts the current modifications of the document}
+
+\codeblock [language=c++] ***
+void revert ();
+***
+
+Reverts the current modifications of the document.
+
+//----------------------------------------------------------------------------
+
+\method {push}
+\brief {Pushes the transactions to the upstream}
+
+\codeblock [language=c++] ***
+void push ();
+***
+
+Pushes the transactions in the push stack to the upstream and empty the push
+stack. If no upstream is present then this function will just empty the push
+stack.
+
+//----------------------------------------------------------------------------
+
+\method {pull}
+\brief {Pulls document modifications from the upstream}
+
+\codeblock [language=c++] ***
+void pull ();
+***
+
+Pulls document modifications from the upstream. If no upstream is present then
+this function does nothing.
+
+If the document contains modifications, they are temporarily saved and rollbacked, then
+external modifications are applied, and the local modifications are reapplied.
+If the local modifications cannot be reapplied, then they are dropped silently.
+
+
+
+/*\\\ DIVISION \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\division {Transaction}
+
+\method {execute_forward}
+\brief {Executes a transaction on a document in forward direction}
+
+\codeblock [language=c++] ***
+bool  execute_forward (const Transaction & tx, bool undo_mode_flag = false);
+***
+
+Executes a transaction on a document in forward direction. Returns \code {true}
+if the execution was successful, \code {false} otherwise. Executing a transaction
+does not call the validator nor commits the transaction.
+
+If \code {undo_mode_flag} is set to \code {true}, then the instructions of the transaction
+that are marked to be out of undo (through a prior call to \code {disable_in_undo})
+won't be executed unless the top object disabled in undo has a container parent
+enabled in undo and the top object was either added or removed.
+This is the default mode when using flip \code {History} class.
+
+//----------------------------------------------------------------------------
+
+\method {execute_backward}
+\brief {Executes a transaction on a document in backward direction}
+
+\codeblock [language=c++] ***
+bool  execute_backward (const Transaction & tx, bool undo_mode_flag = false);
+***
+
+Executes a transaction on a document in backward direction. Returns \code {true}
+if the execution was successful, \code {false} otherwise. Executing a transaction
+does not call the validator nor commits the transaction.
+
+If \code {undo_mode_flag} is set to \code {true}, then the instructions of the transaction
+that are marked to be out of undo (through a prior call to \code {disable_in_undo})
+won't be executed. This is the default mode when using flip \code {History} class.
+
+//----------------------------------------------------------------------------
+
+\method {execute_correct_forward}
+\brief {Executes and corrects a transaction on a document in forward direction}
+
+\codeblock [language=c++] ***
+bool  execute_correct_forward (const Transaction & tx, bool undo_mode_flag = false);
+***
+
+Executes and corrects a transaction on a document in forward direction. Returns \code {true}
+if the execution was successful, \code {false} otherwise. Executing a transaction
+does not call the validator nor commits the transaction.
+
+Correcting allows to force a transaction to execute if possible. Transaction instructions
+are similar to compare & exchange processor instructions. Only if the old state of the
+document matches the instruction old value then the new value is applied. In this case
+correcting allows the virtual machine to force the execution and change the instruction
+to match virtual machine constraints.
+
+If \code {undo_mode_flag} is set to \code {true}, then the instructions of the transaction
+that are marked to be out of undo (through a prior call to \code {disable_in_undo})
+won't be executed. This is the default mode when using flip \code {History} class.
+
+//----------------------------------------------------------------------------
+
+\method {execute_correct_backward}
+\brief {Executes and corrects a transaction on a document in backward direction}
+
+\codeblock [language=c++] ***
+bool  execute_correct_forward (const Transaction & tx, bool undo_mode_flag = false);
+***
+
+Executes and corrects a transaction on a document in backward direction. Returns \code {true}
+if the execution was successful, \code {false} otherwise. Executing a transaction
+does not call the validator nor commits the transaction.
+
+Correcting allows to force a transaction to execute if possible. Transaction instructions
+are similar to compare & exchange processor instructions. Only if the old state of the
+document matches the instruction old value then the new value is applied. In this case
+correcting allows the virtual machine to force the execution and change the instruction
+to match virtual machine constraints.
+
+If \code {undo_mode_flag} is set to \code {true}, then the instructions of the transaction
+that are marked to be out of undo (through a prior call to \code {disable_in_undo})
+won't be executed. This is the default mode when using flip \code {History} class.
+
+
+
+/*\\\ DIVISION \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\division {Observing}
+
+\method {controller}
+\brief {Returns the current controller source of modification}
+
+\codeblock [language=c++] ***
+Controller  controller () const;
+***
+
+When called from document observer callback,
+returns the current controller source of modification.
+If the callback resulted from a \code {pull} operation, the returned
+controller is the last one from the pull queue.
+
+\codeblock [language=c++] ***
+enum class Controller
+{
+   NONE,          (1)
+   SELF,          (2)
+   UNDO,          (3)
+   READ,          (4)
+   LOCAL,         (5)
+   EXTERNAL,      (6)
+   ACKNOWLEDGED,  (7)
+   DENIED,        (8)
+};
+***
+
+\enumerate {
+\item {Returned when called outside of an observer callback}
+\item {Returned when originated to this document}
+\item {Returned when originated from an undo operation (\code {History})}
+\item {Returned when originated from a read operation}
+\item {Returned when originated from a local change}
+\item {Returned when originated from a remote change}
+\item {Returned when the server accepted one of the pushed transaction}
+\item {Returned when the server rejected one of the pushed transaction}
+}
+
+
+
+/*\\\ DIVISION \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\division {Input/Ouput}
+
+\method {write}
+\brief {Write the current state of the document to an intermediate representation format}
+
+\codeblock [language=c++] ***
+BackEndIR   write ();
+***
+
+Write the current state of the document (with its potential modifications)
+to an intermediate representation format backend.
+
+The resulting object can be used with concrete backends format such as
+\code {BackEndBinary} or \code {BackEndMl} to store them on a media.
+
+//----------------------------------------------------------------------------
+
+\method {read}
+\brief {Read from an intermediate representation format}
+
+\codeblock [language=c++] ***
+void  read (BackEndIR & backend);
+***
+
+Read from an intermediate representation format backend. Internally this
+will create a transaction that represents the difference between the new
+backend and the current state of the document. As such, the document
+modification are not commited at the end of this operation.
+
+
+
+/*\\\ DIVISION \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\division {Accessing Objects}
+
+\method {root}
+\brief {Returns the root object}
+
+\codeblock [language=c++] ***
+template <class T>   T & root ();
+***
+
+Returns the root object of the document.
+
+//----------------------------------------------------------------------------
+
+\method {object}
+\brief {Returns an object given its unique flip reference number}
+
+\codeblock [language=c++] ***
+template <class T>   T & object (const Ref & ref);
+***
+
+Returns an object given its unique flip reference number. The function will throw
+if the reference number does not exist in the document or if the resulting object
+cannot be casted to \code {T}.
+
+//----------------------------------------------------------------------------
+
+\method {object_ptr}
+\brief {Returns an object pointer given its unique flip reference number, or \code {nullptr}}
+
+\codeblock [language=c++] ***
+template <class T>   T * object_ptr (const Ref & ref);
+***
+
+Returns an object given its unique flip reference number. The function will return
+\code {nullptr} if the reference number does not exist in the document
+or if the resulting object
+cannot be casted to \code {T}.
+

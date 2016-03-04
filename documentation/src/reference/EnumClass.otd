@@ -1,0 +1,84 @@
+/*****************************************************************************
+
+        EnumClass.otd
+        Copyright (c) 2015 Ohm Force
+
+*****************************************************************************/
+
+
+
+\class {EnumClass}
+\header {flip/EnumClass.h}
+\declaration ***
+template <class T>   class EnumClass;
+***
+
+\code {flip::EnumClass} is a type that represents a declaration of a flip Enumeration.
+A concrete instance of this enumeration is acquired using an instance of the
+\link [id=DataModel] {\code {DataModel}}
+
+
+
+/*\\\ METHODS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\division {Declaring}
+
+\method {name}
+\brief {Set the name of the enumeration}
+
+\codeblock [language=c++] ***
+EnumClass &  name (const char * name_0);
+***
+
+Set the name of the enumeration. The name must be in the \code {ascii-7} character
+set, with exception of spaces, control characters as well as \code {del} character.
+
+Names starting with \code {flip} are reserved.
+
+This function returns a reference to the \code {EnumClass} to allow call chaining.
+
+//----------------------------------------------------------------------------
+
+\method {member}
+\brief {Declare an enumerator of the enumeration}
+
+\codeblock [language=c++] ***
+template <T val>   EnumClass &  enumerator (const char * name_0);
+***
+
+Declare an enumerator of the enumeration. The name must be in the \code {ascii-7} character
+set, with exception of spaces, control characters as well as \code {del} character.
+
+\warning {flip Enumeration declaration must follow the same order as in the C++ enumeration declaration.
+must start from 0, and must be continguous.}
+
+This function returns a reference to the \code {EnumClass} to allow call chaining.
+
+
+
+/*\\\ DIVISION \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\division {Accessing}
+
+\method {name}
+\brief {Returns the name of the enumeration}
+
+\codeblock [language=c++] ***
+const char *   name () const
+***
+
+Returns the name of the enumeration.
+
+//----------------------------------------------------------------------------
+
+\method {members}
+\brief {Returns information on the enumerators of the enumeration}
+
+\codeblock [language=c++] ***
+const Enumerators &   enumerators () const
+***
+
+Returns information on the enumerators of the enumeration. This allows for automatic
+introspection of an instance of the enumeration.
+
+

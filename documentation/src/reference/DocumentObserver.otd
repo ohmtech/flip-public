@@ -1,0 +1,55 @@
+/*****************************************************************************
+
+        DocumentObserver.otd
+        Copyright (c) 2015 Ohm Force
+
+*****************************************************************************/
+
+
+
+\class {DocumentObserver}
+\header {flip/DocumentObserver.h}
+\declaration ***
+template <class T>   class DocumentObserver;
+***
+
+\code {flip::DocumentObserver} is the base of document observers.
+
+
+
+/*\\\ PARAMETERS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\parameter {T} {The root class to observer. \code {T} must inherit from \code {flip::Object}}
+
+
+
+/*\\\ METHODS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\method {document_changed}
+\brief {Receives document change notification}
+
+\codeblock [language=c++] ***
+virtual void   document_changed (T & root) = 0;
+***
+
+To receive document change notification, one will inherit from this class
+and implement this function.
+This function is then trigerred at \code {commit} or \code {pull} stage.
+
+Example:
+
+\codeblock [language=c++] ***
+class MyObserver : public flip::DocumentObserver <MyRootClass>
+{
+public:
+   virtual void   document_changed (MyRootClass & root) override;
+};
+
+void  MyObserver::document_changed (MyRootClass & root)
+{
+   if (root.changed ())
+   {
+      // ...
+   }
+}
+***

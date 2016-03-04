@@ -1,0 +1,162 @@
+/*****************************************************************************
+
+        DataModel.otd
+        Copyright (c) 2015 Ohm Force
+
+*****************************************************************************/
+
+
+
+\class {DataModel}
+\header {flip/DataModel.h}
+\declaration ***
+template <class T>   class DataModel;
+***
+
+\code {flip::DataModel} is a type that represents declarations of classes that
+form a consistent data model. Typical usage consists to derive from this
+class, using this class as the template parameter, to define your model.
+
+Example:
+
+\codeblock [language=c++] ***
+class MyModel : public flip::DataModel <MyModel> {};
+***
+
+
+
+/*\\\ METHODS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\method {version}
+\brief {Sets the format revision of the data model}
+
+\codeblock [language=c++] ***
+static void version (const std::string & version);
+***
+
+Sets the format revision of the data model.
+The name must be in the \code {ascii-7} character set,
+with exception of control characters as well as \code {del} character.
+
+Example:
+
+\codeblock [language=c++] ***
+MyModel::version ("1.00 RC1");
+***
+
+//----------------------------------------------------------------------------
+
+\method {declare}
+\brief {Declares a class of the model}
+
+\codeblock [language=c++] ***
+template <class U> static Class <U> &  declare ();
+***
+
+Declares a class and add it to the model.
+Returns a reference to the \code {Class} to
+declare the class name, inheritance and members.
+
+This also sets the class as the root class model, making the last
+declaration the root class by default. This behavior can be changed
+by using \code {set_root} decribed below.
+
+Example:
+
+\codeblock [language=c++] ***
+MyModel::declare <MyClass> ()
+   .name ("MyClass");
+***
+
+//----------------------------------------------------------------------------
+
+\method {add}
+\brief {Adds a class to the model}
+
+\codeblock [language=c++] ***
+template <class U> static void  add ();
+***
+
+Add an already declared class to the model.
+This is typically used when sharing a class between multiple models.
+
+Example:
+
+\codeblock [language=c++] ***
+MyModel::declare <MyClass> ()
+   .name ("MyClass");
+
+MyModel2::add <MyClass> ();
+***
+
+//----------------------------------------------------------------------------
+
+\method {set_root}
+\brief {Changes the root class of the model}
+
+\codeblock [language=c++] ***
+template <class U> static void  set_root ();
+***
+
+Changes the root class of the model. The class must already been
+declared in the model.
+This is typically used in unit testing.
+
+Example:
+
+\codeblock [language=c++] ***
+MyModel::declare <Root> ()
+   .name ("Root");
+// last declared class is root by default
+
+MyModel::set_root <MyClass> ();
+// now the root of 'MyModel' is 'MyClass'
+***
+
+//----------------------------------------------------------------------------
+
+\method {has}
+\brief {Returns true iff the class is available in the model}
+
+\codeblock [language=c++] ***
+template <class U> static bool  has ();
+***
+
+Returns true iff the class is available in the model.
+
+Example:
+
+\codeblock [language=c++] ***
+MyModel::declare <MyClass> ()
+   .name ("MyClass");
+
+assert (MyModel::has <MyClass>);
+***
+
+//----------------------------------------------------------------------------
+
+\method {clone_from}
+\brief {Clones an entire model}
+
+\codeblock [language=c++] ***
+template <class Model> static void  clone_from ();
+***
+
+Clones an entire model.
+
+This is typically used in unit testing to :
+
+\itemize {
+\item {clone an entire model and change the root class to isolate testing}
+\item {clone an entire model and add a text fixture class}
+}
+
+Example:
+
+\codeblock [language=c++] ***
+MyTestModel::clone_from <MyModel> ();
+MyTestModel::declare <MyFixture> ();
+MyTestModel::set_root <MyFixture> ();
+***
+
+

@@ -1,0 +1,346 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXFileReference section */
+		0502F46B1AF25BA80046A370 /* book.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = book.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		0502F46C1AF25BA80046A370 /* gesture.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = gesture.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		0502F46D1AF25BA80046A370 /* gesture2.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = gesture2.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		0502F46E1AF25BA80046A370 /* setup.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = setup.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		0502F46F1AF25BA80046A370 /* simple.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = simple.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		0502F4701AF25BD80046A370 /* Message.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = Message.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		0513405C1AB85FBF00D30154 /* book.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = book.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		0525DF481AB72618008802DA /* library.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = library.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		0525DF4B1AB72618008802DA /* Array.iterator.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = Array.iterator.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		0525DF4C1AB72618008802DA /* Array.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = Array.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		0525DF4D1AB72618008802DA /* book.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = book.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		05281DF31B73724000358CAA /* msvc.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = msvc.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		053C41DF1BC7F8DC004B521C /* Vector.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = Vector.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		054464321AC9AF090028CBCA /* Bool.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = Bool.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		054464331AC9BBF10028CBCA /* Int.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = Int.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		054464341AC9BC670028CBCA /* Float.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = Float.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		054464351AC9C3190028CBCA /* Collection.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = Collection.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		054464361AC9C4C50028CBCA /* Collection.iterator.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = Collection.iterator.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		054464371AC9C51C0028CBCA /* Blob.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = Blob.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		054464381AC9C65D0028CBCA /* String.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = String.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		054464391AC9C8290028CBCA /* Type.methods.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = Type.methods.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		0544643A1ACA96F00028CBCA /* BackEndBinary.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = BackEndBinary.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		0544643B1ACA9EDD0028CBCA /* BackEndIR.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = BackEndIR.otd; sourceTree = "<group>"; };
+		0544643D1ACAC8250028CBCA /* BackEndMl.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = BackEndMl.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		0544643E1ACAC9000028CBCA /* Class.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = Class.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		0544643F1ACAD53E0028CBCA /* DataModel.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = DataModel.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		054464401ACAD74A0028CBCA /* Entity.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = Entity.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		054464411ACAF2BF0028CBCA /* History.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = History.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		054464421ACAF6120028CBCA /* Mold.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = Mold.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		054464431ACAFBDF0028CBCA /* Object.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = Object.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		054464441ACB01B20028CBCA /* ObjectRef.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = ObjectRef.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		054464451ACB036D0028CBCA /* Ref.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = Ref.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		054464461ACB05A50028CBCA /* Signal.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = Signal.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		054464471ACBF5560028CBCA /* Transaction.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = Transaction.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		054464481ACBF82E0028CBCA /* Document.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = Document.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		054464491ACBFA0E0028CBCA /* DocumentBase.methods.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = DocumentBase.methods.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		0544644A1ACC12540028CBCA /* DocumentServer.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = DocumentServer.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		0544644B1ACC17050028CBCA /* DocumentObserver.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = DocumentObserver.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		0544644C1ACC183A0028CBCA /* DocumentValidator.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = DocumentValidator.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		05A3C12C1BE11E8E002F1FE5 /* Enum.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = Enum.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		05A3C12D1BE11FF7002F1FE5 /* EnumClass.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = EnumClass.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		05B462DD1B0F5399003FF3B5 /* Variant.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = Variant.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		05B462DE1B0F6BDB003FF3B5 /* Optional.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = Optional.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		05C6C7731BAC502500F82152 /* book.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = book.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		05C6C7741BAC51CF00F82152 /* overview.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = overview.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		05C6C7751BAC59F100F82152 /* language.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = language.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		05C6C7761BAC641B00F82152 /* using.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = using.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		05DAD21D1B84B3AA0077E466 /* array_iterator.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = array_iterator.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		05DAD21E1B84B4F50077E466 /* collection_iterator.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = collection_iterator.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		05DFC5FC1AB989EF008CCC49 /* declare.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = declare.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		05DFC5FD1AB989F7008CCC49 /* organize.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = organize.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		05DFC5FE1AB98A02008CCC49 /* control.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = control.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		05DFC5FF1AB98A06008CCC49 /* observe.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = observe.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		05DFC6001AB9B404008CCC49 /* remote.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = remote.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		05DFC6011AB9B5C6008CCC49 /* misc.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = misc.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		05E1CA6C1B0CCAC900A2B6D3 /* book.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = book.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		05E1CA6D1B0CD08700A2B6D3 /* files.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = files.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		05E1CA6E1B0CE05900A2B6D3 /* gyp.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = gyp.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		05E1CA6F1B0CEAE800A2B6D3 /* manual.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = manual.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		05E1CA701B0CF3B800A2B6D3 /* dll.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = dll.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+		05E1CA711B0CFB0700A2B6D3 /* misc.otd */ = {isa = PBXFileReference; lastKnownFileType = text; path = misc.otd; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.otd; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		0502F46A1AF25BA80046A370 /* history */ = {
+			isa = PBXGroup;
+			children = (
+				0502F46B1AF25BA80046A370 /* book.otd */,
+				0502F46C1AF25BA80046A370 /* gesture.otd */,
+				0502F46D1AF25BA80046A370 /* gesture2.otd */,
+				0502F46E1AF25BA80046A370 /* setup.otd */,
+				0502F46F1AF25BA80046A370 /* simple.otd */,
+			);
+			path = history;
+			sourceTree = "<group>";
+		};
+		0513405B1AB85FBF00D30154 /* guide */ = {
+			isa = PBXGroup;
+			children = (
+				0513405C1AB85FBF00D30154 /* book.otd */,
+				05DFC5FC1AB989EF008CCC49 /* declare.otd */,
+				05DFC5FD1AB989F7008CCC49 /* organize.otd */,
+				05DFC5FE1AB98A02008CCC49 /* control.otd */,
+				05DFC5FF1AB98A06008CCC49 /* observe.otd */,
+				05DFC6001AB9B404008CCC49 /* remote.otd */,
+				05DFC6011AB9B5C6008CCC49 /* misc.otd */,
+			);
+			path = guide;
+			sourceTree = "<group>";
+		};
+		0525DF3D1AB725B3008802DA = {
+			isa = PBXGroup;
+			children = (
+				0525DF481AB72618008802DA /* library.otd */,
+				05E1CA6B1B0CCAC900A2B6D3 /* config */,
+				0513405B1AB85FBF00D30154 /* guide */,
+				0502F46A1AF25BA80046A370 /* history */,
+				0525DF491AB72618008802DA /* reference */,
+				05C6C7721BAC502500F82152 /* utml */,
+			);
+			sourceTree = "<group>";
+		};
+		0525DF491AB72618008802DA /* reference */ = {
+			isa = PBXGroup;
+			children = (
+				0525DF4D1AB72618008802DA /* book.otd */,
+				05DAD21D1B84B3AA0077E466 /* array_iterator.otd */,
+				0525DF4B1AB72618008802DA /* Array.iterator.otd */,
+				0525DF4C1AB72618008802DA /* Array.otd */,
+				0544643A1ACA96F00028CBCA /* BackEndBinary.otd */,
+				0544643B1ACA9EDD0028CBCA /* BackEndIR.otd */,
+				0544643D1ACAC8250028CBCA /* BackEndMl.otd */,
+				054464371AC9C51C0028CBCA /* Blob.otd */,
+				054464321AC9AF090028CBCA /* Bool.otd */,
+				0544643E1ACAC9000028CBCA /* Class.otd */,
+				05DAD21E1B84B4F50077E466 /* collection_iterator.otd */,
+				054464361AC9C4C50028CBCA /* Collection.iterator.otd */,
+				054464351AC9C3190028CBCA /* Collection.otd */,
+				0544643F1ACAD53E0028CBCA /* DataModel.otd */,
+				054464481ACBF82E0028CBCA /* Document.otd */,
+				054464491ACBFA0E0028CBCA /* DocumentBase.methods.otd */,
+				0544644B1ACC17050028CBCA /* DocumentObserver.otd */,
+				0544644A1ACC12540028CBCA /* DocumentServer.otd */,
+				0544644C1ACC183A0028CBCA /* DocumentValidator.otd */,
+				054464401ACAD74A0028CBCA /* Entity.otd */,
+				05A3C12C1BE11E8E002F1FE5 /* Enum.otd */,
+				05A3C12D1BE11FF7002F1FE5 /* EnumClass.otd */,
+				054464341AC9BC670028CBCA /* Float.otd */,
+				054464411ACAF2BF0028CBCA /* History.otd */,
+				054464331AC9BBF10028CBCA /* Int.otd */,
+				0502F4701AF25BD80046A370 /* Message.otd */,
+				054464421ACAF6120028CBCA /* Mold.otd */,
+				054464431ACAFBDF0028CBCA /* Object.otd */,
+				054464441ACB01B20028CBCA /* ObjectRef.otd */,
+				05B462DE1B0F6BDB003FF3B5 /* Optional.otd */,
+				054464451ACB036D0028CBCA /* Ref.otd */,
+				054464461ACB05A50028CBCA /* Signal.otd */,
+				054464381AC9C65D0028CBCA /* String.otd */,
+				054464471ACBF5560028CBCA /* Transaction.otd */,
+				054464391AC9C8290028CBCA /* Type.methods.otd */,
+				05B462DD1B0F5399003FF3B5 /* Variant.otd */,
+				053C41DF1BC7F8DC004B521C /* Vector.otd */,
+			);
+			path = reference;
+			sourceTree = "<group>";
+		};
+		05C6C7721BAC502500F82152 /* utml */ = {
+			isa = PBXGroup;
+			children = (
+				05C6C7731BAC502500F82152 /* book.otd */,
+				05C6C7741BAC51CF00F82152 /* overview.otd */,
+				05C6C7751BAC59F100F82152 /* language.otd */,
+				05C6C7761BAC641B00F82152 /* using.otd */,
+			);
+			path = utml;
+			sourceTree = "<group>";
+		};
+		05E1CA6B1B0CCAC900A2B6D3 /* config */ = {
+			isa = PBXGroup;
+			children = (
+				05E1CA6C1B0CCAC900A2B6D3 /* book.otd */,
+				05E1CA6D1B0CD08700A2B6D3 /* files.otd */,
+				05E1CA6E1B0CE05900A2B6D3 /* gyp.otd */,
+				05E1CA6F1B0CEAE800A2B6D3 /* manual.otd */,
+				05E1CA701B0CF3B800A2B6D3 /* dll.otd */,
+				05E1CA711B0CFB0700A2B6D3 /* misc.otd */,
+				05281DF31B73724000358CAA /* msvc.otd */,
+			);
+			path = config;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXLegacyTarget section */
+		0525DF441AB72602008802DA /* library */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = ../build.py;
+			buildConfigurationList = 0525DF471AB72602008802DA /* Build configuration list for PBXLegacyTarget "library" */;
+			buildPhases = (
+			);
+			buildToolPath = /usr/bin/python;
+			buildWorkingDirectory = "";
+			dependencies = (
+			);
+			name = library;
+			passBuildSettingsInEnvironment = 1;
+			productName = library;
+		};
+/* End PBXLegacyTarget section */
+
+/* Begin PBXProject section */
+		0525DF3E1AB725B3008802DA /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0610;
+				TargetAttributes = {
+					0525DF441AB72602008802DA = {
+						CreatedOnToolsVersion = 6.1.1;
+					};
+				};
+			};
+			buildConfigurationList = 0525DF411AB725B3008802DA /* Build configuration list for PBXProject "library" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 0525DF3D1AB725B3008802DA;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				0525DF441AB72602008802DA /* library */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin XCBuildConfiguration section */
+		0525DF421AB725B3008802DA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		0525DF431AB725B3008802DA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		0525DF451AB72602008802DA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUGGING_SYMBOLS = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		0525DF461AB72602008802DA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		0525DF411AB725B3008802DA /* Build configuration list for PBXProject "library" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0525DF421AB725B3008802DA /* Debug */,
+				0525DF431AB725B3008802DA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0525DF471AB72602008802DA /* Build configuration list for PBXLegacyTarget "library" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0525DF451AB72602008802DA /* Debug */,
+				0525DF461AB72602008802DA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 0525DF3E1AB725B3008802DA /* Project object */;
+}

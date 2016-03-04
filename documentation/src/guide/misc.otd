@@ -1,0 +1,141 @@
+
+\chapter [id=misc] {More Fun with Flip}
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=history] {Providing Undo/Redo Feature}
+
+Flip provides an undo/redo history system.
+
+\codeblock [language=c++] ***
+void  run ()
+{
+   Document document (Model::use (), 123456789ULL, 'acme', 'gui ');
+   History history (document);                                       (1)
+
+   Root & root = document.root <Root> ();
+
+   root.happiness_level = 100.0;
+
+   document.set_label ("Change");                                    (2)
+
+   auto tx = document.commit ();                                     (3)
+
+   history.push (tx);                                                (4)
+
+   history.undo ().execute ();                                       (5)
+   history.redo ().execute ();                                       (6)
+}
+***
+
+\enumerate {
+\item {Set up a history for document}
+\item {Set a label for the forming transaction}
+\item {\code {commit} returns a transaction, which has the label as a metadata}
+\item {push the transaction to the history system}
+\item {undo the transaction}
+\item {redo the transaction}
+}
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=manipulation] {Manipulating Transactions}
+
+Transactions represent exactly the difference between to state of the document.
+Flip flexibility allows to store them, and replay them in any direction.
+
+\codeblock [language=c++] ***
+void  run ()
+{
+   Document document (Model::use (), 123456789ULL, 'acme', 'gui ');
+
+   Root & root = document.root <Root> ();
+
+   assert (root.tempo == 0.0);            (1)
+
+   root.tempo = 100.0;
+
+   auto tx = document.commit ();
+
+   document.execute_backward (tx);        (2)
+   document.execute_forward (tx);         (3)
+}
+***
+
+\enumerate {
+\item {All flip values are constructed with a zero value or an empty state}
+\item {play the transaction backward, happiness goes back to 0.0. Note that the transaction is applied, but the document is not commited}
+\item {play the transaction backward, happiness goes back to 100.0. Note that the transaction is applied, but the document is not commited. If it was commited, it would produce an empty transaction.}
+}
+
+Since transactions can be copied and are just data without external coupling, they can be used for many usual kind of problem solving.
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=io] {Reading/Writing a Document}
+
+Flip supports two formats :
+
+\itemize {
+\item {A binary format with optimal performance and secure enough for production use,}
+\item {A markup language format, human readable and editable, for debugging purposes}
+}
+
+Those two backend formats can be read or written in an infinite number of media using
+a traditional Consumer/Producer architecture.
+
+\subsection [id=write] {Writing a Document}
+
+\codeblock [language=c++] ***
+void  write ()
+{
+   BackEndIR backend = document.write ();       (1)
+
+   std::vector <uint8_t> data;
+   DataConsumerMemory consumer (data);          (2)
+
+   backend.write <BackEndBinary> (consumer);    (3)
+}
+***
+
+\enumerate {
+\item {Write the document into an intermediate representation format. This format is also used to do document revision conversion}
+\item {Set up a data consumer which will write in memory}
+\item {Write to the consumer using the binary format}
+}
+
+\subsection [id=read] {Reading a Document}
+
+\codeblock [language=c++] ***
+void  read ()
+{
+   std::vector <uint8_t> data;                  (1)
+   DataProviderMemory provider (data);          (2)
+
+   BackEndIR backend;
+   backend.register_backend <BackEndBinary> (); (3)
+   backend.register_backend <BackEndMl> ();
+
+   backend.read (provider);                     (4)
+}
+***
+
+\enumerate {
+\item {Here we suppose that data is already filled with document data}
+\item {Attach a provider to the data to read}
+\item {Register the two formats that the backend can read. The backends implementation are able to tell if the incoming data is in the right format}
+\item {Read the document}
+}
+

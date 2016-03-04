@@ -1,0 +1,129 @@
+/*****************************************************************************
+
+        Ref.otd
+        Copyright (c) 2015 Ohm Force
+
+*****************************************************************************/
+
+
+
+\class {Ref}
+\header {flip/Ref.h}
+\declaration ***
+class Ref;
+***
+
+\code {flip::Ref} is a type that represents the unique reference number of
+a flip object.
+
+
+
+/*\\\ METHODS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\constructor {}
+\brief {Constructs the \code {Ref}}
+
+\codeblock [language=c++] ***
+Ref ();                    (1)
+Ref (const Ref & other);   (2)
+Ref (Ref && other);        (3)
+***
+
+\enumerate {
+\item {Default constructor, constructs the \code {null} reference number.}
+\item {Copy constructor. Constructs the object with the value of \code {other}.}
+\item {Constructor. Constructs the object by moving \code {other}.}
+}
+
+//----------------------------------------------------------------------------
+
+\destructor {}
+\brief {Destructs the \code {Ref}}
+
+\codeblock [language=c++] ***
+~Ref ();
+***
+
+Destructor.
+
+//----------------------------------------------------------------------------
+
+\method {operator =}
+\brief {Assigns value}
+
+\codeblock [language=c++] ***
+Ref & operator = (const Ref & other);  (1)
+Ref & operator = (Ref && other);  (1)
+***
+
+\enumerate {
+\item {Copy assignment operator.}
+\item {Assignment operator. Assigns the object by moving \code {other}.}
+}
+
+
+
+/*\\\ DIVISION \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\division {Decomposition}
+
+\method {user}
+\brief {Returns the user unique id associated to this reference number}
+
+\codeblock [language=c++] ***
+uint64_t user () const;
+***
+
+Returns the user unique id associated to this reference number.
+User id from \code {0} to \code {3} are reserved.
+
+//----------------------------------------------------------------------------
+
+\method {actor}
+\brief {Returns the actor unique id associated to this reference number}
+
+\codeblock [language=c++] ***
+uint64_t actor () const;
+***
+
+Returns the actor unique id associated to this reference number.
+
+//----------------------------------------------------------------------------
+
+\method {obj}
+\brief {Returns the object unique id associated to this reference number}
+
+\codeblock [language=c++] ***
+uint64_t obj () const;
+***
+
+Returns the object unique id associated to this reference number.
+
+
+
+/*\\\ DIVISION \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\division {Static Members}
+
+\variable {null}
+\brief {Represents the \code {null} reference number}
+
+\codeblock [language=c++] ***
+static const Ref null;
+***
+
+Represents the \code {null} reference number. Dereferencing this number
+will always returns \code {nullptr}.
+
+//----------------------------------------------------------------------------
+
+\variable {root}
+\brief {Represents the root object reference number of any document model}
+
+\codeblock [language=c++] ***
+static const Ref root;
+***
+
+Represents the root object reference number of any document model.
+
+

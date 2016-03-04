@@ -1,0 +1,127 @@
+
+\chapter [id=manual] {Setting up Manually}
+
+This chapter explains how to set up your build environment manually.
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=overview] {Overview}
+
+Integrating the Flip framework consists of :
+
+\itemize {
+\item {adding the needed source and optionally header files to your build environment}
+\item {set up the include path}
+\item {set up necessary IDE options}
+}
+
+Even when not using the \code {gyp} build system, the \code {gyp} and
+\code {gypi} makes a good reference for the necessary tasks to
+execute to integrate the Flip framework.
+
+The following sections will describe each of those tasks.
+
+
+/*
+==============================================================================
+*/
+
+\section [id=files] {Including Source and Header Files}
+
+\codeblock ***
+include/
+   flip/
+      contrib/
+      detail/
+src/
+   contrib/
+   detail/
+***
+
+The only necessary files to include are the \code {.cpp} source files contained
+directly in \code {src} and \code {src/detail} folders. This represents the
+core of the Flip framework. In particular the core does not depend on the
+\code {contrib} sources.
+
+You can optionnaly include the header \code {.h} and code header \code {.hpp}
+files.
+
+\important {If including those files to your build system generate errors for XCode,
+please make sure
+to read the \link [id=headermap] {Troubleshooting XCode header inclusion} below}
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=include] {Setting up the include path}
+
+The only path to include in your project IDE is the \code {include} folder.
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=include] {Setting up IDE options}
+
+If you are including header files, you will want to troubleshoot XCode
+header inclusion as described in the next section.
+
+The Flip framework natively both support the \code {C++11} and \code {C++14}
+language dialect.
+
+On Windows you need to add a dependency on the \code {ws2_32.lib} Winsocket 2
+library.
+You also need to disable the following warnings :
+
+\itemize {
+\item {\link [href=msdn.microsoft.com/en-us/library/esew7y1w.aspx] {Warning C4251}}
+}
+
+If you enabled more warnings through the \code {AdditionalOptions: /Wall}
+directive, then please read \link [id=msvc] {MSVC Warnings Notes}
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=headermap] {Troubleshooting XCode header inclusion}
+
+The default XCode header inclusion rule specifies that headers added to the
+project will be searched directly. This means that the \code {Document.h} file
+could be accessed as :
+
+\codeblock [language=c++] ***
+#include "Document.h"
+***
+
+instead of :
+
+\codeblock [language=c++] ***
+#include "flip/Document.h"
+***
+
+This is problematic on platforms where the HFS filesystem is specified as
+case insensitive. In this case system header files including for example \code {float.h}
+will use \code {flip/Float.h} instead.
+
+On MacOS X, the issue arrises for \code {flip/Float.h} and \code {flip/Signal.h}.
+
+To overcome this problem, the Flip user developer will have to explicitely tell
+XCode not to search those files by specifying \code {USE_HEADERMAP} to \code {NO}.
+This is done my adding a User-Defined Setting either in your Project or Target
+Build Settings.
+
+More information on this matter is available \link [href=www.cocoabuilder.com/archive/xcode/285003-xcode-picks-up-headers-from-the-wrong-location.html]{here}.
+
+

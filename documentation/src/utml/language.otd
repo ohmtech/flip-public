@@ -1,0 +1,183 @@
+
+\chapter [id=language] {Language Reference}
+
+This chapter describes the Utml language in pseudo notation format.
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=common] {Common elements}
+
+The following describes common elements used below.
+
+\subsection [id=skip] {Skip character}
+
+For every rule except when parsing the value of a blob, the skip character
+set are white spaces \code {space}, \code {tab}, \code {cr}, \code {lf}.
+This means in particular that an expression, except for blob value,
+might be spanned on multiple lines. In the following it will be assumed
+that symbols are separated by the skip character when matching a rule.
+
+\subsection [id=class] {Class name}
+
+\codeblock ***
+<class-name>
+***
+
+\code {<class-name>} represents a class name as declared in Flip. It follows
+Flip class name validation.
+
+\subsection [id=member] {Member name}
+
+\codeblock ***
+<member-name>
+***
+
+\code {<member-name>} represents an object member name as declared in Flip. It follows
+Flip object name validation.
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=document] {Document}
+
+Document contains exactly one top level object, which represent the root
+of the document tree.
+
+\codeblock ***
+<document> = <top-level-object>
+***
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=top] {Top level objects}
+
+Top level objects are objects like the root object and every objects
+stored in a Flip container like \code {Array} or \code {Collection}.
+
+\codeblock ***
+<top-level-object> = <top-identifier> <content>
+<top-identifier> = <class-name> [object-name]
+***
+
+A top level object has an \emph {optional} name to be used
+with \code {ObjectRef} references.
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=content] {Content}
+
+\codeblock ***
+<content> = "{" 0*<member-definition> "}"
+<member-definition> = <member-name> "=" <value>
+***
+
+The content of an object may contain zero or more member definition.
+This content may be used recursively as seen in the value defined below.
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=value] {Value}
+
+The value type is dependent of the associated data model. As Flip read the
+Utml source, it will match it to the provided data model.
+
+When a member definition is omited, the equivalent member definition is
+then implicitely defaulted. The default values are described below.
+
+\subsection [id=bool] {\code {Bool}}
+
+\codeblock ***
+<value> = "true" | "false"
+***
+
+Default value is \code {false}.
+
+\subsection [id=int] {\code {Int}}
+
+\code {value} represents an integer compatible with \code {std::sscanf}
+with the \code {"%lld"} format specifier.
+
+Default value is \code {0}.
+
+\subsection [id=float] {\code {Float}}
+
+\code {value} represents an integer compatible with \code {std::sscanf}
+with the \code {"%lf"} format specifier.
+
+Default value is \code {0.0}.
+
+\subsection [id=object] {\code {ObjectRef}}
+
+\codeblock ***
+<value> = <object-name> 0*("." <member-name>)
+***
+
+Default value is a \code {Ref::null} Flip reference.
+
+\subsection [id=blob] {\code {Blob} or \code {String}}
+
+\codeblock ***
+<value> = <value-string> | <value-hex> | <value-base64>
+<value-string> = '"' <escaped-ascii> '"'
+<value-hex> = "0x" <hexadecimal>
+<value-base64> = "decode_b64" "(" <base64> ")"
+***
+
+\itemize {
+\item {\code {<escaped-ascii>} represents data parsable by \code {BackEndMlCodec::decode_escaped_ascii}}
+\item {\code {<hexadecimal>} represents data parsable by \code {BackEndMlCodec::decode_hexadecimal}}
+\item {\code {<base64>} represents data parsable by \code {BackEndMlCodec::decode_base64}}
+}
+
+Default value is an empty \code {Blob}.
+
+\subsection [id=collection] {\code {Collection}}
+
+\codeblock ***
+<value> = "{" 0*<top-level-object> "}"
+***
+
+Default value is an empty \code {Collection}.
+
+\subsection [id=array] {\code {Array}}
+
+\codeblock ***
+<value> = "{" 0*<top-level-object> "}"
+***
+
+Default value is an empty \code {Array}.
+
+\subsection [id=array] {\code {Object} member}
+
+\codeblock ***
+<value> = "{" 0*<member-definition> "}"
+***
+
+Default value is an object which all members definition are defaulted, recursively.
+
+\subsection [id=message] {\code {Message}}
+
+Message cannot be defined because they don't have a value.
+
+
+
+

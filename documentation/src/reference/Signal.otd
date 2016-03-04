@@ -1,0 +1,86 @@
+/*****************************************************************************
+
+        Signal.otd
+        Copyright (c) 2015 Ohm Force
+
+*****************************************************************************/
+
+
+
+\class {Signal}
+\header {flip/Signal.h}
+\declaration ***
+template <uint32_t TYPE, class... Args>   class Signal;
+***
+
+\code {flip::Signal} is a type that allows signalling of flip objects
+in a type safe way.
+
+
+
+/*\\\ PARAMETERS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\parameter {TYPE} {A \code {uint32_t} unique number for the class of the object
+that represents the signal type}
+\parameter {Args...} {A variable number of arguments that compose the parameters
+of the signal}
+
+
+
+/*\\\ METHODS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\constructor {}
+\brief {Constructs the \code {Signal}}
+
+\codeblock [language=c++] ***
+Signal (Object & object);
+***
+
+Constructor. Constructs the object by linking it to \code {object}.
+
+//----------------------------------------------------------------------------
+
+\destructor {}
+\brief {Destructs the \code {Signal}}
+
+\codeblock [language=c++] ***
+~Signal ();
+***
+
+Destructor.
+
+//----------------------------------------------------------------------------
+
+\method {operator ()}
+\brief {Fire signal}
+
+\codeblock [language=c++] ***
+void  operator () (Args... args);
+***
+
+Notify all connection listeners for this \code {TYPE} of signal and this
+object as identified by its unique flip reference number.
+
+All documents in the local document tree are also notified, and if the
+transport is configured to let those signal pass through, the server
+will be notified too.
+
+//----------------------------------------------------------------------------
+
+\method {connect}
+\brief {Connect a listener}
+
+\codeblock [language=c++] ***
+template <class T, class F>   SignalConnection  connect (T & t, F f);   (1)
+template <class F>   SignalConnection  connect (F f);                   (2)
+***
+
+\enumerate {
+\item {function member delegate version}
+\item {lambda version}
+}
+
+Connect a listener to this \code {Signal}. Returns a \code {SignalConnection}.
+This last type should be stored in a way to ensure that the listener could be signalled
+as long as the \code {SignalConnection} is alive.
+

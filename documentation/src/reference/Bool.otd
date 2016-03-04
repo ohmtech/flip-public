@@ -1,0 +1,123 @@
+/*****************************************************************************
+
+        Bool.otd
+        Copyright (c) 2015 Ohm Force
+
+*****************************************************************************/
+
+
+
+\class {Bool}
+\inherit {BasicType}
+\header {flip/Bool.h}
+\declaration ***
+class Bool;
+***
+
+\code {flip::Bool} is a type that represents a two state boolean value.
+
+
+
+/*\\\ METHODS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\constructor {}
+\brief {Constructs the \code {Bool}}
+
+\codeblock [language=c++] ***
+Bool ();                      (1)
+Bool (const Bool & other);    (2)
+Bool (bool value);            (3)
+***
+
+\enumerate {
+\item {Default constructor, constructs a boolean with \code {false} value.}
+\item {Copy constructor. Constructs the object with the value of \code {other}.}
+\item {Constructor. Constructs the object with \code {value}.}
+}
+
+\warning {Variant 3 of the constructor cannot be called from the default constructor
+of a flip object.}
+
+//----------------------------------------------------------------------------
+
+\destructor {}
+\brief {Destructs the \code {Bool}}
+
+\codeblock [language=c++] ***
+~Bool ();
+***
+
+Destructor.
+
+//----------------------------------------------------------------------------
+
+\method {operator =}
+\brief {Assigns value}
+
+\codeblock [language=c++] ***
+Bool & operator = (const Bool & other);   (1)
+Bool & operator = (bool value);           (2)
+***
+
+\enumerate {
+\item {Copy assignment operator.}
+\item {Assignment operator. Assigns the object with \code {value}.}
+}
+
+
+
+/*\\\ DIVISION \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+#include "Type.methods.otd"
+
+
+
+/*\\\ DIVISION \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\division {Value Access}
+
+\method {operator bool}
+\brief {Returns the current value of the object}
+
+\codeblock [language=c++] ***
+operator bool () const;
+***
+
+Returns the current value of the object.
+
+//----------------------------------------------------------------------------
+
+\method {before}
+\brief {Returns the previous value of the object}
+
+\codeblock [language=c++] ***
+bool  before () const;
+***
+
+Returns the previous value of the object.
+
+
+
+/*\\\ DIVISION \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\division {Comparaison}
+
+\method {operator ==}
+\brief {Returns \code {true} \emph {iff} objects current values are equal}
+
+\codeblock [language=c++] ***
+bool  operator == (const Bool & rhs) const;
+bool  operator == (bool rhs) const;
+***
+
+//----------------------------------------------------------------------------
+
+\method {operator !=}
+\brief {Returns \code {true} \emph {iff} objects current values are different}
+
+\codeblock [language=c++] ***
+bool  operator != (const Bool & rhs) const;
+bool  operator != (bool rhs) const;
+***
+
+

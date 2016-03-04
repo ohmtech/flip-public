@@ -1,0 +1,126 @@
+/*****************************************************************************
+
+        String.otd
+        Copyright (c) 2015 Ohm Force
+
+*****************************************************************************/
+
+
+
+\class {String}
+\inherit {Blob}
+\header {flip/String.h}
+\declaration ***
+class String;
+***
+
+\code {flip::String} is a type that represents a dynamic-sized string.
+It is a specialisation of \code {Blob}.
+
+
+
+/*\\\ METHODS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\constructor {}
+\brief {Constructs the \code {String}}
+
+\codeblock [language=c++] ***
+String ();                             (1)
+String (const String & other);         (2)
+String (const std::string & value);    (3)
+***
+
+\enumerate {
+\item {Default constructor, constructs an empty string.}
+\item {Copy constructor. Constructs the object with the value of \code {other}.}
+\item {Constructor. Constructs the object with value from \code {value}.}
+}
+
+\warning {Variant 3 of the constructor cannot be called from the default constructor
+of a flip object.}
+
+//----------------------------------------------------------------------------
+
+\destructor {}
+\brief {Destructs the \code {String}}
+
+\codeblock [language=c++] ***
+~String ();
+***
+
+Destructor.
+
+//----------------------------------------------------------------------------
+
+\method {operator =}
+\brief {Assigns value}
+
+\codeblock [language=c++] ***
+String & operator = (const String & other);        (1)
+String & operator = (const std::string & value);   (2)
+String & operator = (std::string && value);        (3)
+***
+
+\enumerate {
+\item {Copy assignment operator.}
+\item {Assignment operator. Assigns the object with \code {value}.}
+\item {Assignment operator. Assigns the object by moving \code {value}.}
+}
+
+
+
+/*\\\ DIVISION \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+#include "Type.methods.otd"
+
+
+
+/*\\\ DIVISION \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\division {Value Access}
+
+\method {operator const std::string &}
+\brief {Returns the current value of the object}
+
+\codeblock [language=c++] ***
+operator const std::string & () const;
+***
+
+Returns the current value of the object.
+
+//----------------------------------------------------------------------------
+
+\method {before}
+\brief {Returns the previous value of the object}
+
+\codeblock [language=c++] ***
+const std::vector <uint8_t> &  before () const;
+***
+
+Returns the previous value of the object.
+
+
+
+/*\\\ DIVISION \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\division {Comparaison}
+
+\method {operator ==}
+\brief {Returns \code {true} \emph {iff} objects current datas are equal}
+
+\codeblock [language=c++] ***
+bool  operator == (const String & rhs) const;
+bool  operator == (const std::string & rhs) const;
+***
+
+//----------------------------------------------------------------------------
+
+\method {operator !=}
+\brief {Returns \code {true} \emph {iff} objects current datas are different}
+
+\codeblock [language=c++] ***
+bool  operator != (const String & rhs) const;
+bool  operator != (const std::string & rhs) const;
+***
+
+

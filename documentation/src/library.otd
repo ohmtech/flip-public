@@ -1,0 +1,17 @@
+\library [id=flip] {Flip Documentation Library}
+
+Flip is a portable data model framework, real-time collaboration-oriented.
+
+
+\itemize {
+\item {\link [id=guide] {Flip Basics Programming Guide}}
+\item {\link [id=config] {Flip Configuration Guide}}
+\item {\link [id=reference] {Flip Reference}}
+\item {\link [id=history] {Flip History Strategy Guide}}
+}
+
+#include "config/book.otd"
+#include "guide/book.otd"
+#include "history/book.otd"
+#include "reference/book.otd"
+#include "utml/book.otd"

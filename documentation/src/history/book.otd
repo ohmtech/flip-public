@@ -1,0 +1,68 @@
+\book [id=history, type=guide] {Flip History Strategy Guide}
+
+This guide is a serie of guides indented for flip developers to assist into
+different strategies to provide History/Undo/Redo features.
+
+\itemize {
+\item {\link [id=about] {About Flip History Strategy Guide}}
+\item {\link [id=setup] {Setting up the History}}
+\item {\link [id=simple] {Handling a Simple Modification}}
+\item {\link [id=gesture] {Handling a Gesture}}
+\item {\link [id=gesture2] {Handling a Non-deterministic Gesture}}
+}
+
+\chapter [id=about] {About Flip History Strategy Guide}
+
+This guide is a serie of guides indented for flip developers to assist into
+different strategies to provide History/Undo/Redo features.
+
+\section [id=how] {How to Use This Document}
+
+If you want to add flip undo/redo support to your application,
+first read \link [id=guide] {Flip Programming Guide} to have a taste
+of the features that flip can add to your application.
+
+You don't necesseraly need to read each chapter of this manual.
+Chapters are separated in very specific tasks, for a very specific need.
+
+\section [id=requisites] {Prerequisites}
+
+You should be familiar with C++ programming, especially templates. You should be also familiar
+with basic C++ design patterns such as the Singleton or Delegate pattern.
+
+You should be familiar with the MVC design pattern. In a flip managed application,
+flip acts as the Model part of the MVC design pattern. /*The \link [id=flip/overview] {Flip Overview}
+gives the basic idea behind the MVC design pattern and how it is used in Flip.*/
+
+/*You should have read the \link [id=flip/babystep] {Flip Babystep Tutorial} priori to reading this guide.*/
+
+\section [id=seealso] {See Also}
+
+See \link [id=reference] {Flip Framework Reference} for details on Flip classes.
+
+\section [id=content] {Content}
+
+This guide presents the following content in a didactic order.
+
+\itemize {
+\item {The chapter \link [id=setup] {Setting up the History} exposes
+      the basic setup of the History object}
+\item {The chapter \link [id=simple] {Handling a Simple Modification}
+      shows a first simple case to record an undo step}
+\item {The chapter \link [id=gesture] {Handling a Gesture}
+      shows how to record history when the modifications span over time}
+\item {The chapter \link [id=gesture2] {Handling a Non-deterministic Gesture}
+      shows how to record history when the modifications span over time
+      with a more complex scenario}
+}
+
+This guide is intended to be read in its natural chapter order.
+The first chapter, \link [id=setup] {Setting up the History} will
+guide you through the task of setting up an history
+to be used with a document.
+
+
+#include "setup.otd"
+#include "simple.otd"
+#include "gesture.otd"
+#include "gesture2.otd"

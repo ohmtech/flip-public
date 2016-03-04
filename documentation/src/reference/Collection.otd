@@ -1,0 +1,217 @@
+/*****************************************************************************
+
+        Collection.otd
+        Copyright (c) 2015 Ohm Force
+
+*****************************************************************************/
+
+
+
+\class {Collection}
+\inherit {BasicType}
+\header {flip/Collection.h}
+\declaration ***
+template <class T> class Collection;
+***
+
+\code {flip::Collection} is an unordered container.
+
+Addition or removal of the elements in the collection or accross collections does not
+invalidate the iterators or references.
+
+The \code {Collection} itself provides support for modification introspection. When modifying
+the content of the \code {Collection}, the previous representation of the collection is still
+present.
+
+
+
+/*\\\ PARAMETERS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\parameter {T} {The type of the elements. \code {T} must inherit from \code {flip::Object}}
+
+
+
+/*\\\ TYPES \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\type {value_type} {\code {T}}
+\type {reference} {\code {T &}}
+\type {const_reference} {\code {const T &}}
+\type {pointer} {\code {T *}}
+\type {const_pointer} {\code {const T *}}
+\type [id=Collection.iterator] {iterator} {Bidirectional access iterator}
+\type [id=Collection.iterator] {const_iterator} {Constant bidirectional access iterator}
+\type [id=Collection.iterator] {reverse_iterator} {Bidirectional access iterator}
+\type [id=Collection.iterator] {const_reverse_iterator} {Constant bidirectional access iterator}
+\type {difference_type} {\code {std::ptrdiff_t}}
+\type {size_type} {\code {std::size_t}}
+
+
+
+/*\\\ METHODS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\constructor {}
+\brief {Constructs the \code {Collection}}
+
+\codeblock [language=c++] ***
+Collection ();                     (1)
+Collection (const Collection & other);  (2)
+***
+
+\enumerate {
+\item {Default constructor, constructs an empty container.}
+\item {Copy constructor. Constructs the container with copy of elements of \code {other}.}
+}
+
+//----------------------------------------------------------------------------
+
+\destructor {}
+\brief {Destructs the \code {Collection}}
+
+\codeblock [language=c++] ***
+~Collection ();
+***
+
+Destructor.
+
+//----------------------------------------------------------------------------
+
+\method {operator =}
+\brief {Assigns values to the container}
+
+\codeblock [language=c++] ***
+Collection & operator = (const Collection & other); (1)
+***
+
+Copy assignment operator.
+
+
+
+/*\\\ DIVISION \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+#include "Type.methods.otd"
+
+
+
+/*\\\ DIVISION \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\division {Iterators}
+
+\method {begin cbegin}
+\brief {Returns an iterator to the beginning}
+
+//----------------------------------------------------------------------------
+
+\method {end cend}
+\brief {Returns an iterator to the end}
+
+//----------------------------------------------------------------------------
+
+\method {rbegin crbegin}
+\brief {Returns a reverse iterator to the beginning}
+
+//----------------------------------------------------------------------------
+
+\method {rend crend}
+\brief {Returns a reverse iterator to the end}
+
+//----------------------------------------------------------------------------
+
+\method {gbegin gcbegin}
+\brief {Returns a generic \code {collection_iterator} to the beginning}
+
+//----------------------------------------------------------------------------
+
+\method {gend gcend}
+\brief {Returns a generic \code {collection_iterator} to the end}
+
+
+
+/*\\\ DIVISION \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\division {Modifiers}
+
+\method {clear}
+\brief {Clears the contents}
+
+\codeblock [language=c++] ***
+void  clear ();
+***
+
+Removes all the elements from the container.
+
+//----------------------------------------------------------------------------
+
+\method {insert}
+\brief {Inserts elements}
+
+\codeblock [language=c++] ***
+iterator insert (const value_type & value);            (1)
+
+template <class U>
+iterator insert (const U & value);                     (2)
+
+template <class U>
+iterator insert (std::unique_ptr <U> && value);        (3)
+
+template <class InputIterator>
+void insert (InputIterator it, InputIterator it_end);  (4)
+***
+
+\enumerate {
+\item {Inserts a copy of \code {value} in the container.}
+\item {Inserts a copy of \code {value} of type \code {U} in the container.}
+\item {Inserts by moving the content of \code {value} in the container.}
+\item {Inserts a copy of the elements from range \code {[it, it_end)}.}
+}
+
+//----------------------------------------------------------------------------
+
+\method {emplace}
+\brief {Constructs element in-place}
+
+\codeblock [language=c++] ***
+template <class... Args>
+iterator emplace (Args &&... args);     (1)
+
+template <class U, class... Args>
+iterator emplace (Args &&... args);     (2)
+
+iterator emplace (const Mold & mold);   (3)
+
+template <class U>
+iterator emplace (const Mold & mold);   (4)
+***
+
+\enumerate {
+\item {Emplaces a new element constructed in-place with arguments \code {args}.}
+\item {Emplaces a new element of type \code {U} constructed in-place with arguments \code {args}.}
+\item {Emplaces a new element casted from \code {mold}.}
+\item {Emplaces a new element of type \code {U} casted from \code {mold}.}
+}
+
+//----------------------------------------------------------------------------
+
+\method {erase}
+\brief {Erases elements}
+
+\codeblock [language=c++] ***
+iterator erase (iterator it);
+***
+
+Erases element at position \code {it}. Returns the \code {iterator} following \code {it}.
+
+//----------------------------------------------------------------------------
+
+\method {splice}
+\brief {Moves elements}
+
+\codeblock [language=c++] ***
+iterator splice (Collection & other, iterator it);
+***
+
+Moves element at position \code {it} from \code {other} to \code {*this}.
+Returns an \code {iterator} to that element.
+
+\note {\code {other} and \code {*this} might \emph {not} refer to the same object.}
+
+

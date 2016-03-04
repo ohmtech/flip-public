@@ -1,0 +1,91 @@
+/*****************************************************************************
+
+        BackEndBinary.otd
+        Copyright (c) 2015 Ohm Force
+
+*****************************************************************************/
+
+
+
+\class {BackEndBinary}
+\header {flip/BackEndBinary.h}
+\declaration ***
+class BackEndBinary;
+***
+
+\code {flip::BackEndBinary} represents a concrete format data type which, using
+a \code {DataProvider} or \code {DataConsumer}, allows to read or write
+and fill a generic back end representation of a document.
+
+The object itself does not hold any data, and just act as a parser/formatter
+from the intermediate representation of the document to the provider/consumer.
+
+\code {BackEndBinary} will format the data in binary :
+
+\itemize {
+\item {This format is compact}
+\item {This format is robust and secure}
+\item {This format is performant}
+\item {This format is \emph {not} human readable or editable}
+}
+
+See \link [id=BackEndMl] {BackEndMl} for a less compact, less robust, less secure
+and less performant format, but which is human readable and editable in any
+plain text editing software.
+
+Normally, this class is used through the use of \link [id=BackEndIR] {BackEndIR}
+directly. See the documentation for more details.
+
+\code {DataProvider}s and \code {DataConsumer}s provides an abstraction to the
+underlying storage media from which to read or write to.
+
+
+
+/*\\\ METHODS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\constructor {}
+\brief {Constructs the \code {BackEndBinary}}
+
+\codeblock [language=c++] ***
+BackEndBinary ();
+***
+
+Default constructor.
+
+//----------------------------------------------------------------------------
+
+\destructor {}
+\brief {Destructs the \code {BackEndBinary}}
+
+\codeblock [language=c++] ***
+~BackEndBinary ();
+***
+
+Destructor.
+
+//----------------------------------------------------------------------------
+
+\method {write}
+\brief {Format the data from the intermediate representation to the data consumer}
+
+\codeblock [language=c++] ***
+void  write (DataConsumerBase & consumer, const BackEndIR & ir);
+***
+
+Format the data from the intermediate representation of the document and
+feed them to the consumer.
+
+//----------------------------------------------------------------------------
+
+\method {read}
+\brief {Parse the data from the data provider to the intermediate representation}
+
+\codeblock [language=c++] ***
+void   read (DataProviderBase & provider, BackEndIR & ir);
+***
+
+Parse the data from the data provider and fill the intermediate representation of the document.
+
+
+
+

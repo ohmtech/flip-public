@@ -1,0 +1,153 @@
+
+\chapter [id=observe] {Observing the Model}
+
+
+Now that we can declare a model and we know how to organize it and manipulate it,
+this chapter describes how to listen to its changes.
+
+This chapter will use the model declared in the chapter \link [id=declare] {Declaring the Model}.
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=declare] {Declaring and Binding the Observer}
+
+To listen to document modification, one must declare an observer.
+
+All observers must inherit from the template class \code {DocumentObserver},
+which takes the root class of your model as a template parameter.
+
+To receive document changes, one must register a document observer to the document.
+
+\note {Only one observer can be setup per document, but an observer might dispatch
+itself to other observers if it wants to.}
+
+\codeblock [language=c++] ***
+class Observer : public flip::DocumentObserver <Song>                         (1)
+{
+public:
+   virtual void document_changed (Song & song) override;                      (2)
+}
+
+void  run ()
+{
+   Observer observer;
+   Document document (Model::use (), observer, 123456789ULL, 'OmSt', 'gui '); (3)
+
+   Song & song = document.root <Song> ();
+
+   song.tempo = 120.0;
+
+   document.commit ();                                                        (4)
+}
+***
+
+\enumerate {
+\item {Make an observer by inheriting from \code {DocumentObserver}}
+\item {Override the pure virtual function declared in \code {DocumentObserver}}
+\item {Attach the observer to the document}
+\item {When \code {commit} is called, it will fire the \code {document_changed} method}
+}
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=property] {Listening to Property Changes}
+
+When \code {commit} is called, it will fire the \code {document_changed} method.
+This method contains the song as a parameter. This song has then the ability
+to represent the document in its old state as well as new state.
+
+Because of this property, Flip types can know when they have changed.
+Therefore, listening to tempo change in our example would look like this :
+
+\codeblock [language=c++] ***
+void  Observer::document_changed (Song & song)
+{
+   if (song.tempo.changed ())                   (1)
+   {
+      double new_tempo = song.tempo;            (2)
+      double old_tempo = song.tempo.before ();  (3)
+   }
+}
+***
+
+\enumerate {
+\item {Take the branch if the value was changed}
+\item {Extract the new tempo value}
+\item {Extract the old tempo value}
+}
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=container] {Listening to Container Changes}
+
+Listening to container changes works in the same way.
+The container can know when it has changed. But the container also
+has the ability to represent both its old and new states.
+
+
+\codeblock [language=c++] ***
+void  Observer::document_changed (Song & song)
+{
+   if (song.tracks.changed ())
+   {
+      auto it = song.tracks.begin ();
+      auto it_end = song.tracks.end ();
+
+      for (; it != it_end ; ++it)
+      {
+         auto & track = *it;
+
+         if (track.changed ())            (1)
+         {
+            if (track.added ())          (2)
+            {
+               ...
+            }
+            else if (track.resident ())   (3)
+            {
+               ...
+            }
+            else if (track.removed ())   (4)
+            {
+               ...
+            }
+         }
+      }
+   }
+}
+***
+
+The code above will iterate other the list of tracks if it did change.
+
+\enumerate {
+\item {Track life cycle is also detected through the use of \code {changed}}
+\item {The track was just added to the container}
+\item {The track is resident, which means that it was neither added or removed from the container. Since the track itself changed (1), this means that it has inner modification}
+\item {The track was removed from the container. Its data is still available to the observer, but the model object will be destroyed when \code {document_changed} exits.}
+}
+
+\note {Traversing a \code {Collection} for changes is exactly similar to traversing an \code {Array}.}
+
+In the code above, a \code {Track} will be reported as changed when the \code {Track} changed itself, or one of its children, for example one \code {Clip} \code {position}
+
+\important {When an object is \code {changed} this means that subtree it represents have changed, maybe somewhere deep in the tree.}
+
+
+The next chapter, \link [id=remote] {Working with a Remote Server} will guide you through setting up a collaboration network.
+
+
+
+
+

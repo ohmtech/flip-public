@@ -1,0 +1,80 @@
+/*****************************************************************************
+
+        Collection.iterator.otd
+        Copyright (c) 2015 Ohm Force
+
+*****************************************************************************/
+
+
+\class [id=Collection.iterator] {Collection::iterator}
+\header {flip/Collection.h}
+\declaration ***
+template <class T> class Collection
+{
+class iterator;
+class const_iterator;
+class reverse_iterator;
+class const_reverse_iterator;
+};
+***
+
+\code {Collection::iterator} satisfies the \code {BidirectionalIterator} C++ concept.
+
+
+
+/*\\\ PARAMETERS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\parameter {T} {The type of the elements. \code {T} must inherit from \code {flip::Object}}
+
+
+
+/*\\\ TYPES \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\type {value_type} {\code {T}}
+\type {reference} {\code {T &}}
+\type {pointer} {\code {T *}}
+\type {difference_type} {\code {std::ptrdiff_t}}
+\type {iterator_category} {\code {std::bidirectional_iterator_tag}}
+
+
+
+/*\\\ METHODS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\division {Miscellaneous}
+
+\method {added}
+\brief {Returns \code {true} \emph {iff} the iterator was added to the container.}
+
+\codeblock [language=c++] ***
+bool added () const;
+***
+
+Returns \code {true} \emph {iff} the iterator was added to the container.
+
+\note {When an object is moved between containers, then the destination iterator is considered
+as added while the object is considered as resident.}
+
+//----------------------------------------------------------------------------
+
+\method {removed}
+\brief {Returns \code {true} \emph {iff} the iterator was removed to the container.}
+
+\codeblock [language=c++] ***
+bool removed () const;
+***
+
+Returns \code {true} \emph {iff} the iterator was removed to the container.
+
+\note {When an object is moved between containers, then the source iterator is considered
+as removed while the object is considered as resident.}
+
+//----------------------------------------------------------------------------
+
+\method {resident}
+\brief {Returns \code {true} \emph {iff} the iterator was neither added or removed.}
+
+\codeblock [language=c++] ***
+bool resident () const;
+***
+
+Returns \code {true} \emph {iff} the iterator was neither added or removed.

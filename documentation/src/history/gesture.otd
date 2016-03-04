@@ -1,0 +1,81 @@
+
+\chapter [id=gesture] {Handling a Gesture}
+
+This chapter shows to implement a simple gesture, that is an undo step that
+relates to multiple commits of the document.
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=overview] {Overview}
+
+One common modifications of the document occurs over a gesture.
+That is, the actual modification of the document integrates multiple commits,
+but the undo step and publication to the outside world happens once the
+gesture is said to be "finished".
+
+Example of such modifications are :
+
+\itemize {
+\item {Modifying the properties of an object using a mouse gesture}
+}
+
+The general idea of the modifications is that it spans over time.
+In this case the document is modified gradually as the gesture is
+performed. This allows on each commit to notify the observers so that
+the document views show an up-to-date of the document, even if this
+does not make the actual undo step stored in the history.
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=impl] {Implementation}
+
+The following code illustrates a modification of the document such
+as a mouse gesture to change gradually the tempo of a song.
+
+\codeblock [language=c++] ***
+Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+History <HistoryStoreMemory> history (document);
+Song & song = document.root <Song> ();
+
+[...]
+
+song.tempo = 120.0;
+document.commit ();           (1)
+
+[...]
+
+song.tempo = 130.0;
+document.commit ();           (1)
+
+[...]
+
+song.tempo = 140.0;
+document.commit ();           (1)
+
+[...]
+
+auto tx = document.squash (); (2)
+history.add_undo_step (tx);   (3)
+document.push ();             (4)
+***
+
+\enumerate {
+\item {Modify the document gradually and commit to notify observer}
+\item {Squash the push stack to make a single transaction out of the multiple commits}
+\item {Store this resulting transaction in an undo step}
+\item {Typically, the client of the library would advertise this document modification to
+      the outside world at that moment}
+}
+
+
+
+The next chapter, \link [id=gesture2] {Handling a Non-deterministic Gesture}
+will show a strategy to use for undo/redo in the case of a more complex gesture.

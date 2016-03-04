@@ -1,0 +1,66 @@
+/*****************************************************************************
+
+        Document.otd
+        Copyright (c) 2015 Ohm Force
+
+*****************************************************************************/
+
+
+
+\class {Document}
+\header {flip/Document.h}
+\declaration ***
+class Document;
+***
+
+\code {flip::Document} is a type that represents a flip document.
+
+
+
+/*\\\ METHODS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\constructor {}
+\brief {Constructs the \code {Document}}
+
+\codeblock [language=c++] ***
+Document (const DataModelBase & data_model, DocumentObserverBase & observer, DocumentValidatorBase & validator, uint64_t user_id, uint32_t manufacturer_id, uint32_t component_id);
+Document (const DataModelBase & data_model, DocumentObserverBase & observer, uint64_t user_id, uint32_t manufacturer_id, uint32_t component_id);
+Document (const DataModelBase & data_model, DocumentValidatorBase & validator, uint64_t user_id, uint32_t manufacturer_id, uint32_t component_id);
+Document (const DataModelBase & data_model, uint64_t user_id, uint32_t manufacturer_id, uint32_t component_id);
+***
+
+Constructs the document from a data model, an optional observer, and optional validator,
+a unique user id, a manufacturer id as as a component id.
+
+The data model represents the blueprint or template the document is going to
+rely on. The data model is previously defined and used for the document.
+
+The unique user identifier is a 64-bit unsigned number that represents a user
+in a unique way.
+
+The manufacturer id shall represents your company abbreviated name in a
+four char code format.
+
+The component id shall represents the component the document represents
+in a four char code format. Typically this could be \code {gui }.
+
+\warning {
+   the tuple make of user identifier, manufacturer id and component id
+   must be guanranteed unique for every documents connected together
+}
+
+
+//----------------------------------------------------------------------------
+
+\destructor {}
+\brief {Destructs the \code {Document}}
+
+\codeblock [language=c++] ***
+~Document ();
+***
+
+Destructor.
+
+//----------------------------------------------------------------------------
+
+#include "DocumentBase.methods.otd"

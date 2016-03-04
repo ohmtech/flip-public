@@ -1,0 +1,100 @@
+/*****************************************************************************
+
+        Mold.otd
+        Copyright (c) 2015 Ohm Force
+
+*****************************************************************************/
+
+
+
+\class {Mold}
+\header {flip/Mold.h}
+\declaration ***
+class Mold;
+***
+
+\code {flip::Mold} is a convencience type to make copies of flip objects.
+It is typically used in implementations of user interface copy/paste feature.
+
+The \code {Mold} itself is used in two ways :
+
+\itemize {
+\item {Making the mold by making an imprint of flip objects and get opaque data out of it}
+\item {Casting the mold by giving the previous opaque data and produce flip objects}
+}
+
+The casting part is typically done using the \code {emplace} overload for mold
+in the flip containers.
+
+
+
+/*\\\ METHODS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\constructor {}
+\brief {Construct the \code {Mold}}
+
+\codeblock [language=c++] ***
+Mold (const DataModelBase & model);                        (1)
+Mold (const DataModelBase & model, StreamBinOut & sbo);    (2)
+Mold (const DataModelBase & model, StreamBinIn & sbi);     (3)
+Mold (Mold && other);                                      (4)
+***
+
+\enumerate {
+\item {Constructs the \code {Mold} for making and casting without serialization}
+\item {Constructs the \code {Mold} for making, by attaching it to a binary stream for writing}
+\item {Constructs the \code {Mold} for casting, by attaching it to a binary stream for reading}
+\item {Constructs the \code {Mold} by moving from \code {other} Mold}
+}
+
+For all constructors, the data model from which the mold is made or casted
+must be passed, to allow automatic flip object (not attached to a document)
+to be made or casted.
+
+//----------------------------------------------------------------------------
+
+\method {make}
+\brief {Add an object to the current mold}
+
+\codeblock [language=c++] ***
+template <class T>   void  make (T & obj, bool skip_container_flag = false);
+***
+
+Add a flip object \code {obj} of type \code {T} to the current mold.
+If \code {skip_container_flag} is \code {true}, the mold will not contain
+the content of any flip container in the object sub-model tree.
+
+\important {This function can only be used in version (1) or (2) of the constructor.}
+
+//----------------------------------------------------------------------------
+
+\method {cure}
+\brief {Cure the mold}
+
+\codeblock [language=c++] ***
+void  cure ();
+***
+
+Cure the mold. This flushes all necessary data to the binary stream so that
+the mold is ready for casting.
+
+\important {This function can only be used in the version (2) of the constructor.}
+
+//----------------------------------------------------------------------------
+
+\method {cast}
+\brief {Casts the mold}
+
+\codeblock [language=c++] ***
+template <class T>   T  cast () const;             (1)
+template <class T>   void  cast (T & obj) const;   (2)
+***
+
+\enumerate {
+\item {Cast the mold which element matches type \code {T} and return it}
+\item {Cast the mold which element matches type \code {T} in the passed object parameter}
+}
+
+\important {Those functions can only be used in the version (1) or (3) of the constructor.}
+
+

@@ -1,0 +1,102 @@
+/*****************************************************************************
+
+        Message.otd
+        Copyright (c) 2015 Ohm Force
+
+*****************************************************************************/
+
+
+
+\class {Message}
+\inherit {BasicType}
+\header {flip/Message.h}
+\declaration ***
+template <class... Args>   class Message;
+***
+
+\code {flip::Message} is a type that allows signalling of non-persistent data.
+In particular, \code {flip::Message} is type-safe and endian-safe.
+
+
+
+
+/*\\\ PARAMETERS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\parameter {Args...} {
+   The types of the elements that the \code {Message} signals.
+   Each element must be compatible with \code {StreamBinIn} and \code {StreamBinOut}.
+}
+
+
+
+/*\\\ METHODS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\constructor {}
+\brief {Constructs the \code {Message}}
+
+\codeblock [language=c++] ***
+Message ();
+***
+
+\enumerate {
+\item {Default constructor.}
+}
+
+
+
+//----------------------------------------------------------------------------
+
+\destructor {}
+\brief {Destructs the \code {Message}}
+
+\codeblock [language=c++] ***
+~Message ();
+***
+
+Destructor.
+
+
+
+/*\\\ DIVISION \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+#include "Type.methods.otd"
+
+
+
+/*\\\ DIVISION \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\division {Sending & Receiving}
+
+\method {send}
+\brief {Sends a message}
+
+\codeblock [language=c++] ***
+Message &   send (Args... args);
+***
+
+Sends a message. Multiple messages may be sent before commiting the document.
+
+//----------------------------------------------------------------------------
+
+\method {get}
+\brief {Get messages}
+
+\codeblock [language=c++] ***
+template <class F>   void get (F f) const;
+***
+
+Get the message(s) currently contained in \code {Message}.
+
+\code {F} is usually used as a lambda function, which must follow the following prototype :
+
+\codeblock [language=c++] ***
+void (bool, Args...)
+***
+
+The first boolean parameter is true if the current execution direction is forward, false otherwise.
+
+
+
+
+
+
