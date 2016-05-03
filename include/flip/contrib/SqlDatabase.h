@@ -13,14 +13,19 @@
 
 /*\\\ INCLUDE FILES \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
 
-#if defined (__clang__) && (__clang_major__ >= 7)
+
+
+#if defined (__clang__)
    #pragma clang diagnostic push
-   #pragma clang diagnostic ignored "-Wreserved-id-macro"
+
+   #if __has_warning ("-Wreserved-id-macro")
+      #pragma clang diagnostic ignored "-Wreserved-id-macro"
+   #endif
 #endif
 
 #include "flip/contrib/sqlite3.h"
 
-#if defined (__clang__) && (__clang_major__ >= 7)
+#if defined (__clang__)
    #pragma clang diagnostic pop
 #endif
 

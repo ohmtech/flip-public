@@ -54,7 +54,16 @@ public:
    >::type        declare ();
 
    template <class U>
-   static void    add ();
+   static typename std::enable_if <
+      !std::is_enum <U>::value,
+      void
+   >::type        add ();
+
+   template <class U>
+   static typename std::enable_if <
+      std::is_enum <U>::value,
+      void
+   >::type        add ();
 
    static void    version (const std::string & version);
    template <class U>

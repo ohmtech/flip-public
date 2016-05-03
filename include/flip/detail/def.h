@@ -212,7 +212,7 @@
 // flip_FATAL represents a permanent error, either a developer error or an
 // internal non-recoverable error
 
-#if (flip_COMPILER == flip_COMPILER_CLANG) || (flip_COMPILER == flip_COMPILER_GNU)
+#if (flip_COMPILER == flip_COMPILER_CLANG)
    #if (flip_FATAL_MODE == flip_FATAL_MODE_THROW)
       #define flip_FATAL \
          throw std::runtime_error (__PRETTY_FUNCTION__)
@@ -222,6 +222,21 @@
          _Pragma ("clang diagnostic ignored \"-Wunreachable-code\"") \
          {assert (false); throw;} \
          _Pragma ("clang diagnostic pop")
+   #elif (flip_FATAL_MODE == flip_FATAL_MODE_USER)
+      #if ! defined (flip_FATAL)
+         #error flip_FATAL_MODE_USER requires a user provided definition of flip_FATAL
+      #endif
+   #else
+      #error Unsupported Configuration
+   #endif
+
+#elif (flip_COMPILER == flip_COMPILER_GNU)
+   #if (flip_FATAL_MODE == flip_FATAL_MODE_THROW)
+      #define flip_FATAL \
+         throw std::runtime_error (__PRETTY_FUNCTION__)
+   #elif (flip_FATAL_MODE == flip_FATAL_MODE_ABORT)
+      #define flip_FATAL \
+         {assert (false); throw;}
    #elif (flip_FATAL_MODE == flip_FATAL_MODE_USER)
       #if ! defined (flip_FATAL)
          #error flip_FATAL_MODE_USER requires a user provided definition of flip_FATAL
@@ -330,11 +345,49 @@
    #define flip_DISABLE_WARNINGS_SYSTEM_HEADERS \
       _Pragma ("clang diagnostic push")
 
+   #define flip_DISABLE_WARNINGS_THROW_FROM_DTOR \
+      _Pragma ("clang diagnostic push")
+
    #define flip_RESTORE_WARNINGS \
       _Pragma ("clang diagnostic pop")
 
    #define flip_DISABLE_WARNINGS_TEST \
       _Pragma ("clang diagnostic ignored \"-Wfour-char-constants\"")
+
+
+
+#elif defined (__GNUC__)
+   #define flip_DISABLE_WARNINGS_CAST \
+      _Pragma ("GCC diagnostic push") \
+
+   #define flip_DISABLE_WARNINGS_BINARY_LITERALS \
+      _Pragma ("GCC diagnostic push") \
+
+   #define flip_DISABLE_WARNINGS_GLOBAL_DESTRUCTORS \
+      _Pragma ("GCC diagnostic push") \
+
+   #define flip_DISABLE_WARNINGS_FOUR_CHAR_CONSTANTS \
+      _Pragma ("GCC diagnostic push") \
+
+   #define flip_DISABLE_WARNINGS_CONTROL_PATHS \
+      _Pragma ("GCC diagnostic push") \
+      _Pragma ("GCC diagnostic ignored \"-Wreturn-type\"")
+
+   #define flip_DISABLE_WARNINGS_DOMINANCE \
+      _Pragma ("GCC diagnostic push")
+
+   #define flip_DISABLE_WARNINGS_TRUSTED_MACROS \
+      _Pragma ("GCC diagnostic push") \
+
+   #define flip_DISABLE_WARNINGS_SYSTEM_HEADERS \
+      _Pragma ("GCC diagnostic push")
+
+   #define flip_RESTORE_WARNINGS \
+      _Pragma ("GCC diagnostic pop")
+
+   #define flip_DISABLE_WARNINGS_TEST
+
+
 
 #elif defined (_MSC_VER)
    #define flip_DISABLE_WARNINGS_CAST \
@@ -365,6 +418,10 @@
       __pragma (warning (push)) \
       __pragma (warning (disable: 4668))
 
+   #define flip_DISABLE_WARNINGS_THROW_FROM_DTOR \
+      __pragma (warning (push)) \
+      __pragma (warning (disable: 4297))
+
    #define flip_RESTORE_WARNINGS \
       __pragma (warning (pop))
 
@@ -383,6 +440,8 @@
    #define flip_DISABLE_WARNINGS_CONTROL_PATHS
    #define flip_DISABLE_WARNINGS_DOMINANCE
    #define flip_DISABLE_WARNINGS_TRUSTED_MACROS
+   #define flip_DISABLE_WARNINGS_SYSTEM_HEADERS
+   #define flip_DISABLE_WARNINGS_THROW_FROM_DTOR
 
    #define flip_RESTORE_WARNINGS
 

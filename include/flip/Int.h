@@ -60,8 +60,14 @@ public:
    int64_t        value () const;
    int64_t        before () const;
 
-   bool           operator == (int64_t rhs) const;
-   bool           operator != (int64_t rhs) const;
+   bool           operator == (int rhs) const;
+   bool           operator != (int rhs) const;
+
+   bool           operator == (long rhs) const;
+   bool           operator != (long rhs) const;
+
+   bool           operator == (long long rhs) const;
+   bool           operator != (long long rhs) const;
 
    virtual void   revert () override;
 

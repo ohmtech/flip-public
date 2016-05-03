@@ -80,6 +80,7 @@ public:
    static void    send (Data & data, bool & error_flag, Id fd);
    static Data    receive (bool & close_flag, bool & error_flag, Id fd);
 
+   static void    set_non_blocking (Id fd);
    static void    set_opt_reuseaddr (Id fd);
    static void    set_opt_multicast_add_membership (Id fd, uint32_t ip);
    static void    set_opt_multicast_drop_membership (Id fd, uint32_t ip);

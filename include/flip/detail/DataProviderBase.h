@@ -17,6 +17,7 @@
 
 #include <string>
 
+#include <cstddef>
 #include <cstdint>
 
 

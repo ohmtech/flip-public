@@ -38,7 +38,7 @@ namespace flip
 
 class Object;
 
-template <uint32_t TYPE, class... Args>
+template <class... Args>
 class Signal
 :  public SignalBase
 {
@@ -46,7 +46,7 @@ class Signal
 /*\\\ PUBLIC \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
 
 public:
-                  Signal (Object & object);
+                  Signal (uint32_t type, Object & object);
    virtual        ~Signal ();
 
 #if (flip_COMPILER == flip_COMPILER_MSVC) && (_MSC_VER == 1800)
@@ -55,6 +55,9 @@ public:
 #else
                   Signal (const Signal & rhs) = delete;  // see note in .hpp
 #endif
+
+   uint32_t       type () const;
+   Object &       object ();
 
    void           operator () (Args... args);
    SignalData     make (Args... args);
@@ -181,6 +184,7 @@ private:
 
    typedef std::map <ConnectionKey, Bundle> BundleMap;
 
+   const uint32_t _type;
    Object &       _object;
 
    ConnectionKey  _key = 0ULL;

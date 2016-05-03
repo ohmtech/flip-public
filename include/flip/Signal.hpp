@@ -26,6 +26,7 @@
 #include <iostream>
 #include <type_traits>
 
+#include <climits>
 #include <cassert>
 
 
@@ -43,11 +44,12 @@ Name : ctor
 ==============================================================================
 */
 
-template <uint32_t TYPE, class... Args>
-Signal <TYPE, Args...>::Signal (Object & object)
-:  _object (object)
+template <class... Args>
+Signal <Args...>::Signal (uint32_t type, Object & object)
+: _type (type)
+, _object (object)
 {
-   _object.impl_bind (*this, TYPE);
+   _object.impl_bind (*this, type);
 }
 
 
@@ -62,9 +64,10 @@ Note :
 */
 
 #if (flip_COMPILER == flip_COMPILER_MSVC) && (_MSC_VER == 1800)
-template <uint32_t TYPE, class... Args>
-Signal <TYPE, Args...>::Signal (const Signal & other)
-  : _object (other._object)
+template <class... Args>
+Signal <Args...>::Signal (const Signal & other)
+: _type (other._type)
+, _object (other._object)
 {
    assert (false);
 }
@@ -77,12 +80,40 @@ Name : dtor
 ==============================================================================
 */
 
-template <uint32_t TYPE, class... Args>
-Signal <TYPE, Args...>::~Signal ()
+template <class... Args>
+Signal <Args...>::~Signal ()
 {
    assert (_bundle_map.empty ());
 
-   _object.impl_unbind (*this, TYPE);
+   _object.impl_unbind (*this, _type);
+}
+
+
+
+/*
+==============================================================================
+Name : type
+==============================================================================
+*/
+
+template <class... Args>
+uint32_t Signal <Args...>::type () const
+{
+   return _type;
+}
+
+
+
+/*
+==============================================================================
+Name : object
+==============================================================================
+*/
+
+template <class... Args>
+Object & Signal <Args...>::object ()
+{
+   return _object;
 }
 
 
@@ -93,8 +124,8 @@ Name : operator ()
 ==============================================================================
 */
 
-template <uint32_t TYPE, class... Args>
-void  Signal <TYPE, Args...>::operator () (Args... args)
+template <class... Args>
+void  Signal <Args...>::operator () (Args... args)
 {
    _object.document ().signal (make (args...));
 }
@@ -107,8 +138,8 @@ Name : make
 ==============================================================================
 */
 
-template <uint32_t TYPE, class... Args>
-SignalData  Signal <TYPE, Args...>::make (Args... args)
+template <class... Args>
+SignalData  Signal <Args...>::make (Args... args)
 {
    std::vector <uint8_t> data;
    StreamBinOut sbo (data);
@@ -117,7 +148,7 @@ SignalData  Signal <TYPE, Args...>::make (Args... args)
 
    return SignalData (
       _object.get_class ().type_id (_object.document ().data_model ()),
-      _object.ref (), TYPE, sbo.data ()
+      _object.ref (), _type, sbo.data ()
    );
 }
 
@@ -131,9 +162,9 @@ Description :
 ==============================================================================
 */
 
-template <uint32_t TYPE, class... Args>
+template <class... Args>
 template <class T, class F>
-SignalConnection  Signal <TYPE, Args...>::connect (T & t, F f)
+SignalConnection  Signal <Args...>::connect (T & t, F f)
 {
    static_assert (sizeof (Buf) == sizeof (std::function <void (T &, Args...)>), "size mismatch");
    flip_ASSERT_NON_NULLPTR (&t);
@@ -164,9 +195,9 @@ Description :
 ==============================================================================
 */
 
-template <uint32_t TYPE, class... Args>
+template <class... Args>
 template <class F>
-SignalConnection  Signal <TYPE, Args...>::connect (F f)
+SignalConnection  Signal <Args...>::connect (F f)
 {
    static_assert (sizeof (Buf) == sizeof (std::function <void (Args...)>), "size mismatch");
 
@@ -198,8 +229,8 @@ Description :
 ==============================================================================
 */
 
-template <uint32_t TYPE, class... Args>
-void  Signal <TYPE, Args...>::impl_signal (const std::vector <uint8_t> & data)
+template <class... Args>
+void  Signal <Args...>::impl_signal (const std::vector <uint8_t> & data)
 {
    Unpacker <Args..., void> unpacker;
 
@@ -216,8 +247,8 @@ Name : impl_disconnect
 ==============================================================================
 */
 
-template <uint32_t TYPE, class... Args>
-void  Signal <TYPE, Args...>::impl_disconnect (const ConnectionKey & key)
+template <class... Args>
+void  Signal <Args...>::impl_disconnect (const ConnectionKey & key)
 {
    auto it = _bundle_map.find (key);
 
@@ -236,8 +267,8 @@ Description :
 ==============================================================================
 */
 
-template <uint32_t TYPE, class... Args>
-void  Signal <TYPE, Args...>::impl_call (Args... args)
+template <class... Args>
+void  Signal <Args...>::impl_call (Args... args)
 {
    for (auto & pair : _bundle_map)
    {
@@ -261,11 +292,11 @@ Name : pack_one
 ==============================================================================
 */
 
-template <uint32_t TYPE, class... Args>
+template <class... Args>
 template <class U>
 typename std::enable_if <
    has_sbio <U>::value
->::type  Signal <TYPE, Args...>::pack_one (StreamBinOut & sbo, U val)
+>::type  Signal <Args...>::pack_one (StreamBinOut & sbo, U val)
 {
    sbo << val;
 }
@@ -278,11 +309,11 @@ Name : pack_one
 ==============================================================================
 */
 
-template <uint32_t TYPE, class... Args>
+template <class... Args>
 template <class U>
 typename std::enable_if <
    !has_sbio <U>::value
->::type  Signal <TYPE, Args...>::pack_one (StreamBinOut & sbo, U val)
+>::type  Signal <Args...>::pack_one (StreamBinOut & sbo, U val)
 {
    static_assert (std::is_pod <U>::value, "Type to complex");
 
@@ -299,9 +330,9 @@ Name : pack_one
 ==============================================================================
 */
 
-template <uint32_t TYPE, class... Args>
+template <class... Args>
 template <class U>
-void  Signal <TYPE, Args...>::pack_one (StreamBinOut & sbo, const std::vector <U> & val)
+void  Signal <Args...>::pack_one (StreamBinOut & sbo, const std::vector <U> & val)
 {
    sbo << uint64_t (val.size ());
 
@@ -319,9 +350,9 @@ Name : pack_one
 ==============================================================================
 */
 
-template <uint32_t TYPE, class... Args>
+template <class... Args>
 template <class U>
-void  Signal <TYPE, Args...>::pack_one (StreamBinOut & sbo, const std::list <U> & val)
+void  Signal <Args...>::pack_one (StreamBinOut & sbo, const std::list <U> & val)
 {
    sbo << uint64_t (val.size ());
 
@@ -339,9 +370,9 @@ Name : pack_one
 ==============================================================================
 */
 
-template <uint32_t TYPE, class... Args>
+template <class... Args>
 template <class U, class V>
-void  Signal <TYPE, Args...>::pack_one (StreamBinOut & sbo, const std::map <U, V> & val)
+void  Signal <Args...>::pack_one (StreamBinOut & sbo, const std::map <U, V> & val)
 {
    sbo << uint64_t (val.size ());
 
@@ -359,9 +390,9 @@ Name : pack_one
 ==============================================================================
 */
 
-template <uint32_t TYPE, class... Args>
+template <class... Args>
 template <class U, class V>
-void  Signal <TYPE, Args...>::pack_one (StreamBinOut & sbo, const std::pair <U, V> & val)
+void  Signal <Args...>::pack_one (StreamBinOut & sbo, const std::pair <U, V> & val)
 {
    pack_one (sbo, val.first);
    pack_one (sbo, val.second);
@@ -375,8 +406,8 @@ Name : pack
 ==============================================================================
 */
 
-template <uint32_t TYPE, class... Args>
-void  Signal <TYPE, Args...>::pack (StreamBinOut & /* sbo */)
+template <class... Args>
+void  Signal <Args...>::pack (StreamBinOut & /* sbo */)
 {
    // nothing, end of recursion
 }
@@ -389,9 +420,9 @@ Name : pack
 ==============================================================================
 */
 
-template <uint32_t TYPE, class... Args>
+template <class... Args>
 template <class U>
-void  Signal <TYPE, Args...>::pack (StreamBinOut & sbo, U val)
+void  Signal <Args...>::pack (StreamBinOut & sbo, U val)
 {
    pack_one (sbo, val);
    pack (sbo);
@@ -405,9 +436,9 @@ Name : pack
 ==============================================================================
 */
 
-template <uint32_t TYPE, class... Args>
+template <class... Args>
 template <class U, class... Args2>
-void  Signal <TYPE, Args...>::pack (StreamBinOut & sbo, U val, Args2... args)
+void  Signal <Args...>::pack (StreamBinOut & sbo, U val, Args2... args)
 {
    pack_one (sbo, val);
    pack (sbo, args...);
@@ -421,10 +452,10 @@ Name : Unpacker::unpack
 ==============================================================================
 */
 
-template <uint32_t TYPE, class... Args>
+template <class... Args>
 template <class U>
 template <class... Args3>
-void  Signal <TYPE, Args...>::Unpacker <U>::unpack (Signal & parent, StreamBinIn & sbi, Args3... args3)
+void  Signal <Args...>::Unpacker <U>::unpack (Signal & parent, StreamBinIn & sbi, Args3... args3)
 {
    if (!sbi.is_eos ()) flip_THROW;
 
@@ -439,12 +470,12 @@ Name : Unpacker::unpack_one
 ==============================================================================
 */
 
-template <uint32_t TYPE, class... Args>
+template <class... Args>
 template <class U, class... Args2>
 template <class V>
 typename std::enable_if <
    has_sbio <V>::value
->::type  Signal <TYPE, Args...>::Unpacker <U, Args2...>::unpack_one (Signal & /* parent */, StreamBinIn & sbi, V & val)
+>::type  Signal <Args...>::Unpacker <U, Args2...>::unpack_one (Signal & /* parent */, StreamBinIn & sbi, V & val)
 {
    sbi >> val;
 }
@@ -457,12 +488,12 @@ Name : Unpacker::unpack_one
 ==============================================================================
 */
 
-template <uint32_t TYPE, class... Args>
+template <class... Args>
 template <class U, class... Args2>
 template <class V>
 typename std::enable_if <
    !has_sbio <V>::value
->::type  Signal <TYPE, Args...>::Unpacker <U, Args2...>::unpack_one (Signal & /* parent */, StreamBinIn & sbi, V & val)
+>::type  Signal <Args...>::Unpacker <U, Args2...>::unpack_one (Signal & /* parent */, StreamBinIn & sbi, V & val)
 {
    val = *reinterpret_cast <const V *> (sbi.pull (sizeof (V)));
 }
@@ -475,10 +506,10 @@ Name : Unpacker::unpack_one
 ==============================================================================
 */
 
-template <uint32_t TYPE, class... Args>
+template <class... Args>
 template <class U, class... Args2>
 template <class V>
-void  Signal <TYPE, Args...>::Unpacker <U, Args2...>::unpack_one (Signal & parent, StreamBinIn & sbi, std::vector <V> & val)
+void  Signal <Args...>::Unpacker <U, Args2...>::unpack_one (Signal & parent, StreamBinIn & sbi, std::vector <V> & val)
 {
    uint64_t val_size;
    sbi >> val_size;
@@ -501,10 +532,10 @@ Name : Unpacker::unpack_one
 ==============================================================================
 */
 
-template <uint32_t TYPE, class... Args>
+template <class... Args>
 template <class U, class... Args2>
 template <class V>
-void  Signal <TYPE, Args...>::Unpacker <U, Args2...>::unpack_one (Signal & parent, StreamBinIn & sbi, std::list <V> & val)
+void  Signal <Args...>::Unpacker <U, Args2...>::unpack_one (Signal & parent, StreamBinIn & sbi, std::list <V> & val)
 {
    uint64_t val_size;
    sbi >> val_size;
@@ -525,10 +556,10 @@ Name : Unpacker::unpack_one
 ==============================================================================
 */
 
-template <uint32_t TYPE, class... Args>
+template <class... Args>
 template <class U, class... Args2>
 template <class V, class W>
-void  Signal <TYPE, Args...>::Unpacker <U, Args2...>::unpack_one (Signal & parent, StreamBinIn & sbi, std::map <V, W> & val)
+void  Signal <Args...>::Unpacker <U, Args2...>::unpack_one (Signal & parent, StreamBinIn & sbi, std::map <V, W> & val)
 {
    uint64_t val_size;
    sbi >> val_size;
@@ -549,10 +580,10 @@ Name : Unpacker::unpack_one
 ==============================================================================
 */
 
-template <uint32_t TYPE, class... Args>
+template <class... Args>
 template <class U, class... Args2>
 template <class V, class W>
-void  Signal <TYPE, Args...>::Unpacker <U, Args2...>::unpack_one (Signal & parent, StreamBinIn & sbi, std::pair <V, W> & val)
+void  Signal <Args...>::Unpacker <U, Args2...>::unpack_one (Signal & parent, StreamBinIn & sbi, std::pair <V, W> & val)
 {
    unpack_one (parent, sbi, val.first);
    unpack_one (parent, sbi, val.second);
@@ -566,9 +597,9 @@ Name : Unpacker::unpack
 ==============================================================================
 */
 
-template <uint32_t TYPE, class... Args>
+template <class... Args>
 template <class U, class... Args2>
-void  Signal <TYPE, Args...>::Unpacker <U, Args2...>::unpack (Signal & parent, StreamBinIn & sbi)
+void  Signal <Args...>::Unpacker <U, Args2...>::unpack (Signal & parent, StreamBinIn & sbi)
 {
    U val;
    unpack_one (parent, sbi, val);
@@ -585,10 +616,10 @@ Name : Unpacker::unpack
 ==============================================================================
 */
 
-template <uint32_t TYPE, class... Args>
+template <class... Args>
 template <class U, class... Args2>
 template <class... Args3>
-void  Signal <TYPE, Args...>::Unpacker <U, Args2...>::unpack (Signal & parent, StreamBinIn & sbi, Args3... args3)
+void  Signal <Args...>::Unpacker <U, Args2...>::unpack (Signal & parent, StreamBinIn & sbi, Args3... args3)
 {
    U val;
    unpack_one (parent, sbi, val);
@@ -605,9 +636,9 @@ Name : fun_call
 ==============================================================================
 */
 
-template <uint32_t TYPE, class... Args>
+template <class... Args>
 template <class T, class F>
-void  Signal <TYPE, Args...>::fun_call (void * ptr, void * func_ptr, Args... args)
+void  Signal <Args...>::fun_call (void * ptr, void * func_ptr, Args... args)
 {
    T * cast_ptr = static_cast <T *> (ptr);
 
@@ -625,9 +656,9 @@ Name : fun_function_dtor
 ==============================================================================
 */
 
-template <uint32_t TYPE, class... Args>
+template <class... Args>
 template <class T, class F>
-void  Signal <TYPE, Args...>::fun_function_dtor (void * func_ptr)
+void  Signal <Args...>::fun_function_dtor (void * func_ptr)
 {
    std::function <void (T &, Args...)> * cast_func_ptr
       = reinterpret_cast <std::function <void (T &, Args...)> *> (func_ptr);
@@ -645,9 +676,9 @@ Name : lambda_call
 ==============================================================================
 */
 
-template <uint32_t TYPE, class... Args>
+template <class... Args>
 template <class T, class F>
-void  Signal <TYPE, Args...>::lambda_call (void * /* ptr */, void * func_ptr, Args... args)
+void  Signal <Args...>::lambda_call (void * /* ptr */, void * func_ptr, Args... args)
 {
    std::function <void (Args...)> & f
       = *reinterpret_cast <std::function <void (Args...)> * > (func_ptr);
@@ -663,9 +694,9 @@ Name : lambda_function_dtor
 ==============================================================================
 */
 
-template <uint32_t TYPE, class... Args>
+template <class... Args>
 template <class T, class F>
-void  Signal <TYPE, Args...>::lambda_function_dtor (void * func_ptr)
+void  Signal <Args...>::lambda_function_dtor (void * func_ptr)
 {
    std::function <void (Args...)> * cast_func_ptr
       = reinterpret_cast <std::function <void (Args...)> *> (func_ptr);
@@ -683,8 +714,8 @@ Name : Bundle::dtor
 ==============================================================================
 */
 
-template <uint32_t TYPE, class... Args>
-Signal <TYPE, Args...>::Bundle::~Bundle ()
+template <class... Args>
+Signal <Args...>::Bundle::~Bundle ()
 {
    _func_dtor_proc (_func_buf);
 }

@@ -629,12 +629,12 @@ typename Collection <T>::iterator   Collection <T>::erase (iterator it)
 
    if (it.added ())
    {
-      if (obj.is_bound ())
+      // case where underlying object is being moved
+      if (it.base ()->second._obj_sptr.unique ())
       {
-         obj.impl_unbind (document ());
+         if (obj.is_bound ()) obj.impl_unbind (document ());
+         obj.impl_entity_reset ();
       }
-
-      obj.impl_entity_reset ();
 
       _map.erase (it.base ());
 
@@ -825,13 +825,21 @@ void  Collection <T>::revert ()
 
          // impl_add is recursive, so the object can be already added
          if (!obj.impl_is_added ()) obj.impl_add ();
+
+         obj.impl_change_parent (this);
       }
 
       if (obj.changed ()) obj.revert ();
 
       if (it->second.added ())
       {
-         obj.impl_unbind (document ());
+
+         if (it->second._obj_sptr.unique ())
+         {
+            obj.impl_change_parent (nullptr);
+            obj.impl_remove ();
+            obj.impl_unbind (document ());
+         }
 
          obj.impl_entity_reset ();
 
@@ -993,7 +1001,12 @@ void  Collection <T>::impl_unbind (DocumentBase & document)
    {
       auto & obj = *it;
 
-      obj.impl_unbind (document);
+      if (obj.is_bound () && it.base ()->second._obj_sptr.unique ())
+      {
+         assert (!obj.impl_is_added ());
+
+         obj.impl_unbind (document);
+      }
    }
 
    Type::impl_unbind (document);
@@ -1048,8 +1061,11 @@ void Collection <T>::impl_remove ()
    {
       auto & obj = pair.second.get ();
 
-      // 'reset' have already removed objects in 'this'
-      assert (!obj.impl_is_added ());
+      if (pair.second._obj_sptr.unique ())
+      {
+         // 'reset' have already removed objects in 'this'
+         assert (!obj.impl_is_added ());
+      }
    }
 #endif
 }
@@ -1239,7 +1255,10 @@ void  Collection <T>::impl_entity_reset ()
    {
       auto & obj = pair.second.get ();
 
-      obj.impl_entity_reset ();
+      if (pair.second._obj_sptr.unique ())
+      {
+         obj.impl_entity_reset ();
+      }
    }
 }
 
@@ -1390,7 +1409,7 @@ void  Collection <T>::impl_erase (const KeyRandom & key)
    auto it = _map.find (key);
    assert (it != _map.end ());
 
-   auto obj_sptr = it->second._obj_sptr;
+   auto && obj_sptr = it->second._obj_sptr;
 
    assert (!obj_sptr->removed ());
 
@@ -1408,7 +1427,11 @@ void  Collection <T>::impl_erase (const KeyRandom & key)
    {
       if (obj_sptr->is_bound ())
       {
-         obj_sptr->impl_unbind (document ());
+         // case where underlying object is being moved
+         if (obj_sptr.unique ())
+         {
+            obj_sptr->impl_unbind (document ());
+         }
       }
 
       obj_sptr->impl_entity_reset ();
