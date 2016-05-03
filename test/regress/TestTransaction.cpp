@@ -22,6 +22,8 @@ flip_DISABLE_WARNINGS_TEST
 #include "flip/detail/TxIdRange.h"
 #include "TestDef.h"
 
+#include <algorithm>
+
 #include <cassert>
 
 

@@ -42,6 +42,11 @@ void  TestBackEndIRDiff::run ()
 {
    Model::version ("test.backend");
 
+   Model::declare <E> ()
+      .name ("E")
+      .enumerator <E0> ("E0")
+      .enumerator <E1> ("E1");
+
    Model::declare <A> ()
       .name ("A")
       .member <Int, &A::_int> ("int")
@@ -53,6 +58,11 @@ void  TestBackEndIRDiff::run ()
       .member <Int, &B::_int2> ("int2")
       .member <Float, &B::_float2> ("float2")
       .member <Collection <A>, &B::_coll> ("coll");
+
+   Model::declare <C> ()
+      .name ("C")
+      .inherit <A> ()
+      .member <Enum <E>, &C::_enum> ("enum");
 
    Model::declare <Root> ()
       .name ("Root")
@@ -85,6 +95,7 @@ void  TestBackEndIRDiff::run ()
    run_011 ();
    run_012 ();
    run_013 ();
+   run_014 ();
 }
 
 
@@ -967,6 +978,66 @@ void  TestBackEndIRDiff::run_013 ()
       }) == 1);
 
       flip_TEST (equal (backend, document.write ()));
+   }
+}
+
+
+
+/*
+==============================================================================
+Name : run_014
+==============================================================================
+*/
+
+void  TestBackEndIRDiff::run_014 ()
+{
+   BackEndIR backend;
+   BackEndIR backend2;
+
+   {
+      Document document (Model::use (), 123456789UL, 'appl', 'beir');
+
+      Root & root = document.root <Root> ();
+
+      C & c = dynamic_cast <C &> (*root._array_a.emplace <C> (root._array_a.begin ()));
+      c._enum = E0;
+
+      C & c2 = dynamic_cast <C &> (*root._array_a.emplace <C> (root._array_a.begin ()));
+      c2._enum = E1;
+
+      document.commit ();
+
+      backend = document.write ();
+
+      root._array_a.clear ();
+
+      document.commit ();
+
+      backend2 = document.write ();
+   }
+
+   {
+      Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+
+      Root & root = document.root <Root> ();
+
+      document.read (backend);
+      document.commit ();
+
+      flip_TEST (equal (backend, document.write ()));
+
+      flip_TEST (root._array_a.count_if ([](A &){return true;}) == 2);
+      flip_TEST (root._array_a.count_if ([](A & elem){
+         return (dynamic_cast <C &> (elem)._enum == E0);
+      }) == 1);
+      flip_TEST (root._array_a.count_if ([](A & elem){
+         return (dynamic_cast <C &> (elem)._enum == E1);
+      }) == 1);
+
+      document.read (backend2);
+      document.commit ();
+
+      flip_TEST (root._array_a.count_if ([](A &){return true;}) == 0);
    }
 }
 

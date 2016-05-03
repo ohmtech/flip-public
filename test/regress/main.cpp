@@ -39,6 +39,7 @@ flip_DISABLE_WARNINGS_TEST
 #include "TestHttpRequestParser.h"
 #include "TestHub.h"
 #include "TestHubLocal.h"
+#include "TestInt.h"
 #include "TestKeyFloat.h"
 #include "TestKeyRandom.h"
 #include "TestLockFreeQueue.h"
@@ -201,6 +202,13 @@ void  run_test ()
 
    {
       TestRefAllocator test;
+      test.run ();
+   }
+
+   std::cout << "   Running TestInt..." << std::endl;
+
+   {
+      TestInt test;
       test.run ();
    }
 

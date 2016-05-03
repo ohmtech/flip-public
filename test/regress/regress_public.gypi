@@ -35,24 +35,24 @@
             'src.gypi',
          ],
 
-            'msvs_settings': {
-               'VCLinkerTool': {
-                  'AdditionalDependencies': [
-                     '../../bin/flip_win32.lib',
-                     '../../bin/flip_x64.lib',
+         'msvs_settings': {
+            'VCLinkerTool': {
+               'AdditionalDependencies': [
+                  '../../bin/flip_win32.lib',
+                  '../../bin/flip_x64.lib',
+               ],
+            },
+         },
+
+         'conditions': [
+            ['OS=="mac"', {
+               'link_settings': {
+                  'libraries': [
+                     '../../bin/flip_macos.a',
                   ],
                },
-            },
-
-            'conditions': [
-               ['OS=="mac"', {
-                  'link_settings': {
-                     'libraries': [
-                        '../../bin/flip_macos.a',
-                     ],
-                  },
-               }],
-            ],
+            }],
+         ],
       },
    ]
 }

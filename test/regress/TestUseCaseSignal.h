@@ -47,10 +47,10 @@ public:
       };
 
                   Note () : Note (0.0, 0.0) {}  // COV_NF_LINE
-                  Note (double position, double duration) : signal_play (*this), _position (position), _duration (duration) {}
+                  Note (double position, double duration) : signal_play (PLAY, *this), _position (position), _duration (duration) {}
                   Note (const Note & rhs) : Note (rhs._position, rhs._duration) {}  // COV_NF_LINE
 
-      Signal <PLAY, double /* velocity */>
+      Signal <double /* velocity */>
                   signal_play;
 
       Float       _position;
@@ -130,11 +130,10 @@ public:
       {
                   OPEN_GUI,
       };
-                  Track () : signal_open_gui (*this) {}
-                  Track (const Track & rhs) : signal_open_gui (*this), _clip_frames (rhs._clip_frames) {}   // COV_NF_LINE
+                  Track () : signal_open_gui (OPEN_GUI, *this) {}
+                  Track (const Track & other) : Object (other), signal_open_gui (OPEN_GUI, *this), _clip_frames (other._clip_frames) {}   // COV_NF_LINE
 
-      Signal <OPEN_GUI>
-                  signal_open_gui;
+      Signal <>   signal_open_gui;
 
       ClipFrames  _clip_frames;
    };

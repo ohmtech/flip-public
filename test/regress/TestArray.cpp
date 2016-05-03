@@ -157,6 +157,14 @@ void  TestArray::run ()
    run_066c ();
    run_066d ();
    run_067 ();
+   run_068 ();
+   run_068b ();
+   run_068c ();
+   run_068d ();
+   run_069 ();
+   run_070 ();
+   run_071 ();
+   run_071b ();
 }
 
 
@@ -211,6 +219,7 @@ void  TestArray::check_concept_iterator ()   // COV_NF_START
       Array <A>::iterator it;
       *it;
       int64_t a = it->_int; a = 0;
+      flip_TEST (a == 0);
    }
 
    // mutability
@@ -3606,6 +3615,287 @@ void  TestArray::run_067 ()
       Array <A>::reverse_iterator it;
       f (it);
    }
+}
+
+
+
+/*
+==============================================================================
+Name : run_068
+==============================================================================
+*/
+
+void  TestArray::run_068 ()
+{
+   Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+
+   Root & root = document.root <Root> ();
+
+   auto it = root._array3.emplace (root._array3.end ());
+   B & b = *it;
+   auto it2 = b._array.emplace (b._array.end ());
+   A & a = *it2;
+   a._int = 2LL;
+
+   B & b2 = *root._array3.emplace (root._array3.end ());
+
+   document.commit ();
+
+   auto it3 = b2._array.splice (b2._array.end (), b._array, it2);
+   root._array3.erase (it);
+
+   document.commit ();
+
+   flip_TEST (a.is_bound ());
+   flip_TEST (a._int.is_bound ());
+   flip_TEST (a._int == 2LL);
+   flip_TEST (a._int.before () == 2LL);
+   flip_TEST (&a.parent <Type> () == &b2._array);
+   flip_TEST (b2._array.count_if ([](A & elem){return elem._int == 2LL;}) == 1);
+}
+
+
+
+/*
+==============================================================================
+Name : run_068b
+==============================================================================
+*/
+
+void  TestArray::run_068b ()
+{
+   Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+
+   Root & root = document.root <Root> ();
+
+   auto it = root._array3.emplace (root._array3.end ());
+   B & b = *it;
+   auto it2 = b._array.emplace (b._array.end ());
+   A & a = *it2;
+   a._int = 2LL;
+
+   B & b2 = *root._array3.emplace (root._array3.end ());
+
+   document.commit ();
+
+   auto it3 = b2._array.splice (b2._array.end (), b._array, it2);
+   //root._array3.erase (it);
+
+   root.impl_reset ();
+
+   document.commit ();
+}
+
+
+
+/*
+==============================================================================
+Name : run_068c
+==============================================================================
+*/
+
+void  TestArray::run_068c ()
+{
+   Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+
+   Root & root = document.root <Root> ();
+
+   auto it = root._array3.emplace (root._array3.end ());
+   B & b = *it;
+   auto it2 = b._array.emplace (b._array.end ());
+   A & a = *it2;
+   a._int = 2LL;
+
+   B & b2 = *root._array3.emplace (root._array3.end ());
+
+   document.commit ();
+
+   auto it3 = b2._array.splice (b2._array.end (), b._array, it2);
+   root._array3.erase (it);
+
+   root.impl_reset ();
+
+   document.commit ();
+}
+
+
+
+/*
+==============================================================================
+Name : run_068d
+==============================================================================
+*/
+
+void  TestArray::run_068d ()
+{
+   Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+
+   Root & root = document.root <Root> ();
+
+   auto it = root._array3.emplace (root._array3.end ());
+   B & b = *it;
+   auto it2 = b._array.emplace (b._array.end ());
+   A & a = *it2;
+   a._int = 2LL;
+
+   B & b2 = *root._array3.emplace (root._array3.end ());
+
+   document.commit ();
+
+   auto it3 = b2._array.splice (b2._array.end (), b._array, it2);
+   root._array3.erase (it);
+}
+
+
+
+/*
+==============================================================================
+Name : run_069
+==============================================================================
+*/
+
+void  TestArray::run_069 ()
+{
+   Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+
+   Root & root = document.root <Root> ();
+
+   auto it = root._array.emplace (root._array.end ());
+   A & a = *it;
+   a._int = 2LL;
+
+   document.commit ();
+
+   root._array2.splice (root._array2.end (), root._array, it);
+
+   document.revert ();
+
+   flip_TEST (a.is_bound ());
+   flip_TEST (a._int.is_bound ());
+   flip_TEST (a._int == 2LL);
+   flip_TEST (a._int.before () == 2LL);
+   flip_TEST (&a.parent <Type> () == &root._array);
+   flip_TEST (root._array.count_if ([](A & elem){return elem._int == 2LL;}) == 1);
+}
+
+
+
+/*
+==============================================================================
+Name : run_070
+==============================================================================
+*/
+
+void  TestArray::run_070 ()
+{
+   Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+
+   Root & root = document.root <Root> ();
+
+   auto it = root._array3.emplace (root._array3.end ());
+   B & b = *it;
+   auto it2 = b._array.emplace (b._array.end ());
+   A & a = *it2;
+   a._int = 2LL;
+
+   B & b2 = *root._array3.emplace (root._array3.end ());
+
+   document.commit ();
+
+   auto it3 = b2._array.splice (b2._array.end (), b._array, it2);
+   root._array3.erase (it);
+
+   document.revert ();
+
+   flip_TEST (a.is_bound ());
+   flip_TEST (a._int.is_bound ());
+   flip_TEST (a._int == 2LL);
+   flip_TEST (a._int.before () == 2LL);
+   flip_TEST (&a.parent <Type> () == &b._array);
+   flip_TEST (b._array.count_if ([](A & elem){return elem._int == 2LL;}) == 1);
+}
+
+
+
+/*
+==============================================================================
+Name : run_071
+==============================================================================
+*/
+
+void  TestArray::run_071 ()
+{
+   Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+
+   Root & root = document.root <Root> ();
+
+   auto it = root._array3.emplace (root._array3.end ());
+   B & b = *it;
+   auto it2 = b._array.emplace (b._array.end ());
+   A & a = *it2;
+   a._int = 2LL;
+
+#if (flip_ENTITY_LOCATION != flip_ENTITY_LOCATION_NONE) && (flip_ENTITY_USE != flip_ENTITY_USE_PEDANTIC)
+   a.entity ().emplace <double> (2.5);
+#endif
+
+   B & b2 = *root._array3.emplace (root._array3.end ());
+
+   document.commit ();
+
+   auto it3 = b2._array.splice (b2._array.end (), b._array, it2);
+   root._array3.erase (it);
+
+   document.commit ();
+
+   flip_TEST (a.is_bound ());
+   flip_TEST (a._int.is_bound ());
+   flip_TEST (a._int == 2LL);
+   flip_TEST (a._int.before () == 2LL);
+   flip_TEST (&a.parent <Type> () == &b2._array);
+   flip_TEST (b2._array.count_if ([](A & elem){return elem._int == 2LL;}) == 1);
+
+#if (flip_ENTITY_LOCATION != flip_ENTITY_LOCATION_NONE) && (flip_ENTITY_USE != flip_ENTITY_USE_PEDANTIC)
+   a.entity ().erase <double> ();
+#endif
+}
+
+
+
+/*
+==============================================================================
+Name : run_071b
+==============================================================================
+*/
+
+void  TestArray::run_071b ()
+{
+   Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+
+   Root & root = document.root <Root> ();
+
+   auto it = root._array3.emplace (root._array3.end ());
+   B & b = *it;
+   auto it2 = b._array.emplace (b._array.end ());
+   A & a = *it2;
+   a._int = 2LL;
+
+#if (flip_ENTITY_LOCATION != flip_ENTITY_LOCATION_NONE) && (flip_ENTITY_USE != flip_ENTITY_USE_PEDANTIC)
+   a.entity ().emplace <double> (2.5);
+#endif
+
+   B & b2 = *root._array3.emplace (root._array3.end ());
+
+   document.commit ();
+
+   auto it3 = b2._array.splice (b2._array.end (), b._array, it2);
+   b2._array.clear ();
+
+#if (flip_ENTITY_LOCATION != flip_ENTITY_LOCATION_NONE) && (flip_ENTITY_USE != flip_ENTITY_USE_PEDANTIC)
+   a.entity ().erase <double> ();
+#endif
+
+   document.commit ();
 }
 
 

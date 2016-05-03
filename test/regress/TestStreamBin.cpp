@@ -19,6 +19,7 @@ flip_DISABLE_WARNINGS_TEST
 #include "flip/detail/StreamBinOut.h"
 #include "TestDef.h"
 
+#include <limits>
 #include <utility>
 #include <vector>
 

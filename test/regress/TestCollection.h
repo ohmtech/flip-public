@@ -184,6 +184,14 @@ private:
    void           run_066c ();
    void           run_066d ();
    void           run_067 ();
+   void           run_068 ();
+   void           run_068b ();
+   void           run_068c ();
+   void           run_068d ();
+   void           run_069 ();
+   void           run_070 ();
+   void           run_071 ();
+   void           run_071b ();
 
    /*void            document_changed (Collection <A> & coll);*/
 

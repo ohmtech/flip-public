@@ -20,6 +20,8 @@ flip_DISABLE_WARNINGS_TEST
 #include "flip/Variant.h"
 #include "TestDef.h"
 
+#include <algorithm>
+
 #include <cassert>
 
 

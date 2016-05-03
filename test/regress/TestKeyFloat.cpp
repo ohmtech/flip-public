@@ -75,7 +75,7 @@ Name : run_pre_01
 
 void  TestKeyFloat::run_pre_01 ()
 {
-#if (flip_COMPILER != flip_COMPILER_MSVC) // binary literal support
+#if (flip_COMPILER != flip_COMPILER_MSVC) && (flip_COMPILER != flip_COMPILER_GNU) // binary literal support
 
    flip_TEST (mask_pre (0b00000000, 0b10000000) == 0b00000000);
    flip_TEST (mask_pre (0b01000000, 0b01110000) == 0b11000000);
@@ -133,7 +133,7 @@ Name : run_pre_02
 
 void  TestKeyFloat::run_pre_02 ()
 {
-#if (flip_COMPILER != flip_COMPILER_MSVC) // binary literal support
+#if (flip_COMPILER != flip_COMPILER_MSVC) && (flip_COMPILER != flip_COMPILER_GNU) // binary literal support
 
    test_pre ({}, 0);
    test_pre ({0b10000000}, 1);
@@ -204,7 +204,7 @@ void  TestKeyFloat::run_000 ()
    flip_TEST (KeyFloat::zero.is_valid ());
    flip_TEST (KeyFloat::one.is_valid ());
 
-#if (flip_COMPILER != flip_COMPILER_MSVC) // binary literal support
+#if (flip_COMPILER != flip_COMPILER_MSVC) && (flip_COMPILER != flip_COMPILER_GNU) // binary literal support
 
    flip_TEST (generate ({0b00100000}).is_valid ());
    flip_TEST (generate ({0b00000000, 0b00000001}).is_valid ());
@@ -230,7 +230,7 @@ void  TestKeyFloat::run_001 ()
       test (KeyFloat::zero, KeyFloat::one);
    }
 
-#if (flip_COMPILER != flip_COMPILER_MSVC) // binary literal support
+#if (flip_COMPILER != flip_COMPILER_MSVC) && (flip_COMPILER != flip_COMPILER_GNU) // binary literal support
 
    {
       KeyFloat rkey = generate ({0b01100000});
@@ -466,6 +466,10 @@ void  TestKeyFloat::test (const KeyFloat & left, const KeyFloat & right, int nbr
 
 
 }  // namespace flip
+
+
+
+flip_RESTORE_WARNINGS
 
 
 

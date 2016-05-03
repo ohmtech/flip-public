@@ -68,6 +68,8 @@
       'TestHub.h',
       'TestHubLocal.cpp',
       'TestHubLocal.h',
+      'TestInt.cpp',
+      'TestInt.h',
       'TestKeyFloat.cpp',
       'TestKeyFloat.h',
       'TestKeyRandom.cpp',

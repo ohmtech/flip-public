@@ -71,6 +71,8 @@ private:
    void           run_009 ();
    void           run_010 ();
    void           run_011 ();
+   void           run_012 ();
+   void           run_013 ();
 
 
 

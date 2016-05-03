@@ -24,6 +24,8 @@ flip_DISABLE_WARNINGS_TEST
 #include "flip/iterator.h"
 #include "TestDef.h"
 
+#include <algorithm>
+
 #include <cassert>
 
 
@@ -149,6 +151,14 @@ void  TestCollection::run ()
    run_066c ();
    run_066d ();
    run_067 ();
+   run_068 ();
+   run_068b ();
+   run_068c ();
+   run_068d ();
+   run_069 ();
+   run_070 ();
+   run_071 ();
+   run_071b ();
 }
 
 
@@ -203,6 +213,7 @@ void  TestCollection::check_concept_iterator () // COV_NF_START
       Collection <A>::iterator it;
       *it;
       int64_t a = it->_int; a = 0;
+      flip_TEST (a == 0);
    }
 
    // mutability
@@ -3303,6 +3314,286 @@ void  TestCollection::run_067 ()
       Collection <A>::reverse_iterator it;
       f (it);
    }
+}
+
+
+
+/*
+==============================================================================
+Name : run_068
+==============================================================================
+*/
+
+void  TestCollection::run_068 ()
+{
+   Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+
+   Root & root = document.root <Root> ();
+
+   auto it = root._coll3.emplace ();
+   B & b = *it;
+   auto it2 = b._coll.emplace ();
+   A & a = *it2;
+   a._int = 2LL;
+
+   B & b2 = *root._coll3.emplace ();
+
+   document.commit ();
+
+   auto it3 = b2._coll.splice (b._coll, it2);
+   root._coll3.erase (it);
+
+   document.commit ();
+
+   flip_TEST (a.is_bound ());
+   flip_TEST (a._int.is_bound ());
+   flip_TEST (a._int == 2LL);
+   flip_TEST (a._int.before () == 2LL);
+   flip_TEST (&a.parent <Type> () == &b2._coll);
+   flip_TEST (b2._coll.count_if ([](A & elem){return elem._int == 2LL;}) == 1);
+}
+
+
+
+/*
+==============================================================================
+Name : run_068b
+==============================================================================
+*/
+
+void  TestCollection::run_068b ()
+{
+   Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+
+   Root & root = document.root <Root> ();
+
+   auto it = root._coll3.emplace ();
+   B & b = *it;
+   auto it2 = b._coll.emplace ();
+   A & a = *it2;
+   a._int = 2LL;
+
+   B & b2 = *root._coll3.emplace ();
+
+   document.commit ();
+
+   auto it3 = b2._coll.splice (b._coll, it2);
+
+   root.impl_reset ();
+
+   document.commit ();
+}
+
+
+
+/*
+==============================================================================
+Name : run_068c
+==============================================================================
+*/
+
+void  TestCollection::run_068c ()
+{
+   Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+
+   Root & root = document.root <Root> ();
+
+   auto it = root._coll3.emplace ();
+   B & b = *it;
+   auto it2 = b._coll.emplace ();
+   A & a = *it2;
+   a._int = 2LL;
+
+   B & b2 = *root._coll3.emplace ();
+
+   document.commit ();
+
+   auto it3 = b2._coll.splice (b._coll, it2);
+   root._coll3.erase (it);
+
+   root.impl_reset ();
+
+   document.commit ();
+}
+
+
+
+/*
+==============================================================================
+Name : run_068d
+==============================================================================
+*/
+
+void  TestCollection::run_068d ()
+{
+   Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+
+   Root & root = document.root <Root> ();
+
+   auto it = root._coll3.emplace ();
+   B & b = *it;
+   auto it2 = b._coll.emplace ();
+   A & a = *it2;
+   a._int = 2LL;
+
+   B & b2 = *root._coll3.emplace ();
+
+   document.commit ();
+
+   auto it3 = b2._coll.splice (b._coll, it2);
+   root._coll3.erase (it);
+}
+
+
+
+/*
+==============================================================================
+Name : run_069
+==============================================================================
+*/
+
+void  TestCollection::run_069 ()
+{
+   Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+
+   Root & root = document.root <Root> ();
+
+   auto it = root._coll.emplace ();
+   A & a = *it;
+   a._int = 2LL;
+
+   document.commit ();
+
+   root._coll2.splice (root._coll, it);
+
+   document.revert ();
+
+   flip_TEST (a.is_bound ());
+   flip_TEST (a._int.is_bound ());
+   flip_TEST (a._int == 2LL);
+   flip_TEST (a._int.before () == 2LL);
+   flip_TEST (&a.parent <Type> () == &root._coll);
+   flip_TEST (root._coll.count_if ([](A & elem){return elem._int == 2LL;}) == 1);
+}
+
+
+
+/*
+==============================================================================
+Name : run_070
+==============================================================================
+*/
+
+void  TestCollection::run_070 ()
+{
+   Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+
+   Root & root = document.root <Root> ();
+
+   auto it = root._coll3.emplace ();
+   B & b = *it;
+   auto it2 = b._coll.emplace ();
+   A & a = *it2;
+   a._int = 2LL;
+
+   B & b2 = *root._coll3.emplace ();
+
+   document.commit ();
+
+   auto it3 = b2._coll.splice (b._coll, it2);
+   root._coll3.erase (it);
+
+   document.revert ();
+
+   flip_TEST (a.is_bound ());
+   flip_TEST (a._int.is_bound ());
+   flip_TEST (a._int == 2LL);
+   flip_TEST (a._int.before () == 2LL);
+   flip_TEST (&a.parent <Type> () == &b._coll);
+   flip_TEST (b._coll.count_if ([](A & elem){return elem._int == 2LL;}) == 1);
+}
+
+
+
+/*
+==============================================================================
+Name : run_071
+==============================================================================
+*/
+
+void  TestCollection::run_071 ()
+{
+   Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+
+   Root & root = document.root <Root> ();
+
+   auto it = root._coll3.emplace ();
+   B & b = *it;
+   auto it2 = b._coll.emplace ();
+   A & a = *it2;
+   a._int = 2LL;
+
+#if (flip_ENTITY_LOCATION != flip_ENTITY_LOCATION_NONE) && (flip_ENTITY_USE != flip_ENTITY_USE_PEDANTIC)
+   a.entity ().emplace <double> (2.5);
+#endif
+
+   B & b2 = *root._coll3.emplace ();
+
+   document.commit ();
+
+   auto it3 = b2._coll.splice (b._coll, it2);
+   root._coll3.erase (it);
+
+   document.commit ();
+
+   flip_TEST (a.is_bound ());
+   flip_TEST (a._int.is_bound ());
+   flip_TEST (a._int == 2LL);
+   flip_TEST (a._int.before () == 2LL);
+   flip_TEST (&a.parent <Type> () == &b2._coll);
+   flip_TEST (b2._coll.count_if ([](A & elem){return elem._int == 2LL;}) == 1);
+
+#if (flip_ENTITY_LOCATION != flip_ENTITY_LOCATION_NONE) && (flip_ENTITY_USE != flip_ENTITY_USE_PEDANTIC)
+   a.entity ().erase <double> ();
+#endif
+}
+
+
+
+/*
+==============================================================================
+Name : run_071b
+==============================================================================
+*/
+
+void  TestCollection::run_071b ()
+{
+   Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+
+   Root & root = document.root <Root> ();
+
+   auto it = root._coll3.emplace ();
+   B & b = *it;
+   auto it2 = b._coll.emplace ();
+   A & a = *it2;
+   a._int = 2LL;
+
+#if (flip_ENTITY_LOCATION != flip_ENTITY_LOCATION_NONE) && (flip_ENTITY_USE != flip_ENTITY_USE_PEDANTIC)
+   a.entity ().emplace <double> (2.5);
+#endif
+
+   B & b2 = *root._coll3.emplace ();
+
+   document.commit ();
+
+   auto it3 = b2._coll.splice (b._coll, it2);
+   b2._coll.clear ();
+
+#if (flip_ENTITY_LOCATION != flip_ENTITY_LOCATION_NONE) && (flip_ENTITY_USE != flip_ENTITY_USE_PEDANTIC)
+   a.entity ().erase <double> ();
+#endif
+
+   document.commit ();
 }
 
 
