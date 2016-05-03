@@ -332,9 +332,21 @@ void  Vector <T>::replace (const_iterator it, const_iterator it_end, InputIterat
 
    auto pos = std::distance (_cached_value.cbegin (), it);
 
-   _cached_value.erase (it, it_end);
+#if defined (__GLIBCXX__)
+   // libstdc++ does not support C++11 insert/erase with const_iterator
 
+   auto itt = _cached_value.begin () + pos;
+   auto pos_end = std::distance (_cached_value.cbegin (), it_end);
+   auto itt_end = _cached_value.begin () + pos_end;
+
+   _cached_value.erase (itt, itt_end);
+   _cached_value.insert (_cached_value.begin () + pos, it2, it_end2);
+
+#else
+   _cached_value.erase (it, it_end);
    _cached_value.insert (begin () + pos, it2, it_end2);
+
+#endif
 
    impl_internal_set (make_value (_cached_value));
 }

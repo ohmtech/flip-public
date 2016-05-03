@@ -17,6 +17,7 @@
 #include "flip/Collection.h"
 #include "flip/DataModel.h"
 #include "flip/DocumentObserver.h"
+#include "flip/Enum.h"
 #include "flip/Int.h"
 #include "flip/Float.h"
 #include "flip/Message.h"
@@ -38,6 +39,12 @@ public:
 
    class Model : public DataModel <Model> {};
 
+   enum E
+   {
+      E0 = 0,
+      E1,
+   };
+
    class A
    :  public Object
    {
@@ -54,6 +61,13 @@ public:
       Float       _float2;
       Collection <A>
                   _coll;
+   };
+
+   class C
+   :  public A
+   {
+   public:
+      Enum <E>    _enum;
    };
 
    class Root
@@ -112,6 +126,7 @@ private:
    void           run_011 ();
    void           run_012 ();
    void           run_013 ();
+   void           run_014 ();
 
    bool           equal (BackEndIR & lhs, BackEndIR rhs);
 

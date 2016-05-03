@@ -96,11 +96,28 @@ Name : add
 
 template <class T>
 template <class U>
-void  DataModel <T>::add ()
+typename std::enable_if <!std::is_enum <U>::value, void>::type  DataModel <T>::add ()
 {
    auto & the_class = Class <U>::use ();
 
    use_mutable ().impl_add_class (the_class);
+}
+
+
+
+/*
+==============================================================================
+Name : add
+==============================================================================
+*/
+
+template <class T>
+template <class U>
+typename std::enable_if <std::is_enum <U>::value, void>::type DataModel <T>::add ()
+{
+   auto & the_enum = EnumClass <U>::use ();
+
+   use_mutable ().impl_add_enum (the_enum);
 }
 
 

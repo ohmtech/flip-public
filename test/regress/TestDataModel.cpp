@@ -48,6 +48,8 @@ void  TestDataModel::run ()
    run_009 ();
    run_010 ();
    run_011 ();
+   run_012 ();
+   run_013 ();
 }
 
 
@@ -637,6 +639,66 @@ void  TestDataModel::run_011 ()
       str += c;
       flip_CHECK_THROW (enum_.enumerator <E::E0> (str.c_str ()));
    }
+}
+
+
+
+/*
+==============================================================================
+Name : run_012
+==============================================================================
+*/
+
+void  TestDataModel::run_012 ()
+{
+   class Model : public DataModel <Model> {};
+
+   class A : public Object
+   {
+   public:
+      Int x;
+   };
+
+   Class <A>::declare ()
+      .name ("A")
+      .member <Int, &A::x> ("x");
+
+   flip_TEST (!Class <A>::use ().abstract ());
+   flip_TEST (Class <A>::use ().members ().size () == 1);
+
+   Model::add <A> ();
+
+   flip_TEST (Model::use ().has_class ("A"));
+   flip_TEST (!Model::use ().has_enum ("A"));
+}
+
+
+
+/*
+==============================================================================
+Name : run_013
+==============================================================================
+*/
+
+void  TestDataModel::run_013 ()
+{
+   class Model : public DataModel <Model> {};
+
+   enum class A
+   {
+      A0,
+   };
+
+   EnumClass <A>::declare ()
+      .name ("A")
+      .enumerator <A::A0> ("A0");
+
+   flip_TEST (EnumClass <A>::use ().size () == 1);
+
+   Model::add <A> ();
+
+   flip_TEST (!Model::use ().has_class ("A"));
+   flip_TEST (Model::use ().has_enum ("A"));
 }
 
 

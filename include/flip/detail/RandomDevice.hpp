@@ -45,7 +45,8 @@ void  RandomDevice::get (std::array <uint8_t, SIZE> & array)
 
    for (size_t i = 0 ; i < SIZE / 4 ; ++i)
    {
-      uint32_t r = _engine ();
+      // when std::mt19937 is 8 bytes, cast anyway
+      uint32_t r = uint32_t (_engine ());
 
       std::memcpy (&array [i * 4], &r, 4);
    }

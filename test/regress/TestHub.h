@@ -63,8 +63,8 @@ public:
                   Sig_FIRE
       };
 
-                  Root () : _signal_fire (*this) {}
-                  Root (const Root &) : _signal_fire (*this) {} // COV_NF_LINE
+                  Root () : _signal_fire (Sig_FIRE, *this) {}
+                  Root (const Root & other) : Object (other), _signal_fire (Sig_FIRE, *this) {} // COV_NF_LINE
 
       Int         _int;
       Float       _float;
@@ -75,7 +75,7 @@ public:
       Collection <B>
                   _coll_b;
 
-      Signal <Sig_FIRE, int>
+      Signal <int>
                   _signal_fire;
    };
 

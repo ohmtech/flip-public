@@ -15,6 +15,8 @@
 
 #include "flip/detail/def.h"
 
+#include <cstdio>
+
 
 
 #define flip_CHECK_THROW(expr) \

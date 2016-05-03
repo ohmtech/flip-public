@@ -24,6 +24,8 @@
 #include "flip/detail/def.h"
 #include "flip/detail/fnc.h"
 
+#include <climits>
+
 
 
 namespace flip

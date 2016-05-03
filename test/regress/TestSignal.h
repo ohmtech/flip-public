@@ -45,9 +45,6 @@ public:
    :  public Object
    {
    public:
-                  A () : _signal_void (*this), _signal_int (*this), _signal_double_int (*this), _signal_float_double_int (*this), _signal_info (*this), _signal_cr_info (*this), _signal_vector_info (*this), _signal_list_info (*this), _signal_map_double_info (*this) {}
-                  A (const A &) : _signal_void (*this), _signal_int (*this), _signal_double_int (*this), _signal_float_double_int (*this), _signal_info (*this), _signal_cr_info (*this), _signal_vector_info (*this), _signal_list_info (*this), _signal_map_double_info (*this) {}
-
       enum
       {
                   TEST_void,
@@ -61,6 +58,9 @@ public:
                   TEST_map_double_Info,
       };
 
+                  A () : _signal_void (TEST_void, *this), _signal_int (TEST_int, *this), _signal_double_int (TEST_double_int, *this), _signal_float_double_int (TEST_float_double_int, *this), _signal_info (TEST_Info, *this), _signal_cr_info (TEST_cr_Info, *this), _signal_vector_info (TEST_vector_Info, *this), _signal_list_info (TEST_list_Info, *this), _signal_map_double_info (TEST_map_double_Info, *this) {}
+                  A (const A & other) : Object (other), _signal_void (TEST_void, *this), _signal_int (TEST_int, *this), _signal_double_int (TEST_double_int, *this), _signal_float_double_int (TEST_float_double_int, *this), _signal_info (TEST_Info, *this), _signal_cr_info (TEST_cr_Info, *this), _signal_vector_info (TEST_vector_Info, *this), _signal_list_info (TEST_list_Info, *this), _signal_map_double_info (TEST_map_double_Info, *this) {}
+
       class Info
       {
       public:
@@ -68,23 +68,22 @@ public:
          uint32_t _val_2;
       };
 
-      Signal <TEST_void>
-                  _signal_void;
-      Signal <TEST_int, int>
+      Signal <>   _signal_void;
+      Signal <int>
                   _signal_int;
-      Signal <TEST_double_int, double, int>
+      Signal <double, int>
                   _signal_double_int;
-      Signal <TEST_float_double_int, float, double, int>
+      Signal <float, double, int>
                   _signal_float_double_int;
-      Signal <TEST_Info, Info>
+      Signal <Info>
                   _signal_info;
-      Signal <TEST_cr_Info, Info>
+      Signal <Info>
                   _signal_cr_info;
-      Signal <TEST_vector_Info, std::vector <Info>>
+      Signal <std::vector <Info>>
                   _signal_vector_info;
-      Signal <TEST_list_Info, std::list <Info>>
+      Signal <std::list <Info>>
                   _signal_list_info;
-      Signal <TEST_map_double_Info, std::map <double, Info>>
+      Signal <std::map <double, Info>>
                   _signal_map_double_info;
 
       Int         _int;

@@ -79,7 +79,7 @@ Name : Client::ctor
 
 TestServer::Client::Client (uint64_t user_id)
 :  _user_id (reinterpret_cast <int64_t &> (user_id))
-,  _signal_test (*this)
+,  _signal_test (Signal_TEST, *this)
 {
 
 }

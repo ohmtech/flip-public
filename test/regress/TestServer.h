@@ -59,8 +59,7 @@ public:
       Int         _user_id;
       Float       _scroll;
 
-      Signal <Signal_TEST>
-                  _signal_test;
+      Signal <>   _signal_test;
    };
 
    class Root
@@ -72,18 +71,16 @@ public:
                   Signal_FROM_CLIENT,
                   Signal_TO_CLIENT,
       };
-                  Root () : _signal_from_client (*this), _signal_to_client (*this) {}
-                  Root (const Root &) : _signal_from_client (*this), _signal_to_client (*this) {} // COV_NF_LINE
+                  Root () : _signal_from_client (Signal_FROM_CLIENT, *this), _signal_to_client (Signal_TO_CLIENT, *this) {}
+                  Root (const Root & other) : Object (other), _signal_from_client (Signal_FROM_CLIENT, *this), _signal_to_client (Signal_TO_CLIENT, *this) {} // COV_NF_LINE
 
       Collection <Client>
                   _clients;
 
       Float       _tempo;
 
-      Signal <Signal_FROM_CLIENT>
-                  _signal_from_client;
-      Signal <Signal_TO_CLIENT>
-                  _signal_to_client;
+      Signal <>   _signal_from_client;
+      Signal <>   _signal_to_client;
    };
 
                   TestServer () = default;

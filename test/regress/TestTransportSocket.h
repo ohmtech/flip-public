@@ -65,9 +65,9 @@ public:
       {
                   Test_SERVER_TO_CLIENT = 0,
       };
-                  Root () : _server_to_client (*this) {}
+                  Root () : _server_to_client (Test_SERVER_TO_CLIENT, *this) {}
 
-      Signal <Test_SERVER_TO_CLIENT, int>
+      Signal <int>
                   _server_to_client;
 
       Int         _int;

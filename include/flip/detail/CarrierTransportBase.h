@@ -14,6 +14,7 @@
 /*\\\ INCLUDE FILES \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
 
 #include "flip/config.h"
+#include "flip/detail/def.h"
 #include "flip/detail/CarrierBase.h"
 
 #include <functional>
@@ -65,6 +66,9 @@ protected:
    virtual void   do_push (const Transaction & tx) override;
    virtual void   do_signal (const SignalData & data) override;
 
+#if (flip_COMPILER == flip_COMPILER_GNU)
+public:  // gcc has a bug with accessibility from lambdas
+#endif
    // derived class
    virtual void   send (const std::vector <uint8_t> & data) = 0;
    void           recv (const uint8_t * data_ptr, size_t data_size);
