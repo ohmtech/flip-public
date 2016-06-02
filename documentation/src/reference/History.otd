@@ -15,6 +15,21 @@ template <class HistoryStoreImpl>   class History;
 
 \code {flip::History} is a flip compatible undo/redo stack implementation.
 
+This class is typically used in conjunction with an history store such
+as :
+
+\itemize {
+\item {\code {HistoryStoreMemory} defined in \code {"flip/HistoryStoreMemory.h"}
+   which will store a non-persistent (in memory) history
+}
+\item {\code {HistoryStoreFile} defined in \code {"flip/contrib/HistoryStoreFile.h"}
+   which will store a persistent (file based) history
+}
+}
+
+See the book \link [id=history] {Flip History Strategy Guide} for examples
+on how to use \code {History}.
+
 
 
 /*\\\ PARAMETERS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
@@ -44,6 +59,15 @@ template <class... Args>   History (DocumentBase & document, Args &&... args);
 Construct the \code {History} by attaching it to the document on which
 it shall operate. \code {args} are passed to the underlying \code {HistoryStoreImpl}.
 
+Example :
+
+\codeblock [language=c++] ***
+Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+
+// Creates a persistent history saved to "/path/to/file"
+History <HistoryStoreFile> history (document, "/path/to/file");
+***
+
 //----------------------------------------------------------------------------
 
 \method {add_undo_step}
@@ -56,6 +80,43 @@ void  add_undo_step (Transaction tx);
 Add a new transaction on the undo stack.
 The transaction might be empty or have no operations enabled in undo,
 in which case the operation is ignored.
+
+Example :
+
+\codeblock [language=c++] ***
+Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+
+// Creates a temporary history in memory
+History <HistoryStoreMemory> history (document);
+
+Root & root = document.root <Root> ();
+root.tempo = 145.0;
+
+// name the current change
+document.set_label ("Change Tempo");
+
+// commit the change and get the associated transaction
+// the transaction contains the label "Change Tempo"
+auto tx = document.commit ();
+
+// add an undo step
+history.add_undo_step (tx);
+
+// fetch undo label
+std::cout << history.last_undo ()->label ();
+// displays "Change Tempo"
+
+// undo operation
+history.execute_undo ();
+
+// fetch redo label
+std::cout << history.first_redo ()->label ();
+// displays "Change Tempo"
+
+// redo operation
+history.execute_redo ();
+***
+
 
 /*\\\ DIVISION \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
 

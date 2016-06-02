@@ -22,7 +22,7 @@ template <class T>   class EnumClass;
 <h3>Accessing</h3>
 
 <table><tr><td><code><a href="#member-function-name">name</a></code></td><td>Returns the name of the enumeration</td></tr>
-<tr><td><code><a href="#member-function-members">members</a></code></td><td>Returns information on the enumerators of the enumeration</td></tr>
+<tr><td><code><a href="#member-function-enumerators">enumerators</a></code></td><td>Returns information on the enumerators of the enumeration</td></tr>
 </table>
 
 <h2>Member Functions</h2>
@@ -56,7 +56,7 @@ const char *   name () const
 
 <p>Returns the name of the enumeration.</p>
 
-<h3 id="member-function-members"><code>members</code></h3>
+<h3 id="member-function-enumerators"><code>enumerators</code></h3>
 ```c++
 const Enumerators &   enumerators () const
 ```

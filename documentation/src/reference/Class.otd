@@ -10,13 +10,18 @@
 \class {Class}
 \header {flip/Class.h}
 \declaration ***
-class Class;
+template <class T> class Class;
 ***
 
 \code {flip::Class} is a type that represents a declaration of a flip Class.
 A concrete instance of this class is acquired using an instance of the
 \link [id=DataModel] {\code {DataModel}}
 
+
+
+/*\\\ PARAMETERS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\parameter {T} {The type to declare. \code {T} must inherit from \code {flip::Object}}
 
 
 /*\\\ METHODS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
@@ -37,6 +42,25 @@ Names starting with \code {flip} are reserved.
 
 This function returns a reference to the \code {Class} to allow call chaining.
 
+Example :
+
+\codeblock [language=c++] ***
+class Model : public DataModel <Model> {};
+
+class Root : public Object
+{
+public:
+   Int   value;
+};
+
+auto & root_class = Model::declare <Root> ();
+// 'root_class' is of type 'Class <Root>'
+
+root_class
+   .name ("myapp.Root")
+   .member <Int, &Root::value> ("value");
+***
+
 //----------------------------------------------------------------------------
 
 \method {inherit}
@@ -47,8 +71,46 @@ template <class U>   Class &  inherit ();
 ***
 
 Inherits from class \code {U} passed as a template parameter.
+Multiple inheritance is not supported.
 
 This function returns a reference to the \code {Class} to allow call chaining.
+
+Example :
+
+\codeblock [language=c++] ***
+class Model : public DataModel <Model> {};
+
+class A : public Object
+{
+public:
+   Int   value;
+};
+
+class B : public A
+{
+public:
+   Float value2;
+};
+
+// first declare base class
+Model::declare <A> ()
+   .name ("myapp.A")
+   .member <Int, &A::value> ("value");
+
+// then declare inherited classes
+Model::declare <B> ()
+   .name ("myapp.B")
+   .inherit <A> ()
+   .member <Float, &B::value2> ("value2");
+***
+
+Inheriting imports all members of superclass in the class, therefore :
+
+\itemize {
+\item {\code {inherit} must be done first before \code {member} declarations}
+\item {All member names must be different, taking into account inherited names}
+}
+
 
 //----------------------------------------------------------------------------
 
@@ -62,9 +124,31 @@ template <class U, U T::*ptr_to_member>   Class &  member (const char * name_0);
 Declare a member of the class. The name must be in the \code {ascii-7} character
 set, with exception of spaces, control characters as well as \code {del} character.
 
-\warning {flip Member declaration must follow the same order as in the C++ class declaration.}
+\warning {
+   flip Member declaration must follow the same order as in the C++ class declaration.
+}
+
+All member names must be different.
 
 This function returns a reference to the \code {Class} to allow call chaining.
+
+Example :
+
+\codeblock [language=c++] ***
+class Model : public DataModel <Model> {};
+
+class Root : public Object
+{
+public:
+   Int   value;
+   Float value2;
+};
+
+Model::declare <Root> ()
+   .name ("myapp.Root")
+   .member <Int, &Root::value> ("value")
+   .member <Float, &Root::value2> ("value2");
+***
 
 
 
@@ -92,5 +176,28 @@ const Members &   members () const
 
 Returns information on the members of the class. This allows for automatic
 introspection of an instance of the class.
+
+Example :
+\codeblock [language=c++] ***
+void  introspect (Root & root)
+{
+   for (const auto & member : root.get_class ().members ())
+   {
+      auto & obj = member._representative.from (root);
+      const char * name_0 = member._name_0;
+
+      // on the first loop iteration,
+      // 'obj' represents a reference to 'root.value'
+      // 'name_0' is "value"
+
+      // on the second loop iteration,
+      // 'obj' represents a reference to 'root.value2'
+      // 'name_0' is "value2"
+   }
+}
+***
+
+
+
 
 

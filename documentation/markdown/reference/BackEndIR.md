@@ -135,6 +135,8 @@ bool  read (DataProviderBase & provider);
 
 <p>Returns <code>true</code> <em>iff</em> the operation was successful.</p>
 
+<p>See <a href="../reference/BackEndMl.md"><code>BackEndMl</code></a> or <a href="../reference/BackEndBinary.md"><code>BackEndBinary</code></a> for an example of use of this method.</p>
+
 <h3 id="member-function-write"><code>write</code></h3>
 ```c++
 template <class BackEnd>
@@ -151,12 +153,16 @@ void  write (DataConsumerBase & consumer);
 backend.write <BackEndBinary> (consumer);
 ```
 
+<p>See <a href="../reference/BackEndMl.md"><code>BackEndMl</code></a> or <a href="../reference/BackEndBinary.md"><code>BackEndBinary</code></a> for a more detailed example of use of this method.</p>
+
 <h3 id="member-function-read"><code>read</code></h3>
 ```c++
 void  read (DocumentBase & document);
 ```
 
 <p>Reads from this object and fill the document. It will modify the document exactly as if executing a transaction. Changed made to the document should then be commited.</p>
+
+<p>See <a href="../reference/BackEndMl.md"><code>BackEndMl</code></a> or <a href="../reference/BackEndBinary.md"><code>BackEndBinary</code></a> for an example of use of this method.</p>
 
 <h3 id="member-function-write"><code>write</code></h3>
 ```c++

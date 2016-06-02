@@ -1,0 +1,130 @@
+/*****************************************************************************
+
+        DataConsumerMemory.otd
+        Copyright (c) 2015 Ohm Force
+
+*****************************************************************************/
+
+
+
+\class {DataConsumerMemory}
+\header {flip/DataConsumerMemory.h}
+\declaration ***
+class DataConsumerMemory;
+***
+
+Generally a data consumer represents an abstraction of output
+serialized data that is platform (endianess and word size) independent.
+
+\code {flip::DataConsumerMemory} is a specialization of data consumer which
+output is memory.
+
+Internally the data is presented in big-endian, and has byte alignment packing.
+
+To output to a file instead of memory,
+see \link [id=DataConsumerFile] {\code {flip::DataConsumerFile}}
+
+
+
+/*\\\ METHODS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\constructor {}
+\brief {Constructs the \code {DataConsumerMemory}}
+
+\codeblock [language=c++] ***
+DataConsumerMemory (std::vector <uint8_t> & data);
+***
+
+Constructor. The output of serialization will be done to \code {data}.
+
+//----------------------------------------------------------------------------
+
+\destructor {}
+\brief {Destructs the \code {DataConsumerMemory}}
+
+\codeblock [language=c++] ***
+~DataConsumerMemory ();
+***
+
+Destructor.
+
+//----------------------------------------------------------------------------
+
+\method {operator <<}
+\brief {Inserts value in the consumer}
+
+\codeblock [language=c++] ***
+DataConsumerMemory & operator << (bool val);                (1)
+DataConsumerMemory & operator << (char val);                (1)
+DataConsumerMemory & operator << (uint8_t val);             (1)
+DataConsumerMemory & operator << (int32_t val);             (1)
+DataConsumerMemory & operator << (uint32_t val);            (1)
+DataConsumerMemory & operator << (int64_t val);             (1)
+DataConsumerMemory & operator << (uint64_t val);            (1)
+DataConsumerMemory & operator << (double val);              (1)
+DataConsumerMemory & operator << (const char * val_0);      (2)
+DataConsumerMemory & operator << (const std::string & val); (3)
+***
+
+Inserts value into the consumer.
+
+\enumerate {
+\item {Inserts value into the consumer and perform automatic byte swapping and packing.}
+\item {Inserts the null terminated string into the consumer.}
+\item {Inserts the string into the consumer.}
+}
+
+\important {
+   String insertions do not contain the dynamic string size.
+}
+
+Example :
+
+\codeblock [language=c++] ***
+std::vector <uint8_t> data;
+DataConsumerMemory consumer (data);
+
+std::string str ("Flip");
+
+consumer << true;
+consumer << int32_t (2);
+consumer << 2.5;
+
+consumer << uint64_t (str.size ());
+consumer << str;
+
+DataProviderMemory provider (data);
+bool val_b;
+int32_t val_i;
+double val_d;
+std::string val_s;
+
+consumer >> val_b; // true
+consumer >> val_i; // 2
+consumer >> val_d; // 2.5
+
+uint64_t str_size;
+consumer >> str_size;
+val_s = consumer.read_string (str_size);   // "Flip"
+
+char val_c;
+consumer >> val_c; // throws std::runtime_error
+***
+
+
+//----------------------------------------------------------------------------
+
+\method {push}
+\brief {Inserts raw data in the consumer}
+
+\codeblock [language=c++] ***
+void  push (const uint8_t * data_ptr, size_t data_size)
+***
+
+Inserts raw data into the consumer. No byte swap is performed and the
+packing of data is not changed.
+
+\important {
+   The insertion does not include the data size.
+}
+

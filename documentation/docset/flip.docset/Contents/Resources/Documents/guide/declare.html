@@ -40,6 +40,7 @@ td > p {margin-left: 6px; height: 12px;}
 .warning {margin-top:21px; margin-bottom:22px; padding-left: 8px; padding-right: 8px; background-color: #f8e3e1; border-color: #c5443e; border-style: solid; border-width: 1px; display: block;}
 .warning strong {margin-right: 8px;}
 .warning p {margin-top: 7px;}
+.caption p {color: black; font-size: 10px; margin-bottom: 10px;}
 img {margin-top:10px; margin-bottom:10px;}
 ul {margin-left: 17px; margin-bottom: 10px;}
 ol {margin-left: 17px; margin-bottom: 10px;}
@@ -320,31 +321,34 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 <h3><a name="types-value">Value Types</a></h3>
 
 <ul>
-<li><code>flip::Bool</code> holds a boolean value</li>
-<li><code>flip::Int</code> holds a 64-bit integer value</li>
-<li><code>flip::Float</code> holds a 64-bit floating point value</li>
-<li><code>flip::Enum</code> holds an <code>enum</code> value</li>
-<li><code>flip::Blob</code> holds a dynamic-sized opaque blob of data</li>
+<li><a href="../reference/Bool.html"><code>flip::Bool</code></a> holds a boolean value</li>
+<li><a href="../reference/Int.html"><code>flip::Int</code></a> holds a 64-bit integer value</li>
+<li><a href="../reference/Float.html"><code>flip::Float</code></a> holds a 64-bit floating point value</li>
+<li><a href="../reference/Enum.html"><code>flip::Enum</code></a> holds an <code>enum</code> value</li>
+<li><a href="../reference/Blob.html"><code>flip::Blob</code></a> holds a dynamic-sized opaque blob of data</li>
+<li><a href="../reference/String.html"><code>flip::String</code></a> holds a string similar to <code>std::string</code></li>
 </ul>
 
 <h3><a name="types-container">Container Types</a></h3>
 
 <ul>
-<li><code>flip::Array</code> is a strictly linear ordered sequence container similar to <code>std::list</code> or <code>std::vector</code></li>
-<li><code>flip::Collection</code> is an unordered container similar to <code>std::set</code></li>
-<li><code>flip::Variant</code> is an one element container similar to <code>boost::variant</code></li>
+<li><a href="../reference/Array.html"><code>flip::Array</code></a> is a strictly linear ordered sequence container similar to <code>std::list</code> or <code>std::vector</code></li>
+<li><a href="../reference/Collection.html"><code>flip::Collection</code></a> is an unordered container similar to <code>std::set</code></li>
+<li><a href="../reference/Variant.html"><code>flip::Variant</code></a> is an one element container similar to <code>boost::variant</code></li>
+<li><a href="../reference/Optional.html"><code>flip::Optional</code></a> is a zero or one element container similar to <code>boost::optional</code></li>
+<li><a href="../reference/Vector.html"><code>flip::Vector</code></a> is a strictly linear ordered sequence container, oriented for performance to the detriment of concurrency, similar to <code>std::list</code> or <code>std::vector</code></li>
 </ul>
 
 <h3><a name="types-reference">Reference Type</a></h3>
 
 <ul>
-<li><code>flip::ObjectRef</code> holds a reference to another object in the model tree. It is similar to a pointer</li>
+<li><a href="../reference/ObjectRef.html"><code>flip::ObjectRef</code></a> holds a reference to another object in the model tree. It is similar to a pointer</li>
 </ul>
 
 <h3><a name="types-signal">Signaling Type</a></h3>
 
 <ul>
-<li><code>flip::Cue</code> allows to signal an object with arbitrary non-persistent data</li>
+<li><a href="../reference/Message.html"><code>flip::Message</code></a> allows to signal an object with arbitrary non-persistent data</li>
 </ul>
 
 <p>The next chapter, <a href="../guide/organize.html">Organizing your Code</a> will guide you through the task of organizing the model code.</p>

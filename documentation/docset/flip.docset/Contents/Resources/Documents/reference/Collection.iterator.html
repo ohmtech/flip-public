@@ -40,6 +40,7 @@ td > p {margin-left: 6px; height: 12px;}
 .warning {margin-top:21px; margin-bottom:22px; padding-left: 8px; padding-right: 8px; background-color: #f8e3e1; border-color: #c5443e; border-style: solid; border-width: 1px; display: block;}
 .warning strong {margin-right: 8px;}
 .warning p {margin-top: 7px;}
+.caption p {color: black; font-size: 10px; margin-bottom: 10px;}
 img {margin-top:10px; margin-bottom:10px;}
 ul {margin-left: 17px; margin-bottom: 10px;}
 ol {margin-left: 17px; margin-bottom: 10px;}
@@ -89,6 +90,8 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 
 <p><code>Collection::iterator</code> satisfies the <code>BidirectionalIterator</code> C++ concept.</p>
 
+<div class="warning"><p><strong>WARNING:</strong> Unlike the C++ standard library, when an element is erased from a container, and if iterating over the container before <code>commit</code>, the element is still present until the modification is commited, but the iterator is marked as removed.</p></div>
+
 <h2>Template Parameters</h2>
 
 <table><a name="//apple_ref/cpp/Parameter/T" class="dashAnchor"></a>
@@ -131,6 +134,33 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 
 <div class="note"><p><strong>Note:</strong> When an object is moved between containers, then the destination iterator is considered as added while the object is considered as resident.</p></div>
 
+<p>Example :</p>
+
+<div class="codeblock"><table>
+<tr><td><pre>void  Observer::document_changed (Collection &lt;Note&gt; &amp; notes)</pre></td></tr>
+<tr><td><pre>{</pre></td></tr>
+<tr><td><pre>   auto it = notes.begin ();</pre></td></tr>
+<tr><td><pre>   auto it_end = notes.end ();</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>   for (; it != it_end ; ++it)</pre></td></tr>
+<tr><td><pre>   {</pre></td></tr>
+<tr><td><pre>      Note &amp; note = *it;</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>      if (it.added () &amp;&amp; note.resident ())</pre></td></tr>
+<tr><td><pre>      {</pre></td></tr>
+<tr><td><pre>         // the note was moved from one container to another</pre></td></tr>
+<tr><td><pre>         // this is the destination container</pre></td></tr>
+<tr><td><pre>      }</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>      if (it.removed () &amp;&amp; note.resident ())</pre></td></tr>
+<tr><td><pre>      {</pre></td></tr>
+<tr><td><pre>         // the note was moved from one container to another</pre></td></tr>
+<tr><td><pre>         // this is the source container</pre></td></tr>
+<tr><td><pre>      }</pre></td></tr>
+<tr><td><pre>   }</pre></td></tr>
+<tr><td><pre>}</pre></td></tr>
+</table></div>
+
 <a name="//apple_ref/cpp/Method/removed" class="dashAnchor"></a>
 <hr /><h3 id="member-function-removed"><code>removed</code></h3>
 <div class="codeblock"><table>
@@ -140,6 +170,31 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 <p>Returns <code>true</code> <em>iff</em> the iterator was removed to the container.</p>
 
 <div class="note"><p><strong>Note:</strong> When an object is moved between containers, then the source iterator is considered as removed while the object is considered as resident.</p></div>
+
+<div class="codeblock"><table>
+<tr><td><pre>void  Observer::document_changed (Collection &lt;Note&gt; &amp; notes)</pre></td></tr>
+<tr><td><pre>{</pre></td></tr>
+<tr><td><pre>   auto it = notes.begin ();</pre></td></tr>
+<tr><td><pre>   auto it_end = notes.end ();</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>   for (; it != it_end ; ++it)</pre></td></tr>
+<tr><td><pre>   {</pre></td></tr>
+<tr><td><pre>      Note &amp; note = *it;</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>      if (it.added () &amp;&amp; note.resident ())</pre></td></tr>
+<tr><td><pre>      {</pre></td></tr>
+<tr><td><pre>         // the note was moved from one container to another</pre></td></tr>
+<tr><td><pre>         // this is the destination container</pre></td></tr>
+<tr><td><pre>      }</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>      if (it.removed () &amp;&amp; note.resident ())</pre></td></tr>
+<tr><td><pre>      {</pre></td></tr>
+<tr><td><pre>         // the note was moved from one container to another</pre></td></tr>
+<tr><td><pre>         // this is the source container</pre></td></tr>
+<tr><td><pre>      }</pre></td></tr>
+<tr><td><pre>   }</pre></td></tr>
+<tr><td><pre>}</pre></td></tr>
+</table></div>
 
 <a name="//apple_ref/cpp/Method/resident" class="dashAnchor"></a>
 <hr /><h3 id="member-function-resident"><code>resident</code></h3>

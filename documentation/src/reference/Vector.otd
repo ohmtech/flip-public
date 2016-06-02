@@ -17,11 +17,21 @@ template <class T> class Vector;
 \code {flip::Vector} is an container of non flip Objects that are continguous in memory.
 
 It is used to store a massive number of objects in a performant way, but is not inherently
-concurrent like \code {Array} or \code {Collection}.
+concurrent like \code {Array} or \code {Collection}, because the whole content
+of the vector is resent every time there is a change to it, instead of just
+changing one element.
+
+This means that if two users are changing a property of an element in the
+vector, and if this operation is done concurrently, only one of the user
+will see his change applied, and the other user will have it rollbacked.
+
+The more there is latency on the network, the more this concurrency problem
+shows. On the local aera network however, this problem would most likely
+rarely shows.
 
 The \code {Vector} itself provides support for modification introspection. When modifying
 the content of the \code {Vector}, the previous representation of the vector is still
-present.
+present. However individual elements are not tracked.
 
 
 

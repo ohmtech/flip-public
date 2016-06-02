@@ -243,31 +243,34 @@ void  declare ()
 <h3 id="types-value">Value Types</h3>
 
 <ul>
-<li><code>flip::Bool</code> holds a boolean value</li>
-<li><code>flip::Int</code> holds a 64-bit integer value</li>
-<li><code>flip::Float</code> holds a 64-bit floating point value</li>
-<li><code>flip::Enum</code> holds an <code>enum</code> value</li>
-<li><code>flip::Blob</code> holds a dynamic-sized opaque blob of data</li>
+<li><a href="../reference/Bool.md"><code>flip::Bool</code></a> holds a boolean value</li>
+<li><a href="../reference/Int.md"><code>flip::Int</code></a> holds a 64-bit integer value</li>
+<li><a href="../reference/Float.md"><code>flip::Float</code></a> holds a 64-bit floating point value</li>
+<li><a href="../reference/Enum.md"><code>flip::Enum</code></a> holds an <code>enum</code> value</li>
+<li><a href="../reference/Blob.md"><code>flip::Blob</code></a> holds a dynamic-sized opaque blob of data</li>
+<li><a href="../reference/String.md"><code>flip::String</code></a> holds a string similar to <code>std::string</code></li>
 </ul>
 
 <h3 id="types-container">Container Types</h3>
 
 <ul>
-<li><code>flip::Array</code> is a strictly linear ordered sequence container similar to <code>std::list</code> or <code>std::vector</code></li>
-<li><code>flip::Collection</code> is an unordered container similar to <code>std::set</code></li>
-<li><code>flip::Variant</code> is an one element container similar to <code>boost::variant</code></li>
+<li><a href="../reference/Array.md"><code>flip::Array</code></a> is a strictly linear ordered sequence container similar to <code>std::list</code> or <code>std::vector</code></li>
+<li><a href="../reference/Collection.md"><code>flip::Collection</code></a> is an unordered container similar to <code>std::set</code></li>
+<li><a href="../reference/Variant.md"><code>flip::Variant</code></a> is an one element container similar to <code>boost::variant</code></li>
+<li><a href="../reference/Optional.md"><code>flip::Optional</code></a> is a zero or one element container similar to <code>boost::optional</code></li>
+<li><a href="../reference/Vector.md"><code>flip::Vector</code></a> is a strictly linear ordered sequence container, oriented for performance to the detriment of concurrency, similar to <code>std::list</code> or <code>std::vector</code></li>
 </ul>
 
 <h3 id="types-reference">Reference Type</h3>
 
 <ul>
-<li><code>flip::ObjectRef</code> holds a reference to another object in the model tree. It is similar to a pointer</li>
+<li><a href="../reference/ObjectRef.md"><code>flip::ObjectRef</code></a> holds a reference to another object in the model tree. It is similar to a pointer</li>
 </ul>
 
 <h3 id="types-signal">Signaling Type</h3>
 
 <ul>
-<li><code>flip::Cue</code> allows to signal an object with arbitrary non-persistent data</li>
+<li><a href="../reference/Message.md"><code>flip::Message</code></a> allows to signal an object with arbitrary non-persistent data</li>
 </ul>
 
 <p>The next chapter, <a href="../guide/organize.md">Organizing your Code</a> will guide you through the task of organizing the model code.</p>

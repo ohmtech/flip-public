@@ -1,4 +1,4 @@
-<p><sup><a href="control.md">previous</a> | <a href="remote.md">next</a></sup></p>
+<p><sup><a href="control.md">previous</a> | <a href="signal.md">next</a></sup></p>
 
 <h1>Observing the Model</h1>
 
@@ -117,7 +117,43 @@ void  Observer::document_changed (Song & song)
 
 <blockquote><h6>Important</h6> When an object is <code>changed</code> this means that subtree it represents have changed, maybe somewhere deep in the tree.</blockquote>
 
-<p>The next chapter, <a href="../guide/remote.md">Working with a Remote Server</a> will guide you through setting up a collaboration network.</p>
+<h2 id="splice">Listening to Container Elements Move</h2>
 
-<p><sup><a href="control.md">previous</a> | <a href="remote.md">next</a></sup></p>
+<p>Containers like <code>Array</code> or <code>Collection</code> have a <code>splice</code> operation which allows to move elements from one container or in the same container for <code>Array</code>.</p>
+
+<p>If <code>splice</code> is used, then the document needs to be observed in a slightly different way, to be able to detect moves in the hierarchy.</p>
+
+<p>An element moved is neither <code>added</code> or <code>removed</code> so it is resident. However the iterator that wrap the object can be also <code>added</code> or <code>removed</code>. When no splice operation is called, the iterator state is always the same as the element it wraps.</p>
+
+<p>Then when an element is moving, the difference between the iterator state and the element state allows to observe moves, as shown in the example below.</p>
+
+```c++
+void  Observer::document_changed (Song & song)
+{
+   if (song.tracks.changed ())
+   {
+      auto it = song.tracks.begin ();
+      auto it_end = song.tracks.end ();
+
+      for (; it != it_end ; ++it)
+      {
+         auto & track = *it;
+
+         if (it.removed () && track.resident ())
+         {
+            // The track is moving from this position...
+         }
+
+         if (it.added () && track.resident ())
+         {
+            // ... to this position
+         }
+      }
+   }
+}
+```
+
+<p>The next chapter, <a href="../guide/signal.md">Signalling the Model</a> will show how to send non-persistent messages to objects of the model.</p>
+
+<p><sup><a href="control.md">previous</a> | <a href="signal.md">next</a></sup></p>
 

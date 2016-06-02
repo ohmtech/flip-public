@@ -40,6 +40,7 @@ td > p {margin-left: 6px; height: 12px;}
 .warning {margin-top:21px; margin-bottom:22px; padding-left: 8px; padding-right: 8px; background-color: #f8e3e1; border-color: #c5443e; border-style: solid; border-width: 1px; display: block;}
 .warning strong {margin-right: 8px;}
 .warning p {margin-top: 7px;}
+.caption p {color: black; font-size: 10px; margin-bottom: 10px;}
 img {margin-top:10px; margin-bottom:10px;}
 ul {margin-left: 17px; margin-bottom: 10px;}
 ol {margin-left: 17px; margin-bottom: 10px;}
@@ -84,6 +85,8 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 <p><code>flip::Entity</code> is a generic associative container of any types where the key is the key type itself and the value an instance of that type.</p>
 
 <p><code>Entity</code>s are used to store custom data in flip <code>Object</code>s and are typically used in observers.</p>
+
+<p>They are a map where the key is a type and the value a type erasure.</p>
 
 <h2>Member Functions Synopsys</h2>
 
@@ -130,6 +133,21 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 
 <div class="warning"><p><strong>WARNING:</strong> The element must exist in the entity.</p></div>
 
+<div class="codeblock"><table>
+<tr><td><pre>class A</pre></td></tr>
+<tr><td><pre>{</pre></td></tr>
+<tr><td><pre>public:</pre></td></tr>
+<tr><td><pre>   A (double value);</pre></td></tr>
+<tr><td><pre>};</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>Entity entity;</pre></td></tr>
+<tr><td><pre>entity.emplace &lt;A&gt; (2.5);</pre></td></tr>
+<tr><td><pre>// &apos;entity&apos; owns a &apos;A&apos; object</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>entity.erase &lt;A&gt; ();</pre></td></tr>
+<tr><td><pre>// &apos;entity&apos; does not have anymore the &apos;A&apos; object</pre></td></tr>
+</table></div>
+
 <a name="//apple_ref/cpp/Method/use" class="dashAnchor"></a>
 <hr /><h3 id="member-function-use"><code>use</code></h3>
 <div class="codeblock"><table>
@@ -138,7 +156,21 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 
 <p>Returns a reference to the element of type <code>T</code>.</p>
 
-<div class="warning"><p><strong>WARNING:</strong> The element must exist in the entity.</p></div>
+<div class="warning"><p><strong>WARNING:</strong> The element must exist in the entity. If not the method will throw an exception</p></div>
+
+<div class="codeblock"><table>
+<tr><td><pre>class A</pre></td></tr>
+<tr><td><pre>{</pre></td></tr>
+<tr><td><pre>public:</pre></td></tr>
+<tr><td><pre>   A (double value);</pre></td></tr>
+<tr><td><pre>};</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>Entity entity;</pre></td></tr>
+<tr><td><pre>entity.emplace &lt;A&gt; (2.5);</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>auto &amp; a = entity.use &lt;A&gt; ();</pre></td></tr>
+<tr><td><pre>// &apos;a&apos; is of type &apos;A &amp;&apos; and its value is &apos;2.5&apos;</pre></td></tr>
+</table></div>
 
 <a name="//apple_ref/cpp/Method/get" class="dashAnchor"></a>
 <hr /><h3 id="member-function-get"><code>get</code></h3>
@@ -147,6 +179,26 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 </table></div>
 
 <p>Returns a pointer to the element of type <code>T</code> if it exists, <code>nullptr</code> otherwise.</p>
+
+<div class="codeblock"><table>
+<tr><td><pre>class A</pre></td></tr>
+<tr><td><pre>{</pre></td></tr>
+<tr><td><pre>public:</pre></td></tr>
+<tr><td><pre>   A (double value);</pre></td></tr>
+<tr><td><pre>};</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>Entity entity;</pre></td></tr>
+<tr><td><pre>entity.emplace &lt;A&gt; (2.5);</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>auto ptr = entity.get &lt;A&gt; ();</pre></td></tr>
+<tr><td><pre>// &apos;ptr&apos; points to entity object &apos;A&apos;</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>entity.erase &lt;A&gt; ();</pre></td></tr>
+<tr><td><pre>// &apos;entity&apos; does not have anymore the &apos;A&apos; object</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>auto ptr2 = entity.get &lt;A&gt; ();</pre></td></tr>
+<tr><td><pre>// &apos;ptr2&apos; is &apos;nullptr&apos;</pre></td></tr>
+</table></div>
 
 <div class="nav" align="right">
 <a href="DocumentValidator.html">previous</a><span>&nbsp;</span><a href="Enum.html">next</a></div>

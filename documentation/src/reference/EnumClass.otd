@@ -71,7 +71,7 @@ Returns the name of the enumeration.
 
 //----------------------------------------------------------------------------
 
-\method {members}
+\method {enumerators}
 \brief {Returns information on the enumerators of the enumeration}
 
 \codeblock [language=c++] ***

@@ -1,4 +1,4 @@
-<p><sup><a href="DataModel.md">previous</a> | <a href="DocumentObserver.md">next</a></sup></p>
+<p><sup><a href="DataProviderMemory.md">previous</a> | <a href="DocumentObserver.md">next</a></sup></p>
 
 <h1>Document Class Reference</h1>
 
@@ -63,7 +63,7 @@ Document (const DataModelBase & data_model, DocumentValidatorBase & validator, u
 Document (const DataModelBase & data_model, uint64_t user_id, uint32_t manufacturer_id, uint32_t component_id);
 ```
 
-<p>Constructs the document from a data model, an optional observer, and optional validator, a unique user id, a manufacturer id as as a component id.</p>
+<p>Constructs the document from a data model, an optional observer, and optional validator, a unique user id, a manufacturer id and a component id.</p>
 
 <p>The data model represents the blueprint or template the document is going to rely on. The data model is previously defined and used for the document.</p>
 
@@ -74,6 +74,8 @@ Document (const DataModelBase & data_model, uint64_t user_id, uint32_t manufactu
 <p>The component id shall represents the component the document represents in a four char code format. Typically this could be <code>gui</code>.</p>
 
 <blockquote><h6>W A R N I N G</h6> the tuple make of user identifier, manufacturer id and component id    must be guanranteed unique for every documents connected together</blockquote>
+
+<p>See <a href="../reference/Ref.md"><code>Ref</code></a> for more details about user identifiers.</p>
 
 <h3 id="member-function-destructor">Destructor</h3>
 ```c++
@@ -89,7 +91,22 @@ void  set_label (std::string label);
 
 <p>Sets the label (ie. name) of the current modifications of the document. This metadata will be added to the transaction at <code>commit</code> stage.</p>
 
+<p>This is typically use to display the undo/redo name in the Edit menu of the menubar.</p>
+
 <p>If called multiple times before <code>commit</code>, only the last state of the metadata is taken into account at <code>commit</code> stage.</p>
+
+<p>Example :</p>
+
+```c++
+Root & root = document.root <Root> ();
+root.notes.emplace <Note> (2.0, 4.0);
+
+document.set_label ("Add note");
+
+Transaction tx = document.commit ();
+// the transaction contains the new note modification in 'root.notes'
+// as well as the metadata label "Add note"
+```
 
 <h3 id="member-function-set_metadata"><code>set_metadata</code></h3>
 ```c++
@@ -99,6 +116,10 @@ void  set_metadata (std::string key, std::string value);
 <p>Sets the metadata <code>value</code> for <code>key</code> of the current modifications of the document. This metadata will be added to the transaction at <code>commit</code> stage.</p>
 
 <p>If called multiple times before <code>commit</code>, only the last state of the metadata is taken into account at <code>commit</code> stage.</p>
+
+<p>This is a more general version of <code>set_label</code>. Actually, <code>set_label</code> calls this methods with the <code>key</code> <code>"label"</code>.</p>
+
+<p>This can be used to present even more textual informations for undo/redo operations, for example detailing the nature of the change.</p>
 
 <h3 id="member-function-commit"><code>commit</code></h3>
 ```c++
@@ -122,6 +143,8 @@ void push ();
 ```
 
 <p>Pushes the transactions in the push stack to the upstream and empty the push stack. If no upstream is present then this function will just empty the push stack.</p>
+
+<blockquote><h6>W A R N I N G</h6> Even if not connected to an upstream, it is important to call <code>push</code>    regularly to empty the push stack.</blockquote>
 
 <h3 id="member-function-pull"><code>pull</code></h3>
 ```c++
@@ -213,12 +236,16 @@ BackEndIR   write ();
 
 <p>The resulting object can be used with concrete backends format such as <code>BackEndBinary</code> or <code>BackEndMl</code> to store them on a media.</p>
 
+<p>See <a href="../reference/BackEndMl.md"><code>BackEndMl</code></a> or <a href="../reference/BackEndBinary.md"><code>BackEndBinary</code></a> for an example of use of this method.</p>
+
 <h3 id="member-function-read"><code>read</code></h3>
 ```c++
 void  read (BackEndIR & backend);
 ```
 
 <p>Read from an intermediate representation format backend. Internally this will create a transaction that represents the difference between the new backend and the current state of the document. As such, the document modification are not commited at the end of this operation.</p>
+
+<p>See <a href="../reference/BackEndMl.md"><code>BackEndMl</code></a> or <a href="../reference/BackEndBinary.md"><code>BackEndBinary</code></a> for an example of use of this method.</p>
 
 <h3 id="member-function-root"><code>root</code></h3>
 ```c++
@@ -234,6 +261,8 @@ template <class T>   T & object (const Ref & ref);
 
 <p>Returns an object given its unique flip reference number. The function will throw if the reference number does not exist in the document or if the resulting object cannot be casted to <code>T</code>.</p>
 
+<p>See <a href="../reference/Ref.md"><code>Ref</code></a> for more details.</p>
+
 <h3 id="member-function-object_ptr"><code>object_ptr</code></h3>
 ```c++
 template <class T>   T * object_ptr (const Ref & ref);
@@ -241,5 +270,7 @@ template <class T>   T * object_ptr (const Ref & ref);
 
 <p>Returns an object given its unique flip reference number. The function will return <code>nullptr</code> if the reference number does not exist in the document or if the resulting object cannot be casted to <code>T</code>.</p>
 
-<p><sup><a href="DataModel.md">previous</a> | <a href="DocumentObserver.md">next</a></sup></p>
+<p>See <a href="../reference/Ref.md"><code>Ref</code></a> for more details.</p>
+
+<p><sup><a href="DataProviderMemory.md">previous</a> | <a href="DocumentObserver.md">next</a></sup></p>
 

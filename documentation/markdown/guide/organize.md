@@ -41,6 +41,8 @@ your_company/
 
 <p>Therefore you should maintain a <code>Converter.txt</code> text file, typically in your conv where you will sum up all the changes needed for the next conversion, and maybe some directions on how to convert the document.</p>
 
+<p>This process is covered in more details in the chapter <a href="../guide/conversion.md">Model Versioning</a>.</p>
+
 <h2 id="class">Classes Naming Conventions</h2>
 
 <p>You should name your classes like <code>your_company.your_product.ClassName</code> where ClassName would be the name of your class.</p>

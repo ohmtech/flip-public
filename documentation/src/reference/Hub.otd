@@ -1,0 +1,97 @@
+/*****************************************************************************
+
+        Hub.otd
+        Copyright (c) 2015 Ohm Force
+
+*****************************************************************************/
+
+
+
+\class {Hub}
+\header {flip/Hub.h}
+\declaration ***
+class Hub;
+***
+
+\code {Hub} allows to use different \code {Document}s on the same local machine,
+when for example documents are used in different threads or processes.
+
+It allows them to communicate between them automatically, as well as allows
+to communicate with a remote server.
+
+
+/*\\\ METHODS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\constructor {}
+\brief {Constructs the \code {Hub}}
+
+\codeblock [language=c++] ***
+template <class... Ports>
+Hub (const DataModelBase & data_model, uint64_t user_id, Ports &... ports);
+***
+
+Constructs a \code {Hub}.
+
+\warning {
+The provided \code {data_model} and \code {user_id} must be the same
+as for all \code {Document}s connected to the \code {Hub}.
+}
+
+The number of connected documents is not dynamic and is set statically
+as many \code {ports} when constructing the hub.
+
+The following example shows a set up where one document is in the
+same thread and process as the hub, and the other document is living
+in a different process or thread.
+
+\codeblock [language=c++] ***
+// port for the document in the same thread/process
+PortDirect port;
+
+// port for the other document in another thread/process
+PortSocketTcp port2 (9090);
+
+const auto user_id = 123456789ULL;
+
+Hub hub (Model::use (), user_id, port, port2);
+
+// make the local document
+Document document (Model::use (), user_id, 'appl', 'gui ');
+CarrierDirect carrier (document, port);
+
+for (;;)
+{
+   // port2 needs to be processed regurarly for communication
+   port2.process ();
+}
+
+
+[... in the other process ...]
+
+// make remote document, notice that the document
+// as a different component 'gui2'
+Document document (Model::use (), user_id, 'appl', 'gui2');
+CarrierSocketTcp carrier (document, 9090);
+
+for (;;)
+{
+   // carrier needs to be processed regurarly for communication
+   carrier.process ();
+}
+***
+
+
+//----------------------------------------------------------------------------
+
+\destructor {}
+\brief {Destructs the \code {Hub}}
+
+\codeblock [language=c++] ***
+~Hub ();
+***
+
+Destructor.
+
+
+
+

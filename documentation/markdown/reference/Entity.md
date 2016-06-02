@@ -13,6 +13,8 @@ class Entity;
 
 <p><code>Entity</code>s are used to store custom data in flip <code>Object</code>s and are typically used in observers.</p>
 
+<p>They are a map where the key is a type and the value a type erasure.</p>
+
 <h2>Member Functions Synopsys</h2>
 
 <table><tr><td><code><a href="#member-function-emplace">emplace</a></code></td><td>Constructs in-place a new element</td></tr>
@@ -56,6 +58,21 @@ template <class T>   void  erase ();
 
 <blockquote><h6>W A R N I N G</h6> The element must exist in the entity.</blockquote>
 
+```c++
+class A
+{
+public:
+   A (double value);
+};
+
+Entity entity;
+entity.emplace <A> (2.5);
+// 'entity' owns a 'A' object
+
+entity.erase <A> ();
+// 'entity' does not have anymore the 'A' object
+```
+
 <h3 id="member-function-use"><code>use</code></h3>
 ```c++
 template <class T>   T &   use ();
@@ -63,7 +80,21 @@ template <class T>   T &   use ();
 
 <p>Returns a reference to the element of type <code>T</code>.</p>
 
-<blockquote><h6>W A R N I N G</h6> The element must exist in the entity.</blockquote>
+<blockquote><h6>W A R N I N G</h6> The element must exist in the entity. If not the method will throw an exception</blockquote>
+
+```c++
+class A
+{
+public:
+   A (double value);
+};
+
+Entity entity;
+entity.emplace <A> (2.5);
+
+auto & a = entity.use <A> ();
+// 'a' is of type 'A &' and its value is '2.5'
+```
 
 <h3 id="member-function-get"><code>get</code></h3>
 ```c++
@@ -71,6 +102,26 @@ template <class T>   T *   get ();
 ```
 
 <p>Returns a pointer to the element of type <code>T</code> if it exists, <code>nullptr</code> otherwise.</p>
+
+```c++
+class A
+{
+public:
+   A (double value);
+};
+
+Entity entity;
+entity.emplace <A> (2.5);
+
+auto ptr = entity.get <A> ();
+// 'ptr' points to entity object 'A'
+
+entity.erase <A> ();
+// 'entity' does not have anymore the 'A' object
+
+auto ptr2 = entity.get <A> ();
+// 'ptr2' is 'nullptr'
+```
 
 <p><sup><a href="DocumentValidator.md">previous</a> | <a href="Enum.md">next</a></sup></p>
 

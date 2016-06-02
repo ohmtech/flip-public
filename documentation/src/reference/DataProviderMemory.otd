@@ -1,0 +1,176 @@
+/*****************************************************************************
+
+        DataProviderMemory.otd
+        Copyright (c) 2015 Ohm Force
+
+*****************************************************************************/
+
+
+
+\class {DataProviderMemory}
+\header {flip/DataProviderMemory.h}
+\declaration ***
+class DataProviderMemory;
+***
+
+Generally a data provider represents an abstraction of input
+serialized data that is platform (endianess and word size) independent.
+
+\code {flip::DataProviderMemory} is a specialization of data provider which
+input is memory.
+
+Internally the data is presented in big-endian, and has byte alignment packing.
+
+To input from a file instead of memory,
+see \link [id=DataProviderFile] {\code {flip::DataProviderFile}}
+
+
+
+/*\\\ METHODS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\constructor {}
+\brief {Constructs the \code {DataProviderMemory}}
+
+\codeblock [language=c++] ***
+DataProviderMemory (const std::vector <uint8_t> & data);
+***
+
+Constructor. The input of serialization will come from \code {data}.
+
+//----------------------------------------------------------------------------
+
+\destructor {}
+\brief {Destructs the \code {DataProviderMemory}}
+
+\codeblock [language=c++] ***
+~DataProviderMemory ();
+***
+
+Destructor.
+
+//----------------------------------------------------------------------------
+
+\method {operator >>}
+\brief {Extracts value from the provider}
+
+\codeblock [language=c++] ***
+DataProviderMemory & operator >> (bool & val);
+DataProviderMemory & operator >> (char & val);
+DataProviderMemory & operator >> (uint8_t & val);
+DataProviderMemory & operator >> (int32_t & val);
+DataProviderMemory & operator >> (uint32_t & val);
+DataProviderMemory & operator >> (int64_t & val);
+DataProviderMemory & operator >> (uint64_t & val);
+DataProviderMemory & operator >> (double & val);
+***
+
+Extracts value from the provider.
+
+If any error occurs (such as reading past the end of the stream), the
+method will throw \code {std::runtime_error}.
+
+Example :
+
+\codeblock [language=c++] ***
+std::vector <uint8_t> data;
+DataConsumerMemory consumer (data);
+
+std::string str ("Flip");
+
+consumer << true;
+consumer << int32_t (2);
+consumer << 2.5;
+
+consumer << uint64_t (str.size ());
+consumer << str;
+
+DataProviderMemory provider (data);
+bool val_b;
+int32_t val_i;
+double val_d;
+std::string val_s;
+
+consumer >> val_b; // true
+consumer >> val_i; // 2
+consumer >> val_d; // 2.5
+
+uint64_t str_size;
+consumer >> str_size;
+val_s = consumer.read_string (str_size);   // "Flip"
+
+char val_c;
+consumer >> val_c; // throws std::runtime_error
+***
+
+//----------------------------------------------------------------------------
+
+\method {read_string}
+\brief {Extracts string from the provider}
+
+\codeblock [language=c++] ***
+std::string read_string (size_t size);
+***
+
+Extracts string from the provider.
+
+If any error occurs (such as reading past the end of the stream), the
+method will throw \code {std::runtime_error}.
+
+//----------------------------------------------------------------------------
+
+\method {pull}
+\brief {Extracts raw data from the provider}
+
+\codeblock [language=c++] ***
+const uint8_t *   pull (size_t data_size);
+***
+
+Extracts \code {data_size} bytes of raw data from the provider.
+No byte swap is performed and the packing of data is not changed.
+
+If any error occurs (such as reading past the end of the stream), the
+method will throw \code {std::runtime_error}.
+
+//----------------------------------------------------------------------------
+
+\method {pull}
+\brief {Returns the current reading position in the stream}
+
+\codeblock [language=c++] ***
+size_t tell ();
+***
+
+Returns the current reading position in the stream.
+
+If any error occurs (such as reading past the end of the stream), the
+method will throw \code {std::runtime_error}.
+
+//----------------------------------------------------------------------------
+
+\method {seek_start}
+\brief {Seek reading position relative to the beginning of the stream}
+
+\codeblock [language=c++] ***
+seek_start (size_t offset_abs = 0);
+***
+
+Seek reading position to \code {offset_abs}, relative to the beginning of the stream.
+
+If any error occurs (such as reading past the end of the stream), the
+method will throw \code {std::runtime_error}.
+
+//----------------------------------------------------------------------------
+
+\method {seek_relative}
+\brief {Seek reading position relative to the current position in the stream}
+
+\codeblock [language=c++] ***
+seek_start (size_t offset_rel = 0);
+***
+
+Seek reading position to \code {offset_rel},
+relative to the current position in the stream.
+
+If any error occurs (such as reading past the end of the stream), the
+method will throw \code {std::runtime_error}.
+

@@ -11,6 +11,26 @@ class Ref;
 
 <p><code>flip::Ref</code> is a type that represents the unique reference number of a flip object.</p>
 
+<p><center><img src="Ref.internal.png" /></center></p>
+
+<p>It is essentialy 3 64-bit numbers.</p>
+
+<ul>
+<li>The <em>user</em> represents a unique user identifier (see below)</li>
+<li>The <em>actor</em> represents a unique controller identifier (see below)</li>
+<li>The <em>obj</em> represents a unique object identifier  for this user and actor (see below)</li>
+</ul>
+
+<p>When constructing a <code>Document</code> it is given a <code>user_id</code> as a parameter. This number shall be unique and represents a unique user number when using collaboration. Typically this can be an OpenId user identifier or a Facebook user number.</p>
+
+<p>In the case where the user is working offline and never connected to your service and therefore doesn't have yet a unique identifier, the special identifier <code>Ref::User::Offline</code> may be used.</p>
+
+<p>When constructing a <code>Document</code> it is given a <code>manufacturer_id</code> and a <code>component_id</code> which combines into a <code>actor_id</code>. This represents the actor as seen from the controller side and shall be unique. This is only relevant when using multiple <code>Document</code> with a <code>Hub</code> when documents are in separate threads or processes.</p>
+
+<p>Finally, each time an object is created, a unique object identifier is created, so that the combinaison of those 3 64-numbers make a unique number in the whole document.</p>
+
+<p>Since every <code>Ref</code> are unique in a document, one can extract an <code>Object</code> using a <code>Ref</code> and a <code>Document</code>. See <a href="../reference/Document.md"><code>Document</code></a> for more details.</p>
+
 <h2>Member Functions Synopsys</h2>
 
 <table><tr><td><a href="#member-function-constructor">Constructor</a></td><td>Constructs the <code>Ref</code></td></tr>

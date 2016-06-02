@@ -17,6 +17,9 @@ template <class... Args>   class Message;
 \code {flip::Message} is a type that allows signalling of non-persistent data.
 In particular, \code {flip::Message} is type-safe and endian-safe.
 
+It is different from \code {flip::Signal} in the sense that it is part of
+a transaction and is broadcasted to every client in a collaboration scheme.
+In particular, receiving a message is done in the observer.
 
 
 
@@ -76,6 +79,37 @@ Message &   send (Args... args);
 
 Sends a message. Multiple messages may be sent before commiting the document.
 
+Example :
+
+\codeblock [language=c++] ***
+class Root : public Object
+{
+public:
+   Message <int, float> message;
+}
+
+Model::version ("test.document");
+Model::declare <Root> ()
+   .name ("Root")
+   .member <Message <int, float>, &Root::message> ("message");
+
+Document document (Model::use (), observer, 123456789UL, 'appl', 'gui ');
+
+Root & root = document.root <Root> ();
+
+root.message.send (20, 2.f);
+root.message.send (25, 3.f);
+
+document.commit ();
+// observer will receive two messages :
+// - the first with '20' and '2.f' as values
+// - the second with '25' and '3.f' as values
+// see below on how to receive messages in the observer
+
+***
+
+
+
 //----------------------------------------------------------------------------
 
 \method {get}
@@ -95,7 +129,18 @@ void (bool, Args...)
 
 The first boolean parameter is true if the current execution direction is forward, false otherwise.
 
+Example :
 
+\codeblock [language=c++] ***
+void  Observer::document_changed (Root & root)
+{
+   root.message.get ([](bool forward_flag, int val1, float val2){
+      // in the example above, this lambda function will be called twice :
+      // one with (forward_flag, val1, val2) == (true, 20, 2.f)
+      // one with (forward_flag, val1, val2) == (true, 25, 3.f)
+   });
+}
+***
 
 
 

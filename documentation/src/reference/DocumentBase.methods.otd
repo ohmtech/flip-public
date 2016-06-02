@@ -21,8 +21,24 @@ void  set_label (std::string label);
 Sets the label (ie. name) of the current modifications of the document.
 This metadata will be added to the transaction at \code {commit} stage.
 
+This is typically use to display the undo/redo name in the Edit menu of
+the menubar.
+
 If called multiple times before \code {commit},
 only the last state of the metadata is taken into account at \code {commit} stage.
+
+Example :
+
+\codeblock [language=c++] ***
+Root & root = document.root <Root> ();
+root.notes.emplace <Note> (2.0, 4.0);
+
+document.set_label ("Add note");
+
+Transaction tx = document.commit ();
+// the transaction contains the new note modification in 'root.notes'
+// as well as the metadata label "Add note"
+***
 
 //----------------------------------------------------------------------------
 
@@ -38,6 +54,12 @@ This metadata will be added to the transaction at \code {commit} stage.
 
 If called multiple times before \code {commit},
 only the last state of the metadata is taken into account at \code {commit} stage.
+
+This is a more general version of \code {set_label}. Actually, \code {set_label}
+calls this methods with the \code {key} \code {"label"}.
+
+This can be used to present even more textual informations for undo/redo
+operations, for example detailing the nature of the change.
 
 //----------------------------------------------------------------------------
 
@@ -79,6 +101,11 @@ void push ();
 Pushes the transactions in the push stack to the upstream and empty the push
 stack. If no upstream is present then this function will just empty the push
 stack.
+
+\warning {
+   Even if not connected to an upstream, it is important to call \code {push}
+   regularly to empty the push stack.
+}
 
 //----------------------------------------------------------------------------
 
@@ -244,6 +271,11 @@ to an intermediate representation format backend.
 The resulting object can be used with concrete backends format such as
 \code {BackEndBinary} or \code {BackEndMl} to store them on a media.
 
+See \link [id=BackEndMl] {\code {BackEndMl}} or
+\link [id=BackEndBinary] {\code {BackEndBinary}}
+for an example of use of this method.
+
+
 //----------------------------------------------------------------------------
 
 \method {read}
@@ -257,6 +289,10 @@ Read from an intermediate representation format backend. Internally this
 will create a transaction that represents the difference between the new
 backend and the current state of the document. As such, the document
 modification are not commited at the end of this operation.
+
+See \link [id=BackEndMl] {\code {BackEndMl}} or
+\link [id=BackEndBinary] {\code {BackEndBinary}}
+for an example of use of this method.
 
 
 
@@ -286,6 +322,8 @@ Returns an object given its unique flip reference number. The function will thro
 if the reference number does not exist in the document or if the resulting object
 cannot be casted to \code {T}.
 
+See \link [id=Ref] {\code {Ref}} for more details.
+
 //----------------------------------------------------------------------------
 
 \method {object_ptr}
@@ -299,4 +337,8 @@ Returns an object given its unique flip reference number. The function will retu
 \code {nullptr} if the reference number does not exist in the document
 or if the resulting object
 cannot be casted to \code {T}.
+
+See \link [id=Ref] {\code {Ref}} for more details.
+
+
 

@@ -7,8 +7,10 @@ The Programming Guide is a serie of guides intented for flip developers to assis
 \item {\link [id=declare] {Declaring the Model}}
 \item {\link [id=control] {Controlling the Model}}
 \item {\link [id=observe] {Observing the Model}}
+\item {\link [id=signal] {Signalling the Model}}
 \item {\link [id=remote] {Working with a Remote Server}}
 \item {\link [id=misc] {More Fun with Flip}}
+\item {\link [id=conversion] {Model Versioning}}
 }
 
 \chapter [id=about] {About Flip Programming Guide}
@@ -48,8 +50,10 @@ This guide presents the following content in a didactic order.
 \item {Before going on with manipulating a model, the chapter \link [id=organize] {Organizing the Code} gives a brief overview on how to layout your code for subsequent work}
 \item {Once this is setup, the chapter \link [id=control] {Controlling the Model} exposes the way to control (that is, modify) the model}
 \item {Once you can control the model, the chapter \link [id=observe] {Observing the Model} exposes the way to listen to model modifications}
+\item {Then, the chapter \link [id=signal] {Signalling the Model} shows how to send messages between objects}
 \item {Next, the chapter \link [id=remote] {Working with a Remote Server} explains how to interact with a remote server and allow collaboration between multiple clients}
-\item {Finally the chapter \link [id=misc] {More Fun with Flip} leverage the full power of the flip transactional and document model and the problems you can solve with it}
+\item {Then the chapter \link [id=misc] {More Fun with Flip} leverage the full power of the flip transactional and document model and the problems you can solve with it}
+\item {Finally the chapter \link [id=conversion] {Model Versioning} will guide you through converting a document from one revision of the model to another one}
 }
 
 This guide is intended to be read in its natural chapter order. The first chapter, \link [id=declare] {Declaring the Model} will guide you through the task of declaring a model
@@ -60,5 +64,7 @@ to be used with documents.
 #include "organize.otd"
 #include "control.otd"
 #include "observe.otd"
+#include "signal.otd"
 #include "remote.otd"
 #include "misc.otd"
+#include "conversion.otd"

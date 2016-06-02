@@ -43,6 +43,12 @@ mouse button. Depending on the case, you might also want not to commit
 on every mouse moves, and commit and push at the same time when the user
 released the mouse button.
 
+Additionally, one can \code {squash} the Push Stack, so that all transactions
+previously commited are squashed to one transaction before this transaction
+is pushed to the server. This is particularly useful in the case where
+the same values are changed over and over in a gesture,
+so that the resulting transaction is far smaller than every commits.
+
 Generally, you would pull almost constantly from the server.
 
 The next sections will show how to set up concretely the code to work

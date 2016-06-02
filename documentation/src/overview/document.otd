@@ -1,0 +1,40 @@
+
+\chapter [id=document] {Document Format, Conversion}
+
+Flip provides an unique document format. Document versions are maintained so that
+it allows document from different versions to be converted to some other
+version. Convenient classes are provided for the latter to simplify work.
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=format] {Document Format}
+
+Flip comes with 2 document formats, a fast binary one for production and a textual one for debugging.
+Should they need it, clients of the library can also write their own document format.
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=format] {Conversion}
+
+/*Bundled with Flip comes a set of convenience classes to ease the conversion process of
+converting, for example, a document from its 1.0 format to it 2.0 format.*/
+
+The client provides a version tree, and how to transition from one version format to
+another. This way, a complex version system can be easily maintained, allowing even
+A/B testing.
+
+/*The convenient classes themselves decode the document to show it already structured,
+but with strings. This allows not to maintain model of older versions, while keeping the
+old model structure implicitely in the conversion classes.
+
+The convenient classes also allow for easy insertion/deletion of members, global tree
+manipulation, etc.*/
+

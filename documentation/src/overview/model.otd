@@ -1,0 +1,114 @@
+
+\chapter [id=model] {Interfacing with the Model}
+
+When interfacing with the model, the code can be separated in two parts :
+
+\enumerate {
+\item {the part that control the model}
+\item {the part that reacts to model changes}
+}
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=control] {Controlling the Model}
+
+Controlling the model is done by directly changing the model as you would
+think with regular classes.
+
+If a class \code {Element} has two members \code {position} and \code {length},
+changing the position and the length of the element is as simple as :
+
+\codeblock [language=c++] ***
+element.position = some_position;
+element.length = some_length;
+***
+
+The members used in classes, are actually Flip classes object. They are proxies
+that will handle the change to the model.
+
+For example if you would write a class with a member :
+
+\codeblock [language=c++] ***
+int	position;
+***
+
+You would transform it to :
+
+\codeblock [language=c++] ***
+flip::Int64	position;
+***
+
+And if you would write a class with a member :
+
+\codeblock [language=c++] ***
+std::list <Element>	element_arr;
+***
+
+You would transform it to :
+
+\codeblock [language=c++] ***
+flip::Array <Element>	element_arr;
+***
+
+Manipulating the Flip containers is close to the standard library naming.
+Adding an element is done through \code {insert} and erasing an element is done
+through \code {erase}. Others functions are provided in a quite monolithic way
+like in the original standard to ensure that client using already the
+standard library will feel like just at home.
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=view] {Observing the Model}
+
+When a client modify its own model or receive a modification (transaction) of
+the model from another client through the server, the model is directly modified.
+
+The client of the model will have registered one or multiple observers to
+observer how the model is modified.
+
+The client observer is then called with the model root object as a parameter.
+
+When the client observer is called, Flip maintains the previous version of
+the model as well as the current one as applied by the transaction. This allows to
+know :
+
+\itemize {
+\item {exactly which objects where modified}
+\item {the value of an object before of a modification}
+\item {what was inserted/erased from a container}
+\item {what was moved from a container to another}
+}
+
+\image [path=model.pdf] {}
+
+The client is then responsible to parse the model tree to ensure that its local
+representation of the model match the one from Flip.
+
+Furthermore, Flip was designed to make this task as simple as possible :
+
+\itemize {
+\item {the model tree can be parsed in any direction, parsed multiple times, etc.}
+\item {one or multiple represented objects can be attached to Flip objects}
+\item {we made up a few pattern of code to simplify your work}
+}
+
+As long as the model client does not exit from the observer call, Flip still
+maintains the old and current version of the model. Each flip object as well
+as your custom classes have an \code {added ()} member to know if
+an object or its compound contains a modification, and this recursively.
+
+Whenether your local model uses object pointers, references or ids, you can
+attach it to any flip object. This also itself a best case interoperability
+with your external libraries or your GUI in a very simple way.
+
+
+
+

@@ -27,8 +27,10 @@
 <li>Before going on with manipulating a model, the chapter <a href="../guide/organize.md">Organizing the Code</a> gives a brief overview on how to layout your code for subsequent work</li>
 <li>Once this is setup, the chapter <a href="../guide/control.md">Controlling the Model</a> exposes the way to control (that is, modify) the model</li>
 <li>Once you can control the model, the chapter <a href="../guide/observe.md">Observing the Model</a> exposes the way to listen to model modifications</li>
+<li>Then, the chapter <a href="../guide/signal.md">Signalling the Model</a> shows how to send messages between objects</li>
 <li>Next, the chapter <a href="../guide/remote.md">Working with a Remote Server</a> explains how to interact with a remote server and allow collaboration between multiple clients</li>
-<li>Finally the chapter <a href="../guide/misc.md">More Fun with Flip</a> leverage the full power of the flip transactional and document model and the problems you can solve with it</li>
+<li>Then the chapter <a href="../guide/misc.md">More Fun with Flip</a> leverage the full power of the flip transactional and document model and the problems you can solve with it</li>
+<li>Finally the chapter <a href="../guide/conversion.md">Model Versioning</a> will guide you through converting a document from one revision of the model to another one</li>
 </ul>
 
 <p>This guide is intended to be read in its natural chapter order. The first chapter, <a href="../guide/declare.md">Declaring the Model</a> will guide you through the task of declaring a model to be used with documents.</p>

@@ -9,13 +9,7 @@
 class Transaction;
 ```
 
-<p><code>flip::Transaction</code> is a type that allows signalling of flip objects in a type safe way.</p>
-
-<h2>Template Parameters</h2>
-
-<table><tr><td><code>TYPE</code></td><td>A <code>uint32_t</code> unique number for the class of the object that represents the signal type</td></tr>
-<tr><td><code>Args...</code></td><td>A variable number of arguments that compose the parameters of the signal</td></tr>
-</table>
+<p><code>flip::Transaction</code> is a type representing a record of the modifications on a document.</p>
 
 <h2>Member Functions Synopsys</h2>
 

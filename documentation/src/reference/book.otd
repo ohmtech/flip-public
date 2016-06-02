@@ -60,10 +60,26 @@ The reference only lists the public API of the framework. Private or internal AP
 \item {\link [id=DocumentServer]{\code {DocumentServer}}}
 \item {\link [id=DocumentValidator]{\code {DocumentValidator}}}
 \item {\link [id=Entity]{\code {Entity}}}
+\item {\link [id=Hub]{\code {Hub}}}
 \item {\link [id=Mold]{\code {Mold}}}
 \item {\link [id=Ref]{\code {Ref}}}
 \item {\link [id=Signal]{\code {Signal}}}
 \item {\link [id=Transaction]{\code {Transaction}}}
+}
+
+/*
+==============================================================================
+*/
+
+\section [id=misc] {Miscellaneous}
+
+\itemize {
+\item {\link [id=DataConsumerFile]{\code {DataConsumerFile}}}
+\item {\link [id=DataConsumerMemory]{\code {DataConsumerMemory}}}
+\item {\link [id=DataProviderFile]{\code {DataProviderFile}}}
+\item {\link [id=DataProviderMemory]{\code {DataProviderMemory}}}
+\item {\link [id=MulticastServiceExplorer]{\code {MulticastServiceExplorer}}}
+\item {\link [id=MulticastServiceProvider]{\code {MulticastServiceProvider}}}
 }
 
 /*
@@ -84,7 +100,11 @@ The reference only lists the public API of the framework. Private or internal AP
 #include "Collection.otd"
 #include "Collection.iterator.otd"
 #include "collection_iterator.otd"
+#include "DataConsumerFile.otd"
+#include "DataConsumerMemory.otd"
 #include "DataModel.otd"
+#include "DataProviderFile.otd"
+#include "DataProviderMemory.otd"
 #include "Document.otd"
 #include "DocumentObserver.otd"
 #include "DocumentServer.otd"
@@ -94,9 +114,12 @@ The reference only lists the public API of the framework. Private or internal AP
 #include "EnumClass.otd"
 #include "Float.otd"
 #include "History.otd"
+#include "Hub.otd"
 #include "Int.otd"
 #include "Message.otd"
 #include "Mold.otd"
+#include "MulticastServiceExplorer.otd"
+#include "MulticastServiceProvider.otd"
 #include "Object.otd"
 #include "ObjectRef.otd"
 #include "Optional.otd"

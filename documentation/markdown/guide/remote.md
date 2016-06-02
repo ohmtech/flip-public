@@ -1,4 +1,4 @@
-<p><sup><a href="observe.md">previous</a> | <a href="misc.md">next</a></sup></p>
+<p><sup><a href="signal.md">previous</a> | <a href="misc.md">next</a></sup></p>
 
 <h1>Working with a Remote Server</h1>
 
@@ -17,6 +17,8 @@
 <p>Similarly, to receive the changes available on the remote server done by another user, or to know if the change on a document were acknowledge or denied, one will call <code>pull</code> on the document to receive and merge this changes into your local document. Internally, the transport layer will regurarly fetch the server for changes and store them in a <em>Pull Stack</em>. Calling <code>pull</code> will simply execute each element of the pull stack.</p>
 
 <p>Generally, you won't push to the remote server for every single commit you do. For example in the previous example, if a user drags a clip on the track by changing its position, then you may want to advertise those changes to the outside world only when the user has finished its gesture by releasing the mouse button. In this case you might do commit for every mouse moves, and then only push to the remote server once the user has released the mouse button. Depending on the case, you might also want not to commit on every mouse moves, and commit and push at the same time when the user released the mouse button.</p>
+
+<p>Additionally, one can <code>squash</code> the Push Stack, so that all transactions previously commited are squashed to one transaction before this transaction is pushed to the server. This is particularly useful in the case where the same values are changed over and over in a gesture, so that the resulting transaction is far smaller than every commits.</p>
 
 <p>Generally, you would pull almost constantly from the server.</p>
 
@@ -158,5 +160,5 @@ void  Validator::validate (Song & song)
 
 <p>The next chapter, <a href="../guide/misc.md">More Fun with Flip</a> will guide you through more advanced use of Flip.</p>
 
-<p><sup><a href="observe.md">previous</a> | <a href="misc.md">next</a></sup></p>
+<p><sup><a href="signal.md">previous</a> | <a href="misc.md">next</a></sup></p>
 

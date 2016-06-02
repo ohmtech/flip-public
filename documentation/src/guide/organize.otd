@@ -67,6 +67,8 @@ might be not easy when trying to gather all the changes to write a converter.
 Therefore you should maintain a \code {Converter.txt} text file, typically in your conv where you will sum up all the
 changes needed for the next conversion, and maybe some directions on how to convert the document.
 
+This process is covered in more details in the chapter \link [id=conversion] {Model Versioning}.
+
 
 
 /*

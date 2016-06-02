@@ -30,7 +30,7 @@ Document (const DataModelBase & data_model, uint64_t user_id, uint32_t manufactu
 ***
 
 Constructs the document from a data model, an optional observer, and optional validator,
-a unique user id, a manufacturer id as as a component id.
+a unique user id, a manufacturer id and a component id.
 
 The data model represents the blueprint or template the document is going to
 rely on. The data model is previously defined and used for the document.
@@ -48,6 +48,8 @@ in a four char code format. Typically this could be \code {gui }.
    the tuple make of user identifier, manufacturer id and component id
    must be guanranteed unique for every documents connected together
 }
+
+See \link [id=Ref] {\code {Ref}} for more details about user identifiers.
 
 
 //----------------------------------------------------------------------------

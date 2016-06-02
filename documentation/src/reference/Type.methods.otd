@@ -44,6 +44,25 @@ bool  added () const;
 
 Returns \code {true} \emph {iff} the object was just attached to the document tree.
 
+Example :
+
+\codeblock [language=c++] ***
+void  Observer::document_changed (Note & note)
+{
+   if (note.added ())
+   {
+      // A note was added to the document. Create the corresponding
+      // view element
+
+      note.entity ().emplace <NoteView> ();
+   }
+
+   [...]
+}
+***
+
+
+
 //----------------------------------------------------------------------------
 
 \method {removed}
@@ -54,6 +73,23 @@ bool  removed () const;
 ***
 
 Returns \code {true} \emph {iff} the object was just detached from the document tree.
+
+Example :
+
+\codeblock [language=c++] ***
+void  Observer::document_changed (Note & note)
+{
+   [...]
+
+   if (note.removed ())
+   {
+      // A note was removed from the document. Release the corresponding
+      // view element
+
+      note.entity ().erase <NoteView> ();
+   }
+}
+***
 
 //----------------------------------------------------------------------------
 
@@ -66,6 +102,37 @@ bool  resident () const;
 
 Returns \code {true} \emph {iff} the object was neither attached nor detached from the document tree.
 
+An object can be \code {resident} but moved. In this case the \code {iterator}
+pointing to it will allow to detect the move.
+
+Example :
+
+\codeblock [language=c++] ***
+void  Observer::document_changed (Array <Track> & tracks)
+{
+   auto it = tracks.begin ();
+   auto it_end = tracks.end ();
+
+   for (; it != it_end ; ++it)
+   {
+      Track & track = *it;
+
+      if (it.added () && track.resident ())
+      {
+         // the track was moved in the container
+         // this is the destination position
+      }
+
+      if (it.added () && track.resident ())
+      {
+         // the track was moved in the container
+         // this is the source position
+      }
+   }
+}
+***
+
+
 //----------------------------------------------------------------------------
 
 \method {changed}
@@ -76,6 +143,31 @@ bool  changed () const;
 ***
 
 Returns \code {true} \emph {iff} the object or one of its children was modified.
+
+Example :
+
+\codeblock [language=c++] ***
+void  Observer::document_changed (Note & note)
+{
+   auto & view = note.entity ().use <ViewNote> ();
+
+   if (note.changed ())
+   {
+      // one or more properties of the note changed
+
+      if (note.position.changed ())
+      {
+         view.set_position (note.position);
+      }
+
+      if (note.duration.changed ())
+      {
+         view.set_duration (note.duration);
+      }
+   }
+}
+***
+
 
 //----------------------------------------------------------------------------
 
@@ -103,6 +195,25 @@ void   disable_in_undo ();
 
 Disables the record state modification in history of the object and its
 subtree if any.
+
+Example :
+
+\codeblock [language=c++] ***
+void  add_user (Root & root)
+{
+   // emplace a new User of the document to store
+   // user specific data. User is constructed with
+   // the unique user id number given at document
+   // creation
+
+   User & user = root.users.emplace <User> (root.document ().user ());
+
+   // we don't want the scroll position in the document
+   // to be part of undo
+   user.scroll_position.disable_in_undo ();
+}
+***
+
 
 //----------------------------------------------------------------------------
 
@@ -142,6 +253,17 @@ void  revert () const;
 ***
 
 Reverts all the changes make to the object and its children if any.
+
+Example :
+
+\codeblock [language=c++] ***
+// initially, note.position == 1
+
+note.position = 2;
+note.revert ();
+
+// now, note.position == 1
+***
 
 
 

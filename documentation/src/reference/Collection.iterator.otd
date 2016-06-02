@@ -20,6 +20,13 @@ class const_reverse_iterator;
 
 \code {Collection::iterator} satisfies the \code {BidirectionalIterator} C++ concept.
 
+\warning {
+Unlike the C++ standard library, when an element is erased from a container,
+and if iterating over the container before \code {commit},
+the element is still present until the
+modification is commited, but the iterator is marked as removed.
+}
+
 
 
 /*\\\ PARAMETERS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
@@ -54,6 +61,33 @@ Returns \code {true} \emph {iff} the iterator was added to the container.
 \note {When an object is moved between containers, then the destination iterator is considered
 as added while the object is considered as resident.}
 
+Example :
+
+\codeblock [language=c++] ***
+void  Observer::document_changed (Collection <Note> & notes)
+{
+   auto it = notes.begin ();
+   auto it_end = notes.end ();
+
+   for (; it != it_end ; ++it)
+   {
+      Note & note = *it;
+
+      if (it.added () && note.resident ())
+      {
+         // the note was moved from one container to another
+         // this is the destination container
+      }
+
+      if (it.removed () && note.resident ())
+      {
+         // the note was moved from one container to another
+         // this is the source container
+      }
+   }
+}
+***
+
 //----------------------------------------------------------------------------
 
 \method {removed}
@@ -67,6 +101,31 @@ Returns \code {true} \emph {iff} the iterator was removed to the container.
 
 \note {When an object is moved between containers, then the source iterator is considered
 as removed while the object is considered as resident.}
+
+\codeblock [language=c++] ***
+void  Observer::document_changed (Collection <Note> & notes)
+{
+   auto it = notes.begin ();
+   auto it_end = notes.end ();
+
+   for (; it != it_end ; ++it)
+   {
+      Note & note = *it;
+
+      if (it.added () && note.resident ())
+      {
+         // the note was moved from one container to another
+         // this is the destination container
+      }
+
+      if (it.removed () && note.resident ())
+      {
+         // the note was moved from one container to another
+         // this is the source container
+      }
+   }
+}
+***
 
 //----------------------------------------------------------------------------
 

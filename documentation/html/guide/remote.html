@@ -40,6 +40,7 @@ td > p {margin-left: 6px; height: 12px;}
 .warning {margin-top:21px; margin-bottom:22px; padding-left: 8px; padding-right: 8px; background-color: #f8e3e1; border-color: #c5443e; border-style: solid; border-width: 1px; display: block;}
 .warning strong {margin-right: 8px;}
 .warning p {margin-top: 7px;}
+.caption p {color: black; font-size: 10px; margin-bottom: 10px;}
 img {margin-top:10px; margin-bottom:10px;}
 ul {margin-left: 17px; margin-bottom: 10px;}
 ol {margin-left: 17px; margin-bottom: 10px;}
@@ -79,6 +80,7 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 <li><a href="../guide/organize.html">Organizing your Code</a></li>
 <li><a href="../guide/control.html">Controlling the Model</a></li>
 <li><a href="../guide/observe.html">Observing the Model</a></li>
+<li><a href="../guide/signal.html">Signalling the Model</a></li>
 <li><a href="../guide/remote.html">Working with a Remote Server</a>	<ul>
 	<li><a href="../guide/remote.html#workflow">Commit/Push/Pull Model</a></li>
 	<li><a href="../guide/remote.html#remote">Working with a Remote Server, Client Part</a></li>
@@ -89,12 +91,13 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 	</ul>
 </li>
 <li><a href="../guide/misc.html">More Fun with Flip</a></li>
+<li><a href="../guide/conversion.html">Model Versioning</a></li>
 </ul>
 </div>
 
 <div id="content">
 <div class="nav" align="right">
-<a href="observe.html">previous</a><span>&nbsp;</span><a href="misc.html">next</a></div>
+<a href="signal.html">previous</a><span>&nbsp;</span><a href="misc.html">next</a></div>
 
 <h1>Working with a Remote Server</h1>
 
@@ -113,6 +116,8 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 <p>Similarly, to receive the changes available on the remote server done by another user, or to know if the change on a document were acknowledge or denied, one will call <code>pull</code> on the document to receive and merge this changes into your local document. Internally, the transport layer will regurarly fetch the server for changes and store them in a <em>Pull Stack</em>. Calling <code>pull</code> will simply execute each element of the pull stack.</p>
 
 <p>Generally, you won't push to the remote server for every single commit you do. For example in the previous example, if a user drags a clip on the track by changing its position, then you may want to advertise those changes to the outside world only when the user has finished its gesture by releasing the mouse button. In this case you might do commit for every mouse moves, and then only push to the remote server once the user has released the mouse button. Depending on the case, you might also want not to commit on every mouse moves, and commit and push at the same time when the user released the mouse button.</p>
+
+<p>Additionally, one can <code>squash</code> the Push Stack, so that all transactions previously commited are squashed to one transaction before this transaction is pushed to the server. This is particularly useful in the case where the same values are changed over and over in a gesture, so that the resulting transaction is far smaller than every commits.</p>
 
 <p>Generally, you would pull almost constantly from the server.</p>
 
@@ -255,7 +260,7 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 <p>The next chapter, <a href="../guide/misc.html">More Fun with Flip</a> will guide you through more advanced use of Flip.</p>
 
 <div class="nav" align="right">
-<a href="observe.html">previous</a><span>&nbsp;</span><a href="misc.html">next</a></div>
+<a href="signal.html">previous</a><span>&nbsp;</span><a href="misc.html">next</a></div>
 
 <div class="bottomspacer">&nbsp;</div>
 </div>

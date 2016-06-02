@@ -40,6 +40,7 @@ td > p {margin-left: 6px; height: 12px;}
 .warning {margin-top:21px; margin-bottom:22px; padding-left: 8px; padding-right: 8px; background-color: #f8e3e1; border-color: #c5443e; border-style: solid; border-width: 1px; display: block;}
 .warning strong {margin-right: 8px;}
 .warning p {margin-top: 7px;}
+.caption p {color: black; font-size: 10px; margin-bottom: 10px;}
 img {margin-top:10px; margin-bottom:10px;}
 ul {margin-left: 17px; margin-bottom: 10px;}
 ol {margin-left: 17px; margin-bottom: 10px;}
@@ -86,7 +87,11 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 <li><a href="../reference/Collection.html">Collection</a></li>
 <li><a href="../reference/Collection.iterator.html">Collection::iterator</a></li>
 <li><a href="../reference/collection_iterator.html">collection_iterator</a></li>
+<li><a href="../reference/DataConsumerFile.html">DataConsumerFile</a></li>
+<li><a href="../reference/DataConsumerMemory.html">DataConsumerMemory</a></li>
 <li><a href="../reference/DataModel.html">DataModel</a></li>
+<li><a href="../reference/DataProviderFile.html">DataProviderFile</a></li>
+<li><a href="../reference/DataProviderMemory.html">DataProviderMemory</a></li>
 <li><a href="../reference/Document.html">Document</a></li>
 <li><a href="../reference/DocumentObserver.html">DocumentObserver</a></li>
 <li><a href="../reference/DocumentServer.html">DocumentServer</a></li>
@@ -96,9 +101,12 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 <li><a href="../reference/EnumClass.html">EnumClass</a></li>
 <li><a href="../reference/Float.html">Float</a></li>
 <li><a href="../reference/History.html">History</a></li>
+<li><a href="../reference/Hub.html">Hub</a></li>
 <li><a href="../reference/Int.html">Int</a></li>
 <li><a href="../reference/Message.html">Message</a></li>
 <li><a href="../reference/Mold.html">Mold</a></li>
+<li><a href="../reference/MulticastServiceExplorer.html">MulticastServiceExplorer</a></li>
+<li><a href="../reference/MulticastServiceProvider.html">MulticastServiceProvider</a></li>
 <li><a href="../reference/Object.html">Object</a></li>
 <li><a href="../reference/ObjectRef.html">ObjectRef</a></li>
 <li><a href="../reference/Optional.html">Optional</a></li>
@@ -129,9 +137,13 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 
 <p><code>flip::Vector</code> is an container of non flip Objects that are continguous in memory.</p>
 
-<p>It is used to store a massive number of objects in a performant way, but is not inherently concurrent like <code>Array</code> or <code>Collection</code>.</p>
+<p>It is used to store a massive number of objects in a performant way, but is not inherently concurrent like <code>Array</code> or <code>Collection</code>, because the whole content of the vector is resent every time there is a change to it, instead of just changing one element.</p>
 
-<p>The <code>Vector</code> itself provides support for modification introspection. When modifying the content of the <code>Vector</code>, the previous representation of the vector is still present.</p>
+<p>This means that if two users are changing a property of an element in the vector, and if this operation is done concurrently, only one of the user will see his change applied, and the other user will have it rollbacked.</p>
+
+<p>The more there is latency on the network, the more this concurrency problem shows. On the local aera network however, this problem would most likely rarely shows.</p>
+
+<p>The <code>Vector</code> itself provides support for modification introspection. When modifying the content of the <code>Vector</code>, the previous representation of the vector is still present. However individual elements are not tracked.</p>
 
 <h2>Template Parameters</h2>
 
@@ -246,12 +258,46 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 
 <p>Returns <code>true</code> <em>iff</em> the object was just attached to the document tree.</p>
 
+<p>Example :</p>
+
+<div class="codeblock"><table>
+<tr><td><pre>void  Observer::document_changed (Note &amp; note)</pre></td></tr>
+<tr><td><pre>{</pre></td></tr>
+<tr><td><pre>   if (note.added ())</pre></td></tr>
+<tr><td><pre>   {</pre></td></tr>
+<tr><td><pre>      // A note was added to the document. Create the corresponding</pre></td></tr>
+<tr><td><pre>      // view element</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>      note.entity ().emplace &lt;NoteView&gt; ();</pre></td></tr>
+<tr><td><pre>   }</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>   [...]</pre></td></tr>
+<tr><td><pre>}</pre></td></tr>
+</table></div>
+
 <hr /><h3 id="member-function-removed"><code>removed</code></h3>
 <div class="codeblock"><table>
 <tr><td><pre>bool  removed () const;</pre></td></tr>
 </table></div>
 
 <p>Returns <code>true</code> <em>iff</em> the object was just detached from the document tree.</p>
+
+<p>Example :</p>
+
+<div class="codeblock"><table>
+<tr><td><pre>void  Observer::document_changed (Note &amp; note)</pre></td></tr>
+<tr><td><pre>{</pre></td></tr>
+<tr><td><pre>   [...]</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>   if (note.removed ())</pre></td></tr>
+<tr><td><pre>   {</pre></td></tr>
+<tr><td><pre>      // A note was removed from the document. Release the corresponding</pre></td></tr>
+<tr><td><pre>      // view element</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>      note.entity ().erase &lt;NoteView&gt; ();</pre></td></tr>
+<tr><td><pre>   }</pre></td></tr>
+<tr><td><pre>}</pre></td></tr>
+</table></div>
 
 <hr /><h3 id="member-function-resident"><code>resident</code></h3>
 <div class="codeblock"><table>
@@ -260,12 +306,65 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 
 <p>Returns <code>true</code> <em>iff</em> the object was neither attached nor detached from the document tree.</p>
 
+<p>An object can be <code>resident</code> but moved. In this case the <code>iterator</code> pointing to it will allow to detect the move.</p>
+
+<p>Example :</p>
+
+<div class="codeblock"><table>
+<tr><td><pre>void  Observer::document_changed (Array &lt;Track&gt; &amp; tracks)</pre></td></tr>
+<tr><td><pre>{</pre></td></tr>
+<tr><td><pre>   auto it = tracks.begin ();</pre></td></tr>
+<tr><td><pre>   auto it_end = tracks.end ();</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>   for (; it != it_end ; ++it)</pre></td></tr>
+<tr><td><pre>   {</pre></td></tr>
+<tr><td><pre>      Track &amp; track = *it;</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>      if (it.added () &amp;&amp; track.resident ())</pre></td></tr>
+<tr><td><pre>      {</pre></td></tr>
+<tr><td><pre>         // the track was moved in the container</pre></td></tr>
+<tr><td><pre>         // this is the destination position</pre></td></tr>
+<tr><td><pre>      }</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>      if (it.added () &amp;&amp; track.resident ())</pre></td></tr>
+<tr><td><pre>      {</pre></td></tr>
+<tr><td><pre>         // the track was moved in the container</pre></td></tr>
+<tr><td><pre>         // this is the source position</pre></td></tr>
+<tr><td><pre>      }</pre></td></tr>
+<tr><td><pre>   }</pre></td></tr>
+<tr><td><pre>}</pre></td></tr>
+</table></div>
+
 <hr /><h3 id="member-function-changed"><code>changed</code></h3>
 <div class="codeblock"><table>
 <tr><td><pre>bool  changed () const;</pre></td></tr>
 </table></div>
 
 <p>Returns <code>true</code> <em>iff</em> the object or one of its children was modified.</p>
+
+<p>Example :</p>
+
+<div class="codeblock"><table>
+<tr><td><pre>void  Observer::document_changed (Note &amp; note)</pre></td></tr>
+<tr><td><pre>{</pre></td></tr>
+<tr><td><pre>   auto &amp; view = note.entity ().use &lt;ViewNote&gt; ();</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>   if (note.changed ())</pre></td></tr>
+<tr><td><pre>   {</pre></td></tr>
+<tr><td><pre>      // one or more properties of the note changed</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>      if (note.position.changed ())</pre></td></tr>
+<tr><td><pre>      {</pre></td></tr>
+<tr><td><pre>         view.set_position (note.position);</pre></td></tr>
+<tr><td><pre>      }</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>      if (note.duration.changed ())</pre></td></tr>
+<tr><td><pre>      {</pre></td></tr>
+<tr><td><pre>         view.set_duration (note.duration);</pre></td></tr>
+<tr><td><pre>      }</pre></td></tr>
+<tr><td><pre>   }</pre></td></tr>
+<tr><td><pre>}</pre></td></tr>
+</table></div>
 
 <hr /><h3 id="member-function-ancestor"><code>ancestor</code></h3>
 <div class="codeblock"><table>
@@ -283,6 +382,24 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 </table></div>
 
 <p>Disables the record state modification in history of the object and its subtree if any.</p>
+
+<p>Example :</p>
+
+<div class="codeblock"><table>
+<tr><td><pre>void  add_user (Root &amp; root)</pre></td></tr>
+<tr><td><pre>{</pre></td></tr>
+<tr><td><pre>   // emplace a new User of the document to store</pre></td></tr>
+<tr><td><pre>   // user specific data. User is constructed with</pre></td></tr>
+<tr><td><pre>   // the unique user id number given at document</pre></td></tr>
+<tr><td><pre>   // creation</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>   User &amp; user = root.users.emplace &lt;User&gt; (root.document ().user ());</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>   // we don&apos;t want the scroll position in the document</pre></td></tr>
+<tr><td><pre>   // to be part of undo</pre></td></tr>
+<tr><td><pre>   user.scroll_position.disable_in_undo ();</pre></td></tr>
+<tr><td><pre>}</pre></td></tr>
+</table></div>
 
 <hr /><h3 id="member-function-inherit_in_undo"><code>inherit_in_undo</code></h3>
 <div class="codeblock"><table>
@@ -306,6 +423,17 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 </table></div>
 
 <p>Reverts all the changes make to the object and its children if any.</p>
+
+<p>Example :</p>
+
+<div class="codeblock"><table>
+<tr><td><pre>// initially, note.position == 1</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>note.position = 2;</pre></td></tr>
+<tr><td><pre>note.revert ();</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>// now, note.position == 1</pre></td></tr>
+</table></div>
 
 <hr /><h3 id="member-function-begin cbegin"><code>begin cbegin</code></h3>
 <p>Returns an iterator to the beginning.</p>

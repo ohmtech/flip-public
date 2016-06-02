@@ -1,0 +1,192 @@
+
+\chapter [id=conversion] {Model Versioning}
+
+
+Over time, your model will change, and so its revision. Document then needs
+to be converted, and this chapter describes how to do so.
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=converters] {Converters}
+
+Your \code {model} folder should contain a \code {conv} folder. It will contains all your format version changes in a single
+place. Since Flip format conversion system is rather flexible, it is very easy to make document format
+changes, so you are very likely to make a lot of them.
+
+You should name your conversion classes \code {Converter#1_#2} where \code {#1} would be the initial revision,
+according to your version source control naming. In the same fashion, \code {#2} would be your destination revision.
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=dispatch] {Conversion graph}
+
+Just after reading a serialized document in \code {BackEndMl} or \code {BackEndBinary}
+to the \code {BackEndIR} format, you need to convert the latter format to the
+revision of the model currently used in your application.
+
+\code {BackEndMl} or \code {BackEndBinary} are model revision agnostic, and so
+is \code {BackEndIR}, so that you don't need to maintain all versions of the
+model to be able to convert.
+
+The general idea is to convert from one conversion to another the
+\code {BackEndIR} format until you've matched the revision available to use
+with your application.
+
+Typically, this global conversion process looks like this :
+
+\codeblock [language=c++] ***
+DataProviderFile provider ("/path/to/file");
+
+// tell the backend to automatically recognize the binary format
+BackEndIR backend;
+backend.register_backend <BackEndBinary> ();
+
+bool ok_flag = backend.read (provider);
+if (!ok_flag) return;   // a corruption occured
+
+// now starts the conversion process, where every converters process
+// the 'backend' in-place, and changes its version
+
+if (backend.version == "myapp.beta.1")
+{
+   Converter_beta1_beta2 converter;
+   converter.process (backend);
+
+   // now backend.version == "myapp.beta.2"
+}
+
+if (backend.version == "myapp.beta.3")
+{
+   // beta.3 was a mistake, so we decide to rollback it to beta.2
+   // for our loyal beta testers
+   Converter_beta3_beta2 converter;
+   converter.process (backend);
+
+   // now backend.version == "myapp.beta.2"
+}
+
+if (backend.version == "myapp.beta.2")
+{
+   Converter_beta2_r100 converter;
+   converter.process (backend);
+
+   // now backend.version == "myapp.r100"
+   // which is the current model revision
+}
+
+Document document (Model::use (), user_id, manufacturer_id, component_id);
+
+// change the document with the content of the backend
+document.read (backend);
+
+// commit the changes
+document.commit ();
+***
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=converter] {Converter}
+
+\note {
+   For now the conversion process is done entirely manually, and require deep
+   knowledge of the internals of Flip. It will be soon simplified by using
+   dedicated tool classes.
+}
+
+Now that we have seen the global conversion graph managment, let's look
+at a single converter anatomy.
+
+\code {BackEndIR} contains a member \code {version} string which is the current
+revision of the model. A part from that, it contains a member \code {root}
+which is the starting point of every conversions.
+
+\code {root} itself is a \code {BackEndIR::Type} which is a generic way to
+represent a \code {Type} in the document. It can represent either an
+\code {Object}, but also a container type or a basic type like \code {Float}.
+
+\code {Type} contains a \code {type_name} as well as a \code {type_id} to allows
+to know which kind of type we are manipulating.
+
+\itemize {
+\item {If the \code {Type} is an object, then \code {Type::members} is the list of the members of the object}
+\item {If the \code {Type} is an array, then \code {Type::array} is the list of the element of the array}
+\item {If the \code {Type} is a collection, then \code {Type::collection} is the list of the element of the collection}
+\item {If the \code {Type} is a value type like \code {Float}, then \code {Type::value} is the value}
+}
+
+For example let's say that we had the following model :
+
+\codeblock [language=c++] ***
+class Note : public Object
+{
+public:
+   String title;
+   String body;
+};
+
+class Root : public Object
+{
+public:
+   Collection <Note> notes;
+};
+***
+
+And that we want to convert to this new model, where we added a member \code {date}
+
+\codeblock [language=c++] ***
+class Note : public Object
+{
+public:
+   String title;
+   String body;
+   String date;
+};
+
+class Root : public Object
+{
+public:
+   Collection <Note> notes;
+};
+***
+
+Then the converter will need to add a member and initialize it to a value this way :
+
+\codeblock [language=c++] ***
+void  Converter::process (BackEndIR backend)
+{
+   std::string current_date = today ();
+
+   for (auto & element : backend.root.collection)
+   {
+      auto & note = element.second;
+
+      auto & date = *note.members.emplace_back (std::make_pair ("date", Type ()));
+
+      date.type_name = "flip.Blob"; // String is a Blob
+      date.type_id = TypeId::BLOB;
+      date.value.blob.assign (current_date.begin (), current_date.end ());
+      date.value.blob_string_flag = true;
+   }
+}
+***
+
+
+
+
+
+
+
+
+

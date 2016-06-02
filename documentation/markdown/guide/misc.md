@@ -1,4 +1,4 @@
-<p><sup><a href="remote.md">previous</a></sup></p>
+<p><sup><a href="remote.md">previous</a> | <a href="conversion.md">next</a></sup></p>
 
 <h1>More Fun with Flip</h1>
 
@@ -35,6 +35,8 @@ void  run ()
 <li>undo the transaction</li>
 <li>redo the transaction</li>
 </ol>
+
+<p>The undo/redo/history topic is studied in more details in the book <a href="../history/about.md">Flip History Strategy Guide</a>.</p>
 
 <h2 id="manipulation">Manipulating Transactions</h2>
 
@@ -97,6 +99,8 @@ void  write ()
 <li>Write to the consumer using the binary format</li>
 </ol>
 
+<p>See <a href="../reference/BackEndBinary.md">BackEndBinary</a> or <a href="../reference/BackEndMl.md">BackEndMl</a> reference documentation for additional examples.</p>
+
 <h3 id="io-read">Reading a Document</h3>
 
 ```c++
@@ -120,5 +124,9 @@ void  read ()
 <li>Read the document</li>
 </ol>
 
-<p><sup><a href="remote.md">previous</a></sup></p>
+<p>See <a href="../reference/BackEndBinary.md">BackEndBinary</a> or <a href="../reference/BackEndMl.md">BackEndMl</a> reference documentation for additional examples.</p>
+
+<p>The next chapter, <a href="../guide/conversion.md">Model Versioning</a> will guide you through converting a document from one revision of the model to another one.</p>
+
+<p><sup><a href="remote.md">previous</a> | <a href="conversion.md">next</a></sup></p>
 

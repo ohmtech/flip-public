@@ -15,7 +15,11 @@ using const_array_iterator = ...;
 
 \code {array_iterator} satisfies the \code {BidirectionalIterator} C++ concept.
 It is a generic iterator that can be used to iterate other any specialization
-of \code {Array}.
+of template class \code {Array}.
+
+All specializations of template class \code {Array} inherit from \code {ArrayBase}
+which has the methods \code {gbegin}, \code {gcbegin}, \code {gend}, \code {gcend}
+which return iterators of type \code {array_iterator} or \code {const_array_iterator}.
 
 
 
@@ -41,6 +45,9 @@ const KeyFloat & key () const;
 
 Returns the key associated to the iterator.
 
+The key is guaranteed unique in the container and is used to sort
+elements in the container.
+
 //----------------------------------------------------------------------------
 
 \method {added}
@@ -53,7 +60,10 @@ bool added () const;
 Returns \code {true} \emph {iff} the iterator was added to the container.
 
 \note {When an object is moved in the container, then the destination iterator is considered
-as added while the object is considered as resident.}
+as added while the object is considered as resident.
+See \link [id=Array.iterator] {Array::iterator} for an example of it.
+}
+
 
 //----------------------------------------------------------------------------
 
@@ -67,7 +77,9 @@ bool removed () const;
 Returns \code {true} \emph {iff} the iterator was removed to the container.
 
 \note {When an object is moved in the container, then the source iterator is considered
-as removed while the object is considered as resident.}
+as removed while the object is considered as resident.
+See \link [id=Array.iterator] {Array::iterator} for an example of it.
+}
 
 //----------------------------------------------------------------------------
 

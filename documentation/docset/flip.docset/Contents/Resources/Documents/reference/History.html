@@ -40,6 +40,7 @@ td > p {margin-left: 6px; height: 12px;}
 .warning {margin-top:21px; margin-bottom:22px; padding-left: 8px; padding-right: 8px; background-color: #f8e3e1; border-color: #c5443e; border-style: solid; border-width: 1px; display: block;}
 .warning strong {margin-right: 8px;}
 .warning p {margin-top: 7px;}
+.caption p {color: black; font-size: 10px; margin-bottom: 10px;}
 img {margin-top:10px; margin-bottom:10px;}
 ul {margin-left: 17px; margin-bottom: 10px;}
 ol {margin-left: 17px; margin-bottom: 10px;}
@@ -69,7 +70,7 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 
 <div id="content">
 <div class="nav" align="right">
-<a href="Float.html">previous</a><span>&nbsp;</span><a href="Int.html">next</a></div>
+<a href="Float.html">previous</a><span>&nbsp;</span><a href="Hub.html">next</a></div>
 
 <a name="//apple_ref/cpp/Class/History" class="dashAnchor"></a>
 <h1>History Class Reference</h1>
@@ -82,6 +83,15 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 </table></div>
 
 <p><code>flip::History</code> is a flip compatible undo/redo stack implementation.</p>
+
+<p>This class is typically used in conjunction with an history store such as :</p>
+
+<ul>
+<li><code>HistoryStoreMemory</code> defined in <code>"flip/HistoryStoreMemory.h"</code>    which will store a non-persistent (in memory) history</li>
+<li><code>HistoryStoreFile</code> defined in <code>"flip/contrib/HistoryStoreFile.h"</code>    which will store a persistent (file based) history</li>
+</ul>
+
+<p>See the book <a href="../history/index.html">Flip History Strategy Guide</a> for examples on how to use <code>History</code>.</p>
 
 <h2>Template Parameters</h2>
 
@@ -135,6 +145,15 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 
 <p>Construct the <code>History</code> by attaching it to the document on which it shall operate. <code>args</code> are passed to the underlying <code>HistoryStoreImpl</code>.</p>
 
+<p>Example :</p>
+
+<div class="codeblock"><table>
+<tr><td><pre>Document document (Model::use (), 123456789UL, &apos;appl&apos;, &apos;gui &apos;);</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>// Creates a persistent history saved to &quot;/path/to/file&quot;</pre></td></tr>
+<tr><td><pre>History &lt;HistoryStoreFile&gt; history (document, &quot;/path/to/file&quot;);</pre></td></tr>
+</table></div>
+
 <a name="//apple_ref/cpp/Method/add_undo_step" class="dashAnchor"></a>
 <hr /><h3 id="member-function-add_undo_step"><code>add_undo_step</code></h3>
 <div class="codeblock"><table>
@@ -142,6 +161,42 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 </table></div>
 
 <p>Add a new transaction on the undo stack. The transaction might be empty or have no operations enabled in undo, in which case the operation is ignored.</p>
+
+<p>Example :</p>
+
+<div class="codeblock"><table>
+<tr><td><pre>Document document (Model::use (), 123456789UL, &apos;appl&apos;, &apos;gui &apos;);</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>// Creates a temporary history in memory</pre></td></tr>
+<tr><td><pre>History &lt;HistoryStoreMemory&gt; history (document);</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>Root &amp; root = document.root &lt;Root&gt; ();</pre></td></tr>
+<tr><td><pre>root.tempo = 145.0;</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>// name the current change</pre></td></tr>
+<tr><td><pre>document.set_label (&quot;Change Tempo&quot;);</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>// commit the change and get the associated transaction</pre></td></tr>
+<tr><td><pre>// the transaction contains the label &quot;Change Tempo&quot;</pre></td></tr>
+<tr><td><pre>auto tx = document.commit ();</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>// add an undo step</pre></td></tr>
+<tr><td><pre>history.add_undo_step (tx);</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>// fetch undo label</pre></td></tr>
+<tr><td><pre>std::cout &lt;&lt; history.last_undo ()-&gt;label ();</pre></td></tr>
+<tr><td><pre>// displays &quot;Change Tempo&quot;</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>// undo operation</pre></td></tr>
+<tr><td><pre>history.execute_undo ();</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>// fetch redo label</pre></td></tr>
+<tr><td><pre>std::cout &lt;&lt; history.first_redo ()-&gt;label ();</pre></td></tr>
+<tr><td><pre>// displays &quot;Change Tempo&quot;</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>// redo operation</pre></td></tr>
+<tr><td><pre>history.execute_redo ();</pre></td></tr>
+</table></div>
 
 <a name="//apple_ref/cpp/Method/begin" class="dashAnchor"></a>
 <hr /><h3 id="member-function-begin"><code>begin</code></h3>
@@ -216,7 +271,7 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 <p>Returns the history data model version at the moment of history creation. This is relevant only for history stores that provide persistence of history, like <code>HistoryStoreFile</code>.</p>
 
 <div class="nav" align="right">
-<a href="Float.html">previous</a><span>&nbsp;</span><a href="Int.html">next</a></div>
+<a href="Float.html">previous</a><span>&nbsp;</span><a href="Hub.html">next</a></div>
 
 <div class="bottomspacer">&nbsp;</div>
 </div>

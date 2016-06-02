@@ -1,4 +1,4 @@
-<p><sup><a href="Float.md">previous</a> | <a href="Int.md">next</a></sup></p>
+<p><sup><a href="Float.md">previous</a> | <a href="Hub.md">next</a></sup></p>
 
 <h1>History Class Reference</h1>
 
@@ -10,6 +10,15 @@ template <class HistoryStoreImpl>   class History;
 ```
 
 <p><code>flip::History</code> is a flip compatible undo/redo stack implementation.</p>
+
+<p>This class is typically used in conjunction with an history store such as :</p>
+
+<ul>
+<li><code>HistoryStoreMemory</code> defined in <code>"flip/HistoryStoreMemory.h"</code>    which will store a non-persistent (in memory) history</li>
+<li><code>HistoryStoreFile</code> defined in <code>"flip/contrib/HistoryStoreFile.h"</code>    which will store a persistent (file based) history</li>
+</ul>
+
+<p>See the book <a href="../history/README.md">Flip History Strategy Guide</a> for examples on how to use <code>History</code>.</p>
 
 <h2>Template Parameters</h2>
 
@@ -57,12 +66,57 @@ template <class... Args>   History (DocumentBase & document, Args &&... args);
 
 <p>Construct the <code>History</code> by attaching it to the document on which it shall operate. <code>args</code> are passed to the underlying <code>HistoryStoreImpl</code>.</p>
 
+<p>Example :</p>
+
+```c++
+Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+
+// Creates a persistent history saved to "/path/to/file"
+History <HistoryStoreFile> history (document, "/path/to/file");
+```
+
 <h3 id="member-function-add_undo_step"><code>add_undo_step</code></h3>
 ```c++
 void  add_undo_step (Transaction tx);
 ```
 
 <p>Add a new transaction on the undo stack. The transaction might be empty or have no operations enabled in undo, in which case the operation is ignored.</p>
+
+<p>Example :</p>
+
+```c++
+Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+
+// Creates a temporary history in memory
+History <HistoryStoreMemory> history (document);
+
+Root & root = document.root <Root> ();
+root.tempo = 145.0;
+
+// name the current change
+document.set_label ("Change Tempo");
+
+// commit the change and get the associated transaction
+// the transaction contains the label "Change Tempo"
+auto tx = document.commit ();
+
+// add an undo step
+history.add_undo_step (tx);
+
+// fetch undo label
+std::cout << history.last_undo ()->label ();
+// displays "Change Tempo"
+
+// undo operation
+history.execute_undo ();
+
+// fetch redo label
+std::cout << history.first_redo ()->label ();
+// displays "Change Tempo"
+
+// redo operation
+history.execute_redo ();
+```
 
 <h3 id="member-function-begin"><code>begin</code></h3>
 ```c++
@@ -127,5 +181,5 @@ std::string  version ();
 
 <p>Returns the history data model version at the moment of history creation. This is relevant only for history stores that provide persistence of history, like <code>HistoryStoreFile</code>.</p>
 
-<p><sup><a href="Float.md">previous</a> | <a href="Int.md">next</a></sup></p>
+<p><sup><a href="Float.md">previous</a> | <a href="Hub.md">next</a></sup></p>
 

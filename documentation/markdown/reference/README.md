@@ -45,9 +45,21 @@
 <li><a href="../reference/DocumentServer.md"><code>DocumentServer</code></a></li>
 <li><a href="../reference/DocumentValidator.md"><code>DocumentValidator</code></a></li>
 <li><a href="../reference/Entity.md"><code>Entity</code></a></li>
+<li><a href="../reference/Hub.md"><code>Hub</code></a></li>
 <li><a href="../reference/Mold.md"><code>Mold</code></a></li>
 <li><a href="../reference/Ref.md"><code>Ref</code></a></li>
 <li><a href="../reference/Signal.md"><code>Signal</code></a></li>
 <li><a href="../reference/Transaction.md"><code>Transaction</code></a></li>
+</ul>
+
+<h2 id="misc">Miscellaneous</h2>
+
+<ul>
+<li><a href="../reference/DataConsumerFile.md"><code>DataConsumerFile</code></a></li>
+<li><a href="../reference/DataConsumerMemory.md"><code>DataConsumerMemory</code></a></li>
+<li><a href="../reference/DataProviderFile.md"><code>DataProviderFile</code></a></li>
+<li><a href="../reference/DataProviderMemory.md"><code>DataProviderMemory</code></a></li>
+<li><a href="../reference/MulticastServiceExplorer.md"><code>MulticastServiceExplorer</code></a></li>
+<li><a href="../reference/MulticastServiceProvider.md"><code>MulticastServiceProvider</code></a></li>
 </ul>
 

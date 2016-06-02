@@ -40,6 +40,7 @@ td > p {margin-left: 6px; height: 12px;}
 .warning {margin-top:21px; margin-bottom:22px; padding-left: 8px; padding-right: 8px; background-color: #f8e3e1; border-color: #c5443e; border-style: solid; border-width: 1px; display: block;}
 .warning strong {margin-right: 8px;}
 .warning p {margin-top: 7px;}
+.caption p {color: black; font-size: 10px; margin-bottom: 10px;}
 img {margin-top:10px; margin-bottom:10px;}
 ul {margin-left: 17px; margin-bottom: 10px;}
 ol {margin-left: 17px; margin-bottom: 10px;}
@@ -86,9 +87,13 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 <li><a href="../reference/Collection.html">Collection</a></li>
 <li><a href="../reference/Collection.iterator.html">Collection::iterator</a></li>
 <li><a href="../reference/collection_iterator.html">collection_iterator</a></li>
+<li><a href="../reference/DataConsumerFile.html">DataConsumerFile</a></li>
+<li><a href="../reference/DataConsumerMemory.html">DataConsumerMemory</a></li>
 <li><a href="../reference/DataModel.html">DataModel</a>	<ul>
 	</ul>
 </li>
+<li><a href="../reference/DataProviderFile.html">DataProviderFile</a></li>
+<li><a href="../reference/DataProviderMemory.html">DataProviderMemory</a></li>
 <li><a href="../reference/Document.html">Document</a></li>
 <li><a href="../reference/DocumentObserver.html">DocumentObserver</a></li>
 <li><a href="../reference/DocumentServer.html">DocumentServer</a></li>
@@ -98,9 +103,12 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 <li><a href="../reference/EnumClass.html">EnumClass</a></li>
 <li><a href="../reference/Float.html">Float</a></li>
 <li><a href="../reference/History.html">History</a></li>
+<li><a href="../reference/Hub.html">Hub</a></li>
 <li><a href="../reference/Int.html">Int</a></li>
 <li><a href="../reference/Message.html">Message</a></li>
 <li><a href="../reference/Mold.html">Mold</a></li>
+<li><a href="../reference/MulticastServiceExplorer.html">MulticastServiceExplorer</a></li>
+<li><a href="../reference/MulticastServiceProvider.html">MulticastServiceProvider</a></li>
 <li><a href="../reference/Object.html">Object</a></li>
 <li><a href="../reference/ObjectRef.html">ObjectRef</a></li>
 <li><a href="../reference/Optional.html">Optional</a></li>
@@ -115,7 +123,7 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 
 <div id="content">
 <div class="nav" align="right">
-<a href="collection_iterator.html">previous</a><span>&nbsp;</span><a href="Document.html">next</a></div>
+<a href="DataConsumerMemory.html">previous</a><span>&nbsp;</span><a href="DataProviderFile.html">next</a></div>
 
 <h1>DataModel Class Reference</h1>
 
@@ -152,6 +160,8 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 </table></div>
 
 <p>Sets the format revision of the data model. The name must be in the <code>ascii-7</code> character set, with exception of control characters as well as <code>del</code> character.</p>
+
+<p>The format revision is used to discriminate between two data models. This is typically used for document conversion from one data model to another one, for example when upgrading to a new version of the model with more properties.</p>
 
 <p>Example:</p>
 
@@ -248,7 +258,7 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 </table></div>
 
 <div class="nav" align="right">
-<a href="collection_iterator.html">previous</a><span>&nbsp;</span><a href="Document.html">next</a></div>
+<a href="DataConsumerMemory.html">previous</a><span>&nbsp;</span><a href="DataProviderFile.html">next</a></div>
 
 <div class="bottomspacer">&nbsp;</div>
 </div>
