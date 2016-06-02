@@ -135,6 +135,8 @@ public:
 
    void           impl_notify_modification ();
 
+   void           impl_execute_no_error (const Transaction & tx, Direction direction);
+
    size_t         pending_txs () const;
    const PullStack &
                   pull_stack () const;
@@ -186,7 +188,7 @@ private:
 
    friend class AutoStash;
 
-   bool           execute (Transaction & tx, Direction direction, bool correct_mode_flag, bool undo_mode_flag);
+   bool           execute (Transaction & tx, Direction direction, bool correct_mode_flag, bool undo_mode_flag, bool no_error_mode_flag);
 
    void           notify_observer ();
 

@@ -159,6 +159,15 @@ void  TestCollection::run ()
    run_070 ();
    run_071 ();
    run_071b ();
+   run_072 ();
+   run_072b ();
+   run_073 ();
+   run_074 ();
+   run_075 ();
+   run_076 ();
+   run_077 ();
+   run_077b ();
+   run_078 ();
 }
 
 
@@ -3594,6 +3603,331 @@ void  TestCollection::run_071b ()
 #endif
 
    document.commit ();
+}
+
+
+
+/*
+==============================================================================
+Name : run_072
+==============================================================================
+*/
+
+void  TestCollection::run_072 ()
+{
+   Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+
+   Root & root = document.root <Root> ();
+
+   auto it = root._coll3.emplace ();
+   B & b = *it;
+   auto it2 = b._coll.emplace ();
+   A & a = *it2;
+   a._int = 2LL;
+
+   B & b2 = *root._coll3.emplace ();
+
+   document.commit ();
+
+   auto it3 = b2._coll.splice (b._coll, it2);
+
+   auto tx = document.commit ();
+
+   auto ok_flag = document.execute_backward (tx);
+   flip_TEST (ok_flag);
+
+   ok_flag = document.execute_forward (tx);
+   flip_TEST (ok_flag);
+
+   document.commit ();
+
+   flip_TEST (a.is_bound ());
+   flip_TEST (a._int.is_bound ());
+   flip_TEST (a._int == 2LL);
+   flip_TEST (a._int.before () == 2LL);
+   flip_TEST (&a.parent <Type> () == &b2._coll);
+   flip_TEST (b._coll.count_if ([](A & elem){return elem._int == 2LL;}) == 0);
+   flip_TEST (b2._coll.count_if ([](A & elem){return elem._int == 2LL;}) == 1);
+}
+
+
+
+/*
+==============================================================================
+Name : run_072b
+==============================================================================
+*/
+
+void  TestCollection::run_072b ()
+{
+   Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+
+   Root & root = document.root <Root> ();
+
+   auto it = root._coll3.emplace ();
+   B & b = *it;
+   auto it2 = b._coll.emplace ();
+   A & a = *it2;
+   a._int = 2LL;
+
+   B & b2 = *root._coll3.emplace ();
+
+   document.commit ();
+
+   auto it3 = b2._coll.splice (b._coll, it2);
+
+   auto tx = document.commit ();
+
+   auto ok_flag = document.execute_backward (tx);
+   flip_TEST (ok_flag);
+
+   ok_flag = document.execute_forward (tx);
+   flip_TEST (ok_flag);
+
+   ok_flag = document.execute_backward (tx);
+   flip_TEST (ok_flag);
+
+   document.commit ();
+
+   flip_TEST (a.is_bound ());
+   flip_TEST (a._int.is_bound ());
+   flip_TEST (a._int == 2LL);
+   flip_TEST (a._int.before () == 2LL);
+   flip_TEST (&a.parent <Type> () == &b._coll);
+   flip_TEST (b._coll.count_if ([](A & elem){return elem._int == 2LL;}) == 1);
+   flip_TEST (b2._coll.count_if ([](A & elem){return elem._int == 2LL;}) == 0);
+}
+
+
+
+/*
+==============================================================================
+Name : run_073
+==============================================================================
+*/
+
+void  TestCollection::run_073 ()
+{
+   Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+
+   Root & root = document.root <Root> ();
+
+   auto it = root._coll3.emplace ();
+   B & b = *it;
+   auto it2 = b._coll.emplace ();
+   A & a = *it2;
+   a._int = 2LL;
+
+   document.commit ();
+
+   B & b2 = *root._coll3.emplace ();
+
+   auto it3 = b2._coll.splice (b._coll, it2);
+
+   auto tx = document.commit ();
+
+   auto ok_flag = document.execute_backward (tx);
+   flip_TEST (ok_flag);
+
+   document.commit ();
+
+   ok_flag = document.execute_forward (tx);
+   flip_TEST (ok_flag);
+
+   document.commit ();
+
+   flip_TEST (a.is_bound ());
+   flip_TEST (a._int.is_bound ());
+   flip_TEST (a._int == 2LL);
+   flip_TEST (a._int.before () == 2LL);
+   flip_TEST (&a.parent <Type> () != &b._coll);
+   flip_TEST (b._coll.count_if ([](A & elem){return elem._int == 2LL;}) == 0);
+}
+
+
+
+/*
+==============================================================================
+Name : run_074
+==============================================================================
+*/
+
+void  TestCollection::run_074 ()
+{
+   Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+
+   Root & root = document.root <Root> ();
+
+   auto it = root._coll.emplace ();
+
+   document.commit ();
+
+   A & a = *it;
+
+   a._int = 3LL;
+   root._coll2.splice (root._coll, it);
+
+   auto tx = document.commit ();
+
+   auto ok_flag = document.execute_backward (tx);
+   flip_TEST (ok_flag);
+}
+
+
+
+/*
+==============================================================================
+Name : run_075
+==============================================================================
+*/
+
+void  TestCollection::run_075 ()
+{
+   Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+
+   Root & root = document.root <Root> ();
+
+   auto it = root._coll.emplace ();
+
+   document.commit ();
+
+   auto it2 = root._coll2.splice (root._coll, it);
+   root._coll.splice (root._coll2, it2);
+
+   auto tx = document.commit ();
+
+   auto ok_flag = document.execute_backward (tx);
+   flip_TEST (ok_flag);
+}
+
+
+
+/*
+==============================================================================
+Name : run_076
+==============================================================================
+*/
+
+void  TestCollection::run_076 ()
+{
+   Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+
+   Root & root = document.root <Root> ();
+
+   auto it = root._coll3.emplace ();
+   B & b = *it;
+
+   auto it2 = root._coll3.emplace ();
+   B & b2 = *it2;
+   auto it3 = b2._coll.emplace ();
+
+   document.commit ();
+
+   b._coll.splice (b2._coll, it3);
+   root._coll3.erase (it2);
+
+   auto tx = document.commit ();
+
+   auto ok_flag = document.execute_backward (tx);
+   flip_TEST (ok_flag);
+
+   ok_flag = document.execute_forward (tx);
+   flip_TEST (ok_flag);
+}
+
+
+
+/*
+==============================================================================
+Name : run_077
+==============================================================================
+*/
+
+void  TestCollection::run_077 ()
+{
+   Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+
+   Root & root = document.root <Root> ();
+
+   B & b = *root._coll3.emplace ();
+   auto it = b._coll.emplace ();
+
+   document.commit ();
+
+   B & b2 = *root._coll3.emplace ();
+   b2._coll.splice (b._coll, it);
+
+   auto tx = document.commit ();
+
+   auto ok_flag = document.execute_backward (tx);
+   flip_TEST (ok_flag);
+
+   ok_flag = document.execute_forward (tx);
+   flip_TEST (ok_flag);
+}
+
+
+
+/*
+==============================================================================
+Name : run_077b
+==============================================================================
+*/
+
+void  TestCollection::run_077b ()
+{
+   Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+
+   Root & root = document.root <Root> ();
+
+   B & b = *root._coll3.emplace ();
+   auto it = b._coll.emplace ();
+
+   document.commit ();
+
+   B & b2 = *root._coll3.emplace ();
+   b2._coll.splice (b._coll, it);
+
+   auto tx = document.commit ();
+
+   auto ok_flag = document.execute_backward (tx);
+   flip_TEST (ok_flag);
+
+   ok_flag = document.execute_forward (tx);
+   flip_TEST (ok_flag);
+}
+
+
+
+/*
+==============================================================================
+Name : run_078
+==============================================================================
+*/
+
+void  TestCollection::run_078 ()
+{
+   Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+
+   Root & root = document.root <Root> ();
+
+   auto it2 = root._coll3.emplace ();
+   B & b2 = *it2;
+   auto it3 = b2._coll.emplace ();
+
+   document.commit ();
+
+   B & b = *root._coll3.emplace ();
+   b._coll.splice (b2._coll, it3);
+   root._coll3.erase (it2);
+
+   auto tx = document.commit ();
+
+   auto ok_flag = document.execute_backward (tx);
+   flip_TEST (ok_flag);
+
+   ok_flag = document.execute_forward (tx);
+   flip_TEST (ok_flag);
 }
 
 

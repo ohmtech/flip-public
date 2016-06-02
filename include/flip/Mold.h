@@ -33,6 +33,7 @@ namespace flip
 class ArrayBase;
 class Blob;
 class Bool;
+class ClassBase;
 class CollectionBase;
 class DataModelBase;
 class EnumBase;
@@ -60,8 +61,6 @@ public:
    Mold &         operator = (Mold && rhs);
 
    template <class T>
-   void           make (T & obj, bool skip_container_flag = false);
-   template <class T>
    void           make (const T & obj, bool skip_container_flag = false);
    void           cure ();
 
@@ -75,6 +74,8 @@ public:
    >::type        cast () const;
    template <class T>
    void           cast (T & obj) const;
+   template <class T>
+   bool           has () const;
 
 
 
@@ -92,7 +93,7 @@ protected:
 
 private:
 
-   void           make (const Type & obj, StreamBinOut & sbo, bool skip_container_flag);
+   void           make (const ClassBase & class_base, const Type & obj, StreamBinOut & sbo, bool skip_container_flag);
    void           make (const Bool & obj, StreamBinOut & sbo);
    void           make (const Int & obj, StreamBinOut & sbo);
    void           make (const Float & obj, StreamBinOut & sbo);
@@ -102,7 +103,7 @@ private:
    void           make (const CollectionBase & obj, StreamBinOut & sbo, bool skip_container_flag);
    void           make (const ArrayBase & obj, StreamBinOut & sbo, bool skip_container_flag);
    void           make (const MessageBase & obj, StreamBinOut & sbo);
-   void           make (const Object & obj, StreamBinOut & sbo, bool skip_container_flag);
+   void           make (const ClassBase & class_base, const Object & obj, StreamBinOut & sbo, bool skip_container_flag);
 
    void           cast (Type & obj, StreamBinIn & sbi) const;
    void           cast (Bool & obj, StreamBinIn & sbi) const;

@@ -91,6 +91,7 @@ public:
                   label () const;
    const std::string &
                   metadata (std::string key) const;
+   bool           has_metadata (std::string key) const;
 
    static const std::string
                   key_label;
@@ -101,9 +102,17 @@ public:
 
    typedef std::map <std::string, std::string> MetaMap;
 
-   MetaMap &      use_metadata_map ();
+   MetaMap &      impl_use_metadata_map ();
+   const MetaMap &impl_use_metadata_map () const;
+
    bool           is_executable () const;
    bool           has_opcode_in_undo () const;
+
+   Opcodes::iterator
+                  last ();
+   Opcodes &      opcodes ();
+
+   void           invert_inplace ();
 
    void           set_hint (uint64_t user_id, uint64_t actor_id, uint64_t nbr_id, Direction direction);
    bool           has_hint () const;
@@ -123,18 +132,16 @@ protected:
 private:
 
    friend class Journal;
-   typedef std::list <Opcode> OpcodeList;
 
    bool           execute_forward (DocumentBase & document, DocumentValidatorBase & validator, uint8_t flags);
    bool           execute_backward (DocumentBase & document, DocumentValidatorBase & validator, uint8_t flags);
    bool           validate (DocumentBase & document, DocumentValidatorBase & validator);
-   void           consolidate (Direction direction);
-   void           correct (Direction direction);
+   void           consolidate ();
 
    TxId           _id;
 
    MetaMap        _meta_map;
-   OpcodeList     _opcode_list;
+   Opcodes        _opcodes;
    bool           _invert_flag = false;
 
    bool           _executable_flag = true;

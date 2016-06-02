@@ -7,7 +7,9 @@
 <li><a href="../guide/declare.md">Declaring the Model</a></li>
 <li><a href="../guide/control.md">Controlling the Model</a></li>
 <li><a href="../guide/observe.md">Observing the Model</a></li>
+<li><a href="../guide/signal.md">Signalling the Model</a></li>
 <li><a href="../guide/remote.md">Working with a Remote Server</a></li>
 <li><a href="../guide/misc.md">More Fun with Flip</a></li>
+<li><a href="../guide/conversion.md">Model Versioning</a></li>
 </ul>
 

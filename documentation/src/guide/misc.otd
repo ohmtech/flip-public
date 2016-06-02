@@ -41,6 +41,9 @@ void  run ()
 \item {redo the transaction}
 }
 
+The undo/redo/history topic is studied in more details in the book
+\link [id=history/about] {Flip History Strategy Guide}.
+
 
 
 /*
@@ -116,6 +119,12 @@ void  write ()
 \item {Write to the consumer using the binary format}
 }
 
+See
+\link [id=reference/BackEndBinary] {BackEndBinary} or
+\link [id=reference/BackEndMl] {BackEndMl}
+reference documentation for additional examples.
+
+
 \subsection [id=read] {Reading a Document}
 
 \codeblock [language=c++] ***
@@ -139,3 +148,12 @@ void  read ()
 \item {Read the document}
 }
 
+See
+\link [id=reference/BackEndBinary] {BackEndBinary} or
+\link [id=reference/BackEndMl] {BackEndMl}
+reference documentation for additional examples.
+
+
+
+The next chapter, \link [id=conversion] {Model Versioning} will guide you through
+converting a document from one revision of the model to another one.

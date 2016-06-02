@@ -40,6 +40,7 @@ td > p {margin-left: 6px; height: 12px;}
 .warning {margin-top:21px; margin-bottom:22px; padding-left: 8px; padding-right: 8px; background-color: #f8e3e1; border-color: #c5443e; border-style: solid; border-width: 1px; display: block;}
 .warning strong {margin-right: 8px;}
 .warning p {margin-top: 7px;}
+.caption p {color: black; font-size: 10px; margin-bottom: 10px;}
 img {margin-top:10px; margin-bottom:10px;}
 ul {margin-left: 17px; margin-bottom: 10px;}
 ol {margin-left: 17px; margin-bottom: 10px;}
@@ -79,6 +80,7 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 <li><a href="../guide/organize.html">Organizing your Code</a></li>
 <li><a href="../guide/control.html">Controlling the Model</a></li>
 <li><a href="../guide/observe.html">Observing the Model</a></li>
+<li><a href="../guide/signal.html">Signalling the Model</a></li>
 <li><a href="../guide/remote.html">Working with a Remote Server</a></li>
 <li><a href="../guide/misc.html">More Fun with Flip</a>	<ul>
 	<li><a href="../guide/misc.html#history">Providing Undo/Redo Feature</a></li>
@@ -86,12 +88,13 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 	<li><a href="../guide/misc.html#io">Reading/Writing a Document</a></li>
 	</ul>
 </li>
+<li><a href="../guide/conversion.html">Model Versioning</a></li>
 </ul>
 </div>
 
 <div id="content">
 <div class="nav" align="right">
-<a href="remote.html">previous</a></div>
+<a href="remote.html">previous</a><span>&nbsp;</span><a href="conversion.html">next</a></div>
 
 <h1>More Fun with Flip</h1>
 
@@ -128,6 +131,8 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 <li>undo the transaction</li>
 <li>redo the transaction</li>
 </ol>
+
+<p>The undo/redo/history topic is studied in more details in the book <a href="../history/about.html">Flip History Strategy Guide</a>.</p>
 
 <h2><a name="manipulation">Manipulating Transactions</a></h2>
 
@@ -190,6 +195,8 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 <li>Write to the consumer using the binary format</li>
 </ol>
 
+<p>See <a href="../reference/BackEndBinary.html">BackEndBinary</a> or <a href="../reference/BackEndMl.html">BackEndMl</a> reference documentation for additional examples.</p>
+
 <h3><a name="io-read">Reading a Document</a></h3>
 
 <div class="codeblock"><table>
@@ -213,8 +220,12 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 <li>Read the document</li>
 </ol>
 
+<p>See <a href="../reference/BackEndBinary.html">BackEndBinary</a> or <a href="../reference/BackEndMl.html">BackEndMl</a> reference documentation for additional examples.</p>
+
+<p>The next chapter, <a href="../guide/conversion.html">Model Versioning</a> will guide you through converting a document from one revision of the model to another one.</p>
+
 <div class="nav" align="right">
-<a href="remote.html">previous</a></div>
+<a href="remote.html">previous</a><span>&nbsp;</span><a href="conversion.html">next</a></div>
 
 <div class="bottomspacer">&nbsp;</div>
 </div>

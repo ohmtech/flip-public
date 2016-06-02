@@ -136,6 +136,10 @@ stored in this object.
 
 Returns \code {true} \emph {iff} the operation was successful.
 
+See \link [id=BackEndMl] {\code {BackEndMl}} or
+\link [id=BackEndBinary] {\code {BackEndBinary}}
+for an example of use of this method.
+
 //----------------------------------------------------------------------------
 
 \method {write}
@@ -157,6 +161,10 @@ Example:
 backend.write <BackEndBinary> (consumer);
 ***
 
+See \link [id=BackEndMl] {\code {BackEndMl}} or
+\link [id=BackEndBinary] {\code {BackEndBinary}}
+for a more detailed example of use of this method.
+
 
 
 /*\\\ DIVISION \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
@@ -173,6 +181,11 @@ void  read (DocumentBase & document);
 Reads from this object and fill the document. It will modify the document
 exactly as if executing a transaction. Changed made to the document should
 then be commited.
+
+See \link [id=BackEndMl] {\code {BackEndMl}} or
+\link [id=BackEndBinary] {\code {BackEndBinary}}
+for an example of use of this method.
+
 
 //----------------------------------------------------------------------------
 

@@ -1,0 +1,159 @@
+\book [id=overview] {Flip Overview}
+
+Flip is a data model library, designed as a framework, real-time collaboration-oriented,
+transactional, portable and compact.
+
+\itemize {
+\item {\link [id=about] {About Flip}}
+\item {\link [id=how] {How it Works}}
+\item {\link [id=model] {Interfacing with the Model}}
+\item {\link [id=undo] {Undo/Redo System}}
+\item {\link [id=thread] {Threading System}}
+\item {\link [id=document] {Document Format, Conversion}}
+}
+
+\chapter [id=about] {About Flip}
+
+Flip is a data model library, designed as a framework, real-time collaboration-oriented,
+transactional, portable and compact.
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=keypoints] {Key Points}
+
+Flip features a number of key points to your application :
+
+\itemize {
+\item {Real-time collaboration-oriented data model framework library}
+\item {Single user development turns automatically into a multi user application}
+\item {Undo/Redo and history are automatically handled (no action classes)}
+\item {Copy/Paste can be automatic or refined to your needs very simply}
+\item {Multi-threaded/multi-process architecture}
+\item {Transactional}
+\item {Server side is limited to data model code, making it less prone to bugs}
+\item {High stability}
+\item {High performance oriented, extensible and future-proof document formats}
+\item {At the core of Ohm Studio's unrivaled collaborating solution}
+}
+
+Those key points are detailed below.
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=prerequisites] {Prerequisites}
+
+\itemize {
+\item {Client Development in C++}
+\item {Portable C++ code (standard library, no external dependencies)}
+\item {Apple XCode 6, Windows Microsoft Visual Studio C++ 2013 Update 4,
+   or 2015, GCC 4.8 with libstdc++ or Clang 3.6 with libc++ on Ubuntu 14.04}
+}
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=multi] {Multi/single user, good practices}
+
+The library has been conceived to let developers test their programs as single user
+with great chances to get it right for multi user. Particular efforts were made to
+avoid temporal impacts on development iteration. No server is required during
+development cycles.
+
+Moreover, our team set some good practices over the last few years to help you implement
+a solid architecture that will stand the test of time and be able to meet new needs.
+
+In fact, we experienced that industrial implementation of the model yields the best
+correct-lines-to-total-lines ratio. The unique way Flip works offers users to work in
+real-time collaboration without feeling any latency caused by the Internet.
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=undo] {Undo, redo, history, copy, paste}
+
+Flip's very structure makes it unnecessary to manage undo and redo with specific code,
+which allows for super fast implementation of new industry-specific functionalities.
+The library can generate one or many undo/redo histories according to your needs.
+
+Likewise, you can implement copy/paste with the same simplicity, while enjoying the
+unlimited possibilities of customization offered by this feature.
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=format] {Document format, document version, validation}
+
+Flip support a text-editable back-end writing format as well as a binary one.
+This has many advantages, including:
+
+\itemize {
+\item {Parsing the binary format is fast and portable}
+\item {Use of a text editor in debug mode offering outstanding readability with the text-editable back-end}
+}
+
+The use of a text editor in debug mode offering outstanding readability, even with
+documents weighing 100MB+. Simple and efficient, no matter how complex the model is.
+
+The document works on its own version. Graphs of multiple versions are available
+(branches for A/B testing for instance). The document conversion system has been
+successfully tested in production environment including radical paradigm changes.
+
+Flip also allows you to set up a dynamic model validation system, regardless of
+the complexity involved. It can even handle structural model validation with no
+additional code. It doesn't generate orphan objects: actually, we haven't got
+any in 10 years of development.
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=thread] {Thread/Process Flip}
+
+Using optimisic replication, Flip documents can be easily used between
+threads or even processes with no lock.
+
+
+
+/*
+==============================================================================
+*/
+
+\section [id=interoperability] {Interoperability}
+
+Flip has been designed to integrate with external engines without imposing its
+own architecture: IDs, references, and any other system used by external engines
+can be integrated in Flip's engine, without the need to maintain specific glue code :
+each Flip object can store multiple represented objects.
+
+Flip's unique change detection system within a document let the client code parse
+the change in any directions to match external engines object life-time constraint
+for example.
+
+
+
+#include "how.otd"
+#include "model.otd"
+#include "undo.otd"
+#include "thread.otd"
+#include "document.otd"
+
+

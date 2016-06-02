@@ -19,6 +19,7 @@
 #include "flip/Collection.h"
 #include "flip/DataModel.h"
 #include "flip/DocumentObserver.h"
+#include "flip/DocumentValidator.h"
 #include "flip/Enum.h"
 #include "flip/Float.h"
 #include "flip/Int.h"
@@ -114,6 +115,16 @@ public:
       Array <A>   _array_a;
       Enum <D>    _enum;
       Enum <D>    _enum2;
+   };
+
+   class ValidatorFail
+   :  public DocumentValidator <Root>
+   {
+   public:
+      // DocumentValidator <Root>
+      virtual void
+                  validate (Root & root);
+      bool        called_flag = false;
    };
 
                   TestTransaction () = default;
@@ -308,6 +319,16 @@ private:
    void           run_134 ();
    void           run_135 ();
 
+   void           run_136 ();
+   void           run_137 ();
+   void           run_137b ();
+   void           run_138 ();
+   void           run_138b ();
+   void           run_139 ();
+   void           run_139b ();
+
+   void           run_140 ();
+   void           run_140b ();
 
 
 

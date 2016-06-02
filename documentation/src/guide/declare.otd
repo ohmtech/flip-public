@@ -311,31 +311,34 @@ Flip offers categories of basic types :
 \subsection [id=value] {Value Types}
 
 \itemize {
-\item {\code {flip::Bool} holds a boolean value}
-\item {\code {flip::Int} holds a 64-bit integer value}
-\item {\code {flip::Float} holds a 64-bit floating point value}
-\item {\code {flip::Enum} holds an \code {enum} value}
-\item {\code {flip::Blob} holds a dynamic-sized opaque blob of data}
+\item {\link [id=reference/Bool] {\code {flip::Bool}} holds a boolean value}
+\item {\link [id=reference/Int] {\code {flip::Int}} holds a 64-bit integer value}
+\item {\link [id=reference/Float] {\code {flip::Float}} holds a 64-bit floating point value}
+\item {\link [id=reference/Enum] {\code {flip::Enum}} holds an \code {enum} value}
+\item {\link [id=reference/Blob] {\code {flip::Blob}} holds a dynamic-sized opaque blob of data}
+\item {\link [id=reference/String] {\code {flip::String}} holds a string similar to \code {std::string}}
 }
 
 \subsection [id=container] {Container Types}
 
 \itemize {
-\item {\code {flip::Array} is a strictly linear ordered sequence container similar to \code {std::list} or \code {std::vector}}
-\item {\code {flip::Collection} is an unordered container similar to \code {std::set}}
-\item {\code {flip::Variant} is an one element container similar to \code {boost::variant}}
+\item {\link [id=reference/Array] {\code {flip::Array}} is a strictly linear ordered sequence container similar to \code {std::list} or \code {std::vector}}
+\item {\link [id=reference/Collection] {\code {flip::Collection}} is an unordered container similar to \code {std::set}}
+\item {\link [id=reference/Variant] {\code {flip::Variant}} is an one element container similar to \code {boost::variant}}
+\item {\link [id=reference/Optional] {\code {flip::Optional}} is a zero or one element container similar to \code {boost::optional}}
+\item {\link [id=reference/Vector] {\code {flip::Vector}} is a strictly linear ordered sequence container, oriented for performance to the detriment of concurrency, similar to \code {std::list} or \code {std::vector}}
 }
 
 \subsection [id=reference] {Reference Type}
 
 \itemize {
-\item {\code {flip::ObjectRef} holds a reference to another object in the model tree. It is similar to a pointer}
+\item {\link [id=reference/ObjectRef] {\code {flip::ObjectRef}} holds a reference to another object in the model tree. It is similar to a pointer}
 }
 
 \subsection [id=signal] {Signaling Type}
 
 \itemize {
-\item {\code {flip::Cue} allows to signal an object with arbitrary non-persistent data}
+\item {\link [id=reference/Message] {\code {flip::Message}} allows to signal an object with arbitrary non-persistent data}
 }
 
 

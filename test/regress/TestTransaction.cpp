@@ -273,6 +273,17 @@ void  TestTransaction::run ()
    run_133 ();
    run_134 ();
    run_135 ();
+
+   run_136 ();
+   run_137 ();
+   run_137b ();
+   run_138 ();
+   run_138b ();
+   run_139 ();
+   run_139b ();
+
+   run_140 ();
+   run_140b ();
 }
 
 
@@ -5939,6 +5950,432 @@ void  TestTransaction::run_135 ()
 
    bool ok_flag = document.execute_forward (tx);
    flip_TEST (!ok_flag);
+}
+
+
+
+/*
+==============================================================================
+Name : run_136
+==============================================================================
+*/
+
+void  TestTransaction::run_136 ()
+{
+   Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+   Root & root = document.root <Root> ();
+
+   std::vector <uint8_t> data1;
+   data1.push_back (0x22);
+   data1.push_back (0x4a);
+
+   std::vector <uint8_t> data2;
+   data1.push_back (0x0f);
+   data1.push_back (0x1f);
+   data1.push_back (0x23);
+
+   KeyRandom key_random1;
+   KeyRandom key_random2;
+
+   KeyFloat key_float1 = KeyFloat::generate (KeyFloat::zero, KeyFloat::one);
+   KeyFloat key_float2 = KeyFloat::generate (KeyFloat::zero, KeyFloat::one);
+
+   Transaction tx;
+   tx.push_bool_set (root._bool.ref (), 1, false, true);
+   tx.push_bool_set (root._bool.ref (), 0, true, false);
+   tx.push_int64_set (root._int.ref (), 1, 2, 3);
+   tx.push_float64_set (root._float.ref (), 0, 4.5, 2.3);
+   tx.push_enum_set (root._enum.ref (), 0, 1, 19);
+   tx.push_object_ref_set (root._ref_a.ref (), 0, root._bool.ref (), root._int.ref ());
+   tx.push_blob_set (root._blob.ref (), 1, data1, data2);
+   tx.push_collection_insert (root._coll_a.ref (), 0, key_random1, 34, root._blob.ref ());
+   tx.push_collection_erase (root._coll_b.ref (), 1, key_random2, 57, root._int.ref ());
+   tx.push_collection_move (root._coll_a.ref (), 0, key_random1, root._coll_b.ref (), key_random2);
+   tx.push_array_insert (root._array_a.ref (), 1, key_float1, 34, root._blob.ref ());
+   tx.push_array_erase (root._coll_b.ref (), 0, key_float2, 57, root._bool.ref ());
+   tx.push_array_move (root._array_a.ref (), 1, key_float1, root._coll_b.ref (), key_float2);
+   tx.push_message_push (root._message.ref (), 1, data1);
+
+   tx.invert_inplace ();
+
+   Transaction tx2;
+   tx2.push_message_push (root._message.ref (), 1, data1);
+   tx2.push_array_move (root._coll_b.ref (), 1, key_float2, root._array_a.ref (), key_float1);
+   tx2.push_array_insert (root._coll_b.ref (), 0, key_float2, 57, root._bool.ref ());
+   tx2.push_array_erase (root._array_a.ref (), 1, key_float1, 34, root._blob.ref ());
+   tx2.push_collection_move (root._coll_b.ref (), 0, key_random2, root._coll_a.ref (), key_random1);
+   tx2.push_collection_insert (root._coll_b.ref (), 1, key_random2, 57, root._int.ref ());
+   tx2.push_collection_erase (root._coll_a.ref (), 0, key_random1, 34, root._blob.ref ());
+   tx2.push_blob_set (root._blob.ref (), 1, data2, data1);
+   tx2.push_object_ref_set (root._ref_a.ref (), 0, root._int.ref (), root._bool.ref ());
+   tx2.push_enum_set (root._enum.ref (), 0, 19, 1);
+   tx2.push_float64_set (root._float.ref (), 0, 2.3, 4.5);
+   tx2.push_int64_set (root._int.ref (), 1, 3, 2);
+   tx2.push_bool_set (root._bool.ref (), 0, false, true);
+   tx2.push_bool_set (root._bool.ref (), 1, true, false);
+
+   flip_TEST (tx.equal (tx2));
+}
+
+
+
+/*
+==============================================================================
+Name : run_137
+==============================================================================
+*/
+
+void  TestTransaction::run_137 ()
+{
+   Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+   Root & root = document.root <Root> ();
+
+   auto & a = *root._coll_a.emplace ();
+   auto tx = document.commit ();
+
+   a._int = 2;
+   document.commit ();
+
+   bool ok_flag = document.execute_correct_backward (tx);
+   flip_TEST (ok_flag);
+
+   flip_TEST (std::count_if (
+      root._coll_a.begin (), root._coll_a.end (), [](A & elem){return elem.removed ();}
+   ) == 1);
+
+   document.commit ();
+
+   flip_TEST (root._coll_a.begin () == root._coll_a.end ());
+
+   ok_flag = document.execute_forward (tx);
+   flip_TEST (ok_flag);
+   document.commit ();
+
+   flip_TEST (std::count_if (
+      root._coll_a.begin (), root._coll_a.end (), [](A & elem){return elem._int == 2;}
+   ) == 1);
+
+   ok_flag = document.execute_backward (tx);
+   flip_TEST (ok_flag);
+   document.commit ();
+
+   flip_TEST (root._coll_a.begin () == root._coll_a.end ());
+}
+
+
+
+/*
+==============================================================================
+Name : run_137b
+==============================================================================
+*/
+
+void  TestTransaction::run_137b ()
+{
+   Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+   Root & root = document.root <Root> ();
+
+   auto & a = *root._array_a.emplace (root._array_a.end ());
+   auto tx = document.commit ();
+
+   a._int = 2;
+   document.commit ();
+
+   bool ok_flag = document.execute_correct_backward (tx);
+   flip_TEST (ok_flag);
+
+   flip_TEST (std::count_if (
+      root._array_a.begin (), root._array_a.end (), [](A & elem){return elem.removed ();}
+   ) == 1);
+
+   document.commit ();
+
+   flip_TEST (root._array_a.begin () == root._array_a.end ());
+
+   ok_flag = document.execute_forward (tx);
+   flip_TEST (ok_flag);
+   document.commit ();
+
+   flip_TEST (std::count_if (
+      root._array_a.begin (), root._array_a.end (), [](A & elem){return elem._int == 2;}
+   ) == 1);
+
+   ok_flag = document.execute_backward (tx);
+   flip_TEST (ok_flag);
+   document.commit ();
+
+   flip_TEST (root._array_a.begin () == root._array_a.end ());
+}
+
+
+
+/*
+==============================================================================
+Name : run_138
+==============================================================================
+*/
+
+void  TestTransaction::run_138 ()
+{
+   Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+   Root & root = document.root <Root> ();
+
+   auto & a = *root._coll_a.emplace ();
+   auto tx = document.commit ();
+   tx.invert_inplace ();
+
+   a._int = 2;
+   document.commit ();
+
+   bool ok_flag = document.execute_correct_forward (tx);
+   flip_TEST (ok_flag);
+
+   flip_TEST (std::count_if (
+      root._coll_a.begin (), root._coll_a.end (), [](A & elem){return elem.removed ();}
+   ) == 1);
+
+   document.commit ();
+
+   flip_TEST (root._coll_a.begin () == root._coll_a.end ());
+
+   ok_flag = document.execute_backward (tx);
+   flip_TEST (ok_flag);
+   document.commit ();
+
+   flip_TEST (std::count_if (
+      root._coll_a.begin (), root._coll_a.end (), [](A & elem){return elem._int == 2;}
+   ) == 1);
+
+   ok_flag = document.execute_forward (tx);
+   flip_TEST (ok_flag);
+   document.commit ();
+
+   flip_TEST (root._coll_a.begin () == root._coll_a.end ());
+}
+
+
+
+/*
+==============================================================================
+Name : run_138b
+==============================================================================
+*/
+
+void  TestTransaction::run_138b ()
+{
+   Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+   Root & root = document.root <Root> ();
+
+   auto & a = *root._array_a.emplace (root._array_a.end ());
+   auto tx = document.commit ();
+   tx.invert_inplace ();
+
+   a._int = 2;
+   document.commit ();
+
+   bool ok_flag = document.execute_correct_forward (tx);
+   flip_TEST (ok_flag);
+
+   flip_TEST (std::count_if (
+      root._array_a.begin (), root._array_a.end (), [](A & elem){return elem.removed ();}
+   ) == 1);
+
+   document.commit ();
+
+   flip_TEST (root._array_a.begin () == root._array_a.end ());
+
+   ok_flag = document.execute_backward (tx);
+   flip_TEST (ok_flag);
+   document.commit ();
+
+   flip_TEST (std::count_if (
+      root._array_a.begin (), root._array_a.end (), [](A & elem){return elem._int == 2;}
+   ) == 1);
+
+   ok_flag = document.execute_forward (tx);
+   flip_TEST (ok_flag);
+   document.commit ();
+
+   flip_TEST (root._array_a.begin () == root._array_a.end ());
+}
+
+
+
+/*
+==============================================================================
+Name : run_139
+==============================================================================
+*/
+
+void  TestTransaction::run_139 ()
+{
+   Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+   Root & root = document.root <Root> ();
+
+   auto & b = *root._coll_b.emplace ();
+   auto tx = document.commit ();
+
+   b._int = 2;
+   b._int2 = 5;
+   auto & a = *b._coll.emplace ();
+   a._int = 7;
+   document.commit ();
+
+   bool ok_flag = document.execute_correct_backward (tx);
+   flip_TEST (ok_flag);
+
+   flip_TEST (std::count_if (
+      root._coll_b.begin (), root._coll_b.end (), [](A & elem){return elem.removed ();}
+   ) == 1);
+
+   document.commit ();
+
+   flip_TEST (root._coll_b.begin () == root._coll_b.end ());
+
+   ok_flag = document.execute_forward (tx);
+   flip_TEST (ok_flag);
+   document.commit ();
+
+   flip_TEST (std::count_if (
+      root._coll_b.begin (), root._coll_b.end (), [](A & elem){return elem._int == 2;}
+   ) == 1);
+
+   auto & b2 = *root._coll_b.begin ();
+   flip_TEST (b2._int == 2);
+   flip_TEST (b2._int2 == 5);
+
+   flip_TEST (std::count_if (
+      b2._coll.begin (), b2._coll.end (), [](A & elem){return elem._int == 7;}
+   ) == 1);
+
+   ok_flag = document.execute_backward (tx);
+   flip_TEST (ok_flag);
+   document.commit ();
+
+   flip_TEST (root._coll_b.begin () == root._coll_b.end ());
+}
+
+
+
+/*
+==============================================================================
+Name : run_139b
+==============================================================================
+*/
+
+void  TestTransaction::run_139b ()
+{
+   Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+   Root & root = document.root <Root> ();
+
+   auto & b = *root._coll_b.emplace ();
+   auto tx = document.commit ();
+   tx.invert_inplace ();
+
+   b._int = 2;
+   b._int2 = 5;
+   auto & a = *b._coll.emplace ();
+   a._int = 7;
+   document.commit ();
+
+   bool ok_flag = document.execute_correct_forward (tx);
+   flip_TEST (ok_flag);
+
+   flip_TEST (std::count_if (
+      root._coll_b.begin (), root._coll_b.end (), [](A & elem){return elem.removed ();}
+   ) == 1);
+
+   document.commit ();
+
+   flip_TEST (root._coll_b.begin () == root._coll_b.end ());
+
+   ok_flag = document.execute_backward (tx);
+   flip_TEST (ok_flag);
+   document.commit ();
+
+   flip_TEST (std::count_if (
+      root._coll_b.begin (), root._coll_b.end (), [](A & elem){return elem._int == 2;}
+   ) == 1);
+
+   auto & b2 = *root._coll_b.begin ();
+   flip_TEST (b2._int == 2);
+   flip_TEST (b2._int2 == 5);
+
+   flip_TEST (std::count_if (
+      b2._coll.begin (), b2._coll.end (), [](A & elem){return elem._int == 7;}
+   ) == 1);
+
+   ok_flag = document.execute_forward (tx);
+   flip_TEST (ok_flag);
+   document.commit ();
+
+   flip_TEST (root._coll_b.begin () == root._coll_b.end ());
+}
+
+
+
+/*
+==============================================================================
+Name : ValidatorFail::validate
+==============================================================================
+*/
+
+void  TestTransaction::ValidatorFail::validate (Root & root)
+{
+   if (root.removed ()) return;  // abort
+
+   called_flag = true;
+
+   if (root._int != 0)
+   {
+      flip_VALIDATION_FAILED ("test");
+   }
+}
+
+
+
+/*
+==============================================================================
+Name : run_140
+==============================================================================
+*/
+
+void  TestTransaction::run_140 ()
+{
+   ValidatorFail validator;
+   Document document (Model::use (), validator, 123456789UL, 'appl', 'gui ');
+   Root & root = document.root <Root> ();
+
+   validator.called_flag = false;
+
+   Transaction tx;
+   tx.push_int64_set (root._int.ref (), 0, 0, 17);
+
+   flip_CHECK_THROW (document.impl_execute_no_error (tx, Direction::FORWARD));
+   flip_TEST (validator.called_flag == true);
+}
+
+
+
+/*
+==============================================================================
+Name : run_140b
+==============================================================================
+*/
+
+void  TestTransaction::run_140b ()
+{
+   ValidatorFail validator;
+   Document document (Model::use (), validator, 123456789UL, 'appl', 'gui ');
+   Root & root = document.root <Root> ();
+
+   validator.called_flag = false;
+
+   Transaction tx;
+   tx.push_int64_set (root._int.ref (), 0, 17, 0);
+
+   flip_CHECK_THROW (document.impl_execute_no_error (tx, Direction::BACKWARD));
+   flip_TEST (validator.called_flag == true);
 }
 
 

@@ -19,6 +19,8 @@ the key is the key type itself and the value an instance of that type.
 \code {Entity}s are used to store custom data in flip \code {Object}s and
 are typically used in observers.
 
+They are a map where the key is a type and the value a type erasure.
+
 
 
 /*\\\ METHODS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
@@ -63,6 +65,22 @@ Removes the element of type \code {T}.
 
 \warning {The element must exist in the entity.}
 
+\codeblock [language=c++] ***
+class A
+{
+public:
+   A (double value);
+};
+
+Entity entity;
+entity.emplace <A> (2.5);
+// 'entity' owns a 'A' object
+
+entity.erase <A> ();
+// 'entity' does not have anymore the 'A' object
+***
+
+
 //----------------------------------------------------------------------------
 
 \method {use}
@@ -74,7 +92,23 @@ template <class T>   T &   use ();
 
 Returns a reference to the element of type \code {T}.
 
-\warning {The element must exist in the entity.}
+\warning {The element must exist in the entity. If not the method will throw
+an exception}
+
+\codeblock [language=c++] ***
+class A
+{
+public:
+   A (double value);
+};
+
+Entity entity;
+entity.emplace <A> (2.5);
+
+auto & a = entity.use <A> ();
+// 'a' is of type 'A &' and its value is '2.5'
+***
+
 
 //----------------------------------------------------------------------------
 
@@ -88,4 +122,23 @@ template <class T>   T *   get ();
 Returns a pointer to the element of type \code {T} if it exists, \code {nullptr}
 otherwise.
 
+\codeblock [language=c++] ***
+class A
+{
+public:
+   A (double value);
+};
+
+Entity entity;
+entity.emplace <A> (2.5);
+
+auto ptr = entity.get <A> ();
+// 'ptr' points to entity object 'A'
+
+entity.erase <A> ();
+// 'entity' does not have anymore the 'A' object
+
+auto ptr2 = entity.get <A> ();
+// 'ptr2' is 'nullptr'
+***
 

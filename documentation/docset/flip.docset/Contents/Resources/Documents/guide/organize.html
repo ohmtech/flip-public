@@ -40,6 +40,7 @@ td > p {margin-left: 6px; height: 12px;}
 .warning {margin-top:21px; margin-bottom:22px; padding-left: 8px; padding-right: 8px; background-color: #f8e3e1; border-color: #c5443e; border-style: solid; border-width: 1px; display: block;}
 .warning strong {margin-right: 8px;}
 .warning p {margin-top: 7px;}
+.caption p {color: black; font-size: 10px; margin-bottom: 10px;}
 img {margin-top:10px; margin-bottom:10px;}
 ul {margin-left: 17px; margin-bottom: 10px;}
 ol {margin-left: 17px; margin-bottom: 10px;}
@@ -113,6 +114,8 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 <p>However when your application is running in a production environment, conversion will be need to be done, somehow like migrating a database. The model changes are therefore scattered over all the Flip classes which might be not easy when trying to gather all the changes to write a converter.</p>
 
 <p>Therefore you should maintain a <code>Converter.txt</code> text file, typically in your conv where you will sum up all the changes needed for the next conversion, and maybe some directions on how to convert the document.</p>
+
+<p>This process is covered in more details in the chapter <a href="../guide/conversion.html">Model Versioning</a>.</p>
 
 <a name="//apple_ref/cpp/Section/Classes Naming Conventions" class="dashAnchor"></a>
 <h2><a name="class">Classes Naming Conventions</a></h2>

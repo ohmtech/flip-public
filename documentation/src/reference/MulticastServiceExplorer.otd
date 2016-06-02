@@ -1,0 +1,147 @@
+/*****************************************************************************
+
+        MulticastServiceExplorer.otd
+        Copyright (c) 2015 Ohm Force
+
+*****************************************************************************/
+
+
+
+\class {MulticastServiceExplorer}
+\header {flip/contrib/MulticastServiceExplorer.h}
+\declaration ***
+class MulticastServiceExplorer;
+***
+
+\note {
+   Classes part of \code {contrib/} are not supported on every platform.
+}
+
+\code {MulticastServiceExplorer} is used to automatically discover
+over Flip services running
+on the Local Area Network. It uses UDP multicast to achieve it.
+
+It is used in conjunction with \code {MulticastServiceProvider},
+see \link [id=MulticastServiceProvider] {\code {flip::MulticastServiceProvider}}
+
+
+
+/*\\\ METHODS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+
+\constructor {}
+\brief {Constructs the \code {MulticastServiceExplorer}}
+
+\codeblock [language=c++] ***
+MulticastServiceExplorer ();                                                              (1)
+MulticastServiceExplorer (uint32_t multicast_ip, uint16_t port_min, uint16_t port_max);   (2)
+***
+
+\enumerate {
+\item {Convenience default constructor (see below).}
+\item {Constructor (see below).}
+}
+
+Version 2 of the constructor takes the multicast ip and a range of port to
+explore on.
+
+Version 1 of the constructor uses default values as given by
+the class \code {MulticastService}.
+
+\codeblock [language=c++] ***
+MulticastServiceExplorer explorer;
+
+bool loop_flag = true;
+
+// busy wait until we have at least one session discovered
+while (loop_flag)
+{
+   explorer.process ();
+
+   loop_flag = explorer.begin () == explorer.end ();
+}
+
+// look up the available sessions
+for (auto && session : explorer)
+{
+   session.ip;       // IP of Flip server on the network
+   session.port;     // Port of Flip server
+   session.version;  // Version of Flip server
+
+   session.metadata; // Map of arbitrary metadatas associated to the session
+}
+***
+
+
+//----------------------------------------------------------------------------
+
+\destructor {}
+\brief {Destructs the \code {MulticastServiceExplorer}}
+
+\codeblock [language=c++] ***
+~MulticastServiceExplorer ();
+***
+
+Destructor.
+
+//----------------------------------------------------------------------------
+
+\method {set_update_period}
+\brief {Sets the refresh period}
+
+\codeblock [language=c++] ***
+void  set_update_period (double period_s);
+***
+
+Set the refresh period for the explorer. By default this value is set
+to 2 seconds.
+
+\codeblock [language=c++] ***
+MulticastServiceExplorer explorer (0xefeefe89, 59150, 59169);
+
+// very short update rate for unit tests
+explorer.set_update_period (0.1);
+
+explorer.process ();
+
+[...]
+***
+
+//----------------------------------------------------------------------------
+
+\method {process}
+\brief {Processes exploration}
+
+\codeblock [language=c++] ***
+void  process ();
+***
+
+Processes exploration. This function needs to be called regularly to let
+\code {MulticastServiceExplorer} do exploration. This function can
+be called often, as it only processes sockets when needed.
+
+//----------------------------------------------------------------------------
+
+\method {begin}
+\brief {Returns an iterator to the first session}
+
+\codeblock [language=c++] ***
+const_iterator begin ();
+***
+
+Returns an iterator to the first session.
+
+//----------------------------------------------------------------------------
+
+\method {end}
+\brief {Returns an iterator to the end}
+
+\codeblock [language=c++] ***
+const_iterator end ();
+***
+
+Returns an iterator to the end.
+
+
+
+
+

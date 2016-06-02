@@ -38,6 +38,43 @@ identifying this document. When the document is changed on the server side,
 the session identifier is used as a way to identify the server acting as
 a user.
 
+Example, server side :
+
+\codeblock [language=c++] ***
+#include "flip/contrib/transport_tcp/PortTransportServerTcp.h"
+
+// Setup a server for session number 1234567890123
+DocumentValidatorVoid validator;
+DocumentServer document_server (Model::use (), validator, 1234567890123ULL);
+
+// Setup a socket listening on TCP port 9090 to accept new connections.
+PortTransportServerTcp port (document_server, 9090);
+
+for (;;)
+{
+   // process incoming connections and transfers
+   port.process ();
+}
+***
+
+Example, client side :
+
+\codeblock [language=c++] ***
+#include "flip/contrib/transport_tcp/CarrierTransportSocketTcp.h"
+
+Document document (Model::use (), 123456789ULL, 'appl', 'gui ');
+
+// Setup a socket connecting on TCP port 9090 of server.
+CarrierTransportSocketTcp carrier (document, "flip.myserver.com", 9090);
+
+for (;;)
+{
+   // process incoming connections and transfers
+   carrier.process ();
+}
+***
+
+
 //----------------------------------------------------------------------------
 
 \destructor {}
@@ -51,25 +88,79 @@ Destructor.
 
 //----------------------------------------------------------------------------
 
-\method {add}
-\brief {Attach a new client to the server}
+\method {listen_connecting}
+\brief {Reacts just before a client join the document}
 
 \codeblock [language=c++] ***
-void  add (TransportBase & transport);
+void  listen_connecting (std::function <void (PortBase &)> func);
 ***
 
-Attach a new client to the server through its transport representation.
+Example :
+
+\codeblock [language=c++] ***
+DocumentServer server = ...;
+
+// listen on connections and create a specific Client class
+// in the root of the document for private data
+
+server.listen_connecting ([&server](PortBase & port){
+   Root & root = server.root <Root> ();
+
+   if (root._clients.count_if ([&port](Client & client){
+      return client.user () == port.user ();
+   }) == 0)
+   {
+      root._clients.emplace (port.user ());
+   }
+
+   Transaction tx = server.commit ();
+   server.send_tx_if (tx, [](PortBase &){return true;});
+});
+***
 
 //----------------------------------------------------------------------------
 
-\method {remove}
-\brief {Detach a new client to the server}
+\method {listen_connected}
+\brief {Reacts just after a client join the document}
 
 \codeblock [language=c++] ***
-void  remove (TransportBase & transport);
+void  listen_connected (std::function <void (PortBase &)> func);
 ***
 
-Detach a new client to the server through its transport representation.
+Example :
+
+\codeblock [language=c++] ***
+DocumentServer server = ...;
+
+// hypothetic class representing a monitoring system for administration
+MonitoringSystem monitor = ...;
+
+server.listen_connected ([&monitor](PortBase & port){
+   monitor.add_user (port.user ());
+});
+***
+
+//----------------------------------------------------------------------------
+
+\method {listen_disconnected}
+\brief {Reacts just after a client left the document}
+
+\codeblock [language=c++] ***
+void  listen_disconnected (std::function <void (PortBase &)> func);
+***
+
+Example :
+
+\codeblock [language=c++] ***
+DocumentServer server = ...;
+
+// hypothetic class representing a monitoring system for administration
+MonitoringSystem monitor = ...;
+
+listen_disconnected ([&monitor](PortBase & port){
+   monitor.remove_user (port.user ());
+});
+***
 
 //----------------------------------------------------------------------------
 
@@ -83,17 +174,138 @@ template <class UnaryPredicate>  void  send_tx_if (const Transaction & tx, Unary
 Send transaction \code {tx} to every client meeting condition using unary
 function \code {p}.
 
-Example:
+Example :
 
 \codeblock [language=c++] ***
-// DocumentServer server;
-// Transaction tx;
+DocumentServer server = ...;
 
-server.send_tx_if (tx, [](TransportBase &){return true;});
+// listen on connections and create a specific Client class
+// in the root of the document for private data
+
+server.listen_connecting ([&server](PortBase & port){
+   Root & root = server.root <Root> ();
+
+   if (root._clients.count_if ([&port](Client & client){
+      return client.user () == port.user ();
+   }) == 0)
+   {
+      root._clients.emplace (port.user ());
+   }
+
+   Transaction tx = server.commit ();
+   server.send_tx_if (tx, [](PortBase &){return true;});
+});
 ***
 
 Sends the transaction to all attached clients.
 
 //----------------------------------------------------------------------------
 
+\method {reply_signal}
+\brief {Replies to a signal sent from one client}
+
+\codeblock [language=c++] ***
+void  reply_signal (const SignalData & data);
+***
+
+Replies to a signal sent from a client, when the signal on the client
+is configured on the client side to pass through local machine boundaries.
+
+Example :
+
+\codeblock [language=c++] ***
+class Root : public Object
+{
+   enum
+   {
+      Signal_SIGN_UPLOAD_REQUEST = 0,
+      Signal_SIGN_UPLOAD_SIGNATURE,
+   };
+
+   // from client to server
+   Signal <std::string> signal_sign_upload_request;
+
+   // from client to server
+   Signal <std::string> signal_sign_upload_signature;
+};
+***
+
+The following example demonstrates a client sending a signal to the server
+to sign a request to upload data on a server.
+
+\codeblock [language=c++] ***
+/*   Client side   */
+
+// don't forget to move cnx so that it is not destroyed
+auto cnx = root.signal_sign_upload_signature.connect ([](std::string signature){
+   // the client receives the reply to its sign request
+});
+
+// send the sign request
+root.signal_sign_upload_request ("string to sign");
+***
+
+The following example shows how a server is handling the signal and reply
+to it.
+
+\codeblock [language=c++] ***
+/*   Server side   */
+
+DocumentServer = ...;
+
+// don't forget to move cnx so that it is not destroyed
+auto cnx = root.signal_sign_upload_request.connect ([&root, &server](std::string str_to_sign){
+   auto signature = sign_request (str_to_sign);
+
+   server.reply_signal (
+      root.signal_sign_upload_signature.make (signature)
+   ;
+});
+***
+
+//----------------------------------------------------------------------------
+
+\method {send_signal_if}
+\brief {Broadcasts a signal selectively}
+
+\codeblock [language=c++] ***
+template <class UnaryPredicate>
+void  send_signal_if (const SignalData & data, UnaryPredicate p);
+***
+
+Broadcasts a signal selectively to clients.
+
+Example :
+
+The following example shows how a server is handling the previous signal but
+broadcast the signature to every connected clients.
+
+\codeblock [language=c++] ***
+/*   Server side   */
+
+DocumentServer = ...;
+
+// don't forget to move cnx so that it is not destroyed
+auto cnx = root.signal_sign_upload_request.connect ([&root, &server](std::string str_to_sign){
+   auto signature = sign_request (str_to_sign);
+
+   server.send_signal_if (
+      root.signal_sign_upload_signature.make (signature),
+      [](){return true;}
+   ;
+});
+***
+
+
+
+//----------------------------------------------------------------------------
+
 #include "DocumentBase.methods.otd"
+
+
+
+
+
+
+
+

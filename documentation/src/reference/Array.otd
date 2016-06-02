@@ -22,7 +22,30 @@ invalidate the iterators or references.
 
 The \code {Array} itself provides support for modification introspection. When modifying
 the content of the \code {Array}, the previous representation of the array is still
-present.
+present, and can be accessed for every elements using the methods
+\code {added}, \code {resident} or \code {removed}.
+
+\warning {
+Unlike the C++ standard library, when an element is erased from a container,
+and if iterating over the container before \code {commit},
+the element is still present until the
+modification is commited, but the element is marked as removed.
+}
+
+This container is used when the elements need to be \emph {explicitly} ordered.
+
+When elements order can be deduced from their properties (that is an comparing
+to elements is possible), \link [id=Collection] {\code {Collection}} shall be
+prefered.
+
+When elements do not have a particular order,
+then \link [id=Collection] {\code {Collection}} shall be
+prefered.
+
+Finally when a container needs to have an important number of elements and
+should be accessed with maximum speed, \link [id=Vector] {\code {Vector}}
+could be prefered, acknowledging that the latter does not provide very
+good concurrency and its element are not flip objects.
 
 
 
@@ -100,31 +123,96 @@ Copy assignment operator.
 \method {begin cbegin}
 \brief {Returns an iterator to the beginning}
 
+\codeblock [language=c++] ***
+iterator       begin ();
+const_iterator begin () const;
+const_iterator cbegin () const;
+***
+
+Returns an iterator to the beginning.
+
+See \link [id=Array.iterator] {\code {Array::iterator}} for more details.
+
 //----------------------------------------------------------------------------
 
 \method {end cend}
 \brief {Returns an iterator to the end}
+
+\codeblock [language=c++] ***
+iterator       end ();
+const_iterator end () const;
+const_iterator cend () const;
+***
+
+Returns an iterator to the end.
+
+See \link [id=Array.iterator] {\code {Array::iterator}} for more details.
 
 //----------------------------------------------------------------------------
 
 \method {rbegin crbegin}
 \brief {Returns a reverse iterator to the beginning}
 
+\codeblock [language=c++] ***
+reverse_iterator       rbegin ();
+const_reverse_iterator rbegin () const;
+const_reverse_iterator crbegin () const;
+***
+
+Returns a reverse iterator to the beginning.
+
+See \link [id=Array.iterator] {\code {Array::iterator}} for more details.
+
 //----------------------------------------------------------------------------
 
 \method {rend crend}
 \brief {Returns a reverse iterator to the end}
+
+\codeblock [language=c++] ***
+reverse_iterator       rend ();
+const_reverse_iterator rend () const;
+const_reverse_iterator crend () const;
+***
+
+Returns a reverse iterator to the end.
+
+See \link [id=Array.iterator] {\code {Array::iterator}} for more details.
 
 //----------------------------------------------------------------------------
 
 \method {gbegin gcbegin}
 \brief {Returns a generic \code {array_iterator} to the beginning}
 
+\codeblock [language=c++] ***
+array_iterator       gbegin ();
+const_array_iterator gbegin () const;
+const_array_iterator gcbegin () const;
+***
+
+Returns a generic \code {array_iterator} to the beginning.
+
+Generic iterators are used to iterate over any template class \code {Array}
+instance, whatever the specialization of the template class.
+
+See \link [id=array_iterator] {\code {array_iterator}} for more details.
+
 //----------------------------------------------------------------------------
 
 \method {gend gcend}
 \brief {Returns a generic \code {array_iterator} to the end}
 
+\codeblock [language=c++] ***
+array_iterator       gend ();
+const_array_iterator gend () const;
+const_array_iterator gcend () const;
+***
+
+Returns a generic \code {array_iterator} to the end.
+
+Generic iterators are used to iterate over any template class \code {Array}
+instance, whatever the specialization of the template class.
+
+See \link [id=array_iterator] {\code {array_iterator}} for more details.
 
 
 /*\\\ DIVISION \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
@@ -139,6 +227,9 @@ void  clear ();
 ***
 
 Removes all the elements from the container.
+
+This is equivalent to calling \code {erase} on every non-removed element of
+the container.
 
 //----------------------------------------------------------------------------
 
@@ -219,4 +310,6 @@ Returns an \code {iterator} to that element.
 
 \note {\code {other} and \code {*this} might refer to the same object, allowing an object to move inside the container.}
 
+To detect move in a container, see \link [id=Array.iterator] {\code {Array::iterator}}
+for mode details.
 

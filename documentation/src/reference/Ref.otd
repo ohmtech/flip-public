@@ -16,6 +16,40 @@ class Ref;
 \code {flip::Ref} is a type that represents the unique reference number of
 a flip object.
 
+\image [path=Ref.internal.pdf] {}
+
+It is essentialy 3 64-bit numbers.
+
+\itemize {
+\item {The \emph {user} represents a unique user identifier (see below)}
+\item {The \emph {actor} represents a unique controller identifier (see below)}
+\item {The \emph {obj} represents a unique object identifier
+ for this user and actor (see below)}
+}
+
+When constructing a \code {Document} it is given a \code {user_id} as a
+parameter. This number shall be unique and represents a unique user number
+when using collaboration. Typically this can be an OpenId user identifier
+or a Facebook user number.
+
+In the case where the user is working offline and never connected to
+your service and therefore doesn't have yet a unique identifier, the special
+identifier \code {Ref::User::Offline} may be used.
+
+When constructing a \code {Document} it is given a \code {manufacturer_id}
+and a \code {component_id} which combines into a \code {actor_id}. This
+represents the actor as seen from the controller side and shall be unique.
+This is only relevant when using multiple \code {Document} with a \code {Hub}
+when documents are in separate threads or processes.
+
+Finally, each time an object is created, a unique object identifier is created,
+so that the combinaison of those 3 64-numbers make a unique number in the
+whole document.
+
+Since every \code {Ref} are unique in a document, one can extract an
+\code {Object} using a \code {Ref} and a \code {Document}.
+See \link [id=Document] {\code {Document}} for more details.
+
 
 
 /*\\\ METHODS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/

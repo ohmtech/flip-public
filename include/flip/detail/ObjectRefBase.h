@@ -60,7 +60,7 @@ public:
 
    // Type
    virtual void   impl_set_class (const ClassBase & /* class_base */) override {flip_FATAL;}   // COV_NF_LINE
-   virtual void   impl_make (Transaction & /* tx */, ImplUndoRedoMode /* parent_mode */) const override {flip_FATAL;}  // COV_NF_LINE
+   virtual void   impl_make (Transaction & /* tx */, ImplUndoRedoMode /* parent_mode */, TxPostProcessInfo & /* ppinfo */) const override {flip_FATAL;}  // COV_NF_LINE
    virtual bool   impl_is_reset () const override {flip_FATAL;}   // COV_NF_LINE
    virtual void   impl_reset () override {flip_FATAL;}   // COV_NF_LINE
    virtual void   impl_synchronize () override {flip_FATAL;}   // COV_NF_LINE

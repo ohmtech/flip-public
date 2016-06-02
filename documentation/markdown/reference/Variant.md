@@ -16,6 +16,8 @@ template <class T> class Variant;
 
 <p>Internally the <code>Variant</code> is just a <code>Collection</code> with a constraint on size.</p>
 
+<blockquote><h6>Important</h6> A variant must be filled with exactly an element before <code>commit</code>    is called. As a result, a <code>Variant</code> cannot be a member of the    root class of a document.</blockquote>
+
 <h2>Template Parameters</h2>
 
 <table><tr><td><code>T</code></td><td>The type of the elements. <code>T</code> must inherit from <code>flip::Object</code></td></tr>
@@ -116,12 +118,46 @@ bool  added () const;
 
 <p>Returns <code>true</code> <em>iff</em> the object was just attached to the document tree.</p>
 
+<p>Example :</p>
+
+```c++
+void  Observer::document_changed (Note & note)
+{
+   if (note.added ())
+   {
+      // A note was added to the document. Create the corresponding
+      // view element
+
+      note.entity ().emplace <NoteView> ();
+   }
+
+   [...]
+}
+```
+
 <h3 id="member-function-removed"><code>removed</code></h3>
 ```c++
 bool  removed () const;
 ```
 
 <p>Returns <code>true</code> <em>iff</em> the object was just detached from the document tree.</p>
+
+<p>Example :</p>
+
+```c++
+void  Observer::document_changed (Note & note)
+{
+   [...]
+
+   if (note.removed ())
+   {
+      // A note was removed from the document. Release the corresponding
+      // view element
+
+      note.entity ().erase <NoteView> ();
+   }
+}
+```
 
 <h3 id="member-function-resident"><code>resident</code></h3>
 ```c++
@@ -130,12 +166,65 @@ bool  resident () const;
 
 <p>Returns <code>true</code> <em>iff</em> the object was neither attached nor detached from the document tree.</p>
 
+<p>An object can be <code>resident</code> but moved. In this case the <code>iterator</code> pointing to it will allow to detect the move.</p>
+
+<p>Example :</p>
+
+```c++
+void  Observer::document_changed (Array <Track> & tracks)
+{
+   auto it = tracks.begin ();
+   auto it_end = tracks.end ();
+
+   for (; it != it_end ; ++it)
+   {
+      Track & track = *it;
+
+      if (it.added () && track.resident ())
+      {
+         // the track was moved in the container
+         // this is the destination position
+      }
+
+      if (it.added () && track.resident ())
+      {
+         // the track was moved in the container
+         // this is the source position
+      }
+   }
+}
+```
+
 <h3 id="member-function-changed"><code>changed</code></h3>
 ```c++
 bool  changed () const;
 ```
 
 <p>Returns <code>true</code> <em>iff</em> the object or one of its children was modified.</p>
+
+<p>Example :</p>
+
+```c++
+void  Observer::document_changed (Note & note)
+{
+   auto & view = note.entity ().use <ViewNote> ();
+
+   if (note.changed ())
+   {
+      // one or more properties of the note changed
+
+      if (note.position.changed ())
+      {
+         view.set_position (note.position);
+      }
+
+      if (note.duration.changed ())
+      {
+         view.set_duration (note.duration);
+      }
+   }
+}
+```
 
 <h3 id="member-function-ancestor"><code>ancestor</code></h3>
 ```c++
@@ -153,6 +242,24 @@ void   disable_in_undo ();
 ```
 
 <p>Disables the record state modification in history of the object and its subtree if any.</p>
+
+<p>Example :</p>
+
+```c++
+void  add_user (Root & root)
+{
+   // emplace a new User of the document to store
+   // user specific data. User is constructed with
+   // the unique user id number given at document
+   // creation
+
+   User & user = root.users.emplace <User> (root.document ().user ());
+
+   // we don't want the scroll position in the document
+   // to be part of undo
+   user.scroll_position.disable_in_undo ();
+}
+```
 
 <h3 id="member-function-inherit_in_undo"><code>inherit_in_undo</code></h3>
 ```c++
@@ -176,6 +283,17 @@ void  revert () const;
 ```
 
 <p>Reverts all the changes make to the object and its children if any.</p>
+
+<p>Example :</p>
+
+```c++
+// initially, note.position == 1
+
+note.position = 2;
+note.revert ();
+
+// now, note.position == 1
+```
 
 <h3 id="member-function-operator T %26"><code>operator T &</code></h3>
 ```c++

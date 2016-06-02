@@ -17,6 +17,13 @@ class String;
 \code {flip::String} is a type that represents a dynamic-sized string.
 It is a specialisation of \code {Blob}.
 
+This type is to be prefered when the content is actually a human readable string.
+This allows the document to be more easily readable when debugging.
+The string is written in a special escaped ascii-7 format. All non-control
+character are written verbatim, and all other characters are prefixed by
+the escape sequence \code {\\x} followed by the character number in
+hexadecimal.
+
 
 
 /*\\\ METHODS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/

@@ -1,4 +1,4 @@
-<p><sup><a href="collection_iterator.md">previous</a> | <a href="Document.md">next</a></sup></p>
+<p><sup><a href="DataConsumerMemory.md">previous</a> | <a href="DataProviderFile.md">next</a></sup></p>
 
 <h1>DataModel Class Reference</h1>
 
@@ -35,6 +35,8 @@ static void version (const std::string & version);
 ```
 
 <p>Sets the format revision of the data model. The name must be in the <code>ascii-7</code> character set, with exception of control characters as well as <code>del</code> character.</p>
+
+<p>The format revision is used to discriminate between two data models. This is typically used for document conversion from one data model to another one, for example when upgrading to a new version of the model with more properties.</p>
 
 <p>Example:</p>
 
@@ -130,5 +132,5 @@ MyTestModel::declare <MyFixture> ();
 MyTestModel::set_root <MyFixture> ();
 ```
 
-<p><sup><a href="collection_iterator.md">previous</a> | <a href="Document.md">next</a></sup></p>
+<p><sup><a href="DataConsumerMemory.md">previous</a> | <a href="DataProviderFile.md">next</a></sup></p>
 

@@ -14,7 +14,15 @@ template <class T> class Collection;
 
 <p>Addition or removal of the elements in the collection or accross collections does not invalidate the iterators or references.</p>
 
-<p>The <code>Collection</code> itself provides support for modification introspection. When modifying the content of the <code>Collection</code>, the previous representation of the collection is still present.</p>
+<p>The <code>Collection</code> itself provides support for modification introspection. When modifying the content of the <code>Collection</code>, the previous representation of the collection is still present, and can be accessed for every elements using the methods <code>added</code>, <code>resident</code> or <code>removed</code>.</p>
+
+<blockquote><h6>W A R N I N G</h6> Unlike the C++ standard library, when an element is erased from a container, and if iterating over the container before <code>commit</code>, the element is still present until the modification is commited, but the element is marked as removed.</blockquote>
+
+<p>This container is used when the elements have an <em>implicit</em> order of if order is not important. If two elements of the container can be compared, this defines an implicit order.</p>
+
+<p>When elements order is needed but cannot be defined implicitly, then <a href="../reference/Array.md"><code>Array</code></a> shall be prefered.</p>
+
+<p>Finally when a container needs to have an important number of elements and should be accessed with maximum speed, <a href="../reference/Vector.md"><code>Vector</code></a> could be prefered, acknowledging that the latter does not provide very good concurrency and its element are not flip objects.</p>
 
 <h2>Template Parameters</h2>
 
@@ -127,12 +135,46 @@ bool  added () const;
 
 <p>Returns <code>true</code> <em>iff</em> the object was just attached to the document tree.</p>
 
+<p>Example :</p>
+
+```c++
+void  Observer::document_changed (Note & note)
+{
+   if (note.added ())
+   {
+      // A note was added to the document. Create the corresponding
+      // view element
+
+      note.entity ().emplace <NoteView> ();
+   }
+
+   [...]
+}
+```
+
 <h3 id="member-function-removed"><code>removed</code></h3>
 ```c++
 bool  removed () const;
 ```
 
 <p>Returns <code>true</code> <em>iff</em> the object was just detached from the document tree.</p>
+
+<p>Example :</p>
+
+```c++
+void  Observer::document_changed (Note & note)
+{
+   [...]
+
+   if (note.removed ())
+   {
+      // A note was removed from the document. Release the corresponding
+      // view element
+
+      note.entity ().erase <NoteView> ();
+   }
+}
+```
 
 <h3 id="member-function-resident"><code>resident</code></h3>
 ```c++
@@ -141,12 +183,65 @@ bool  resident () const;
 
 <p>Returns <code>true</code> <em>iff</em> the object was neither attached nor detached from the document tree.</p>
 
+<p>An object can be <code>resident</code> but moved. In this case the <code>iterator</code> pointing to it will allow to detect the move.</p>
+
+<p>Example :</p>
+
+```c++
+void  Observer::document_changed (Array <Track> & tracks)
+{
+   auto it = tracks.begin ();
+   auto it_end = tracks.end ();
+
+   for (; it != it_end ; ++it)
+   {
+      Track & track = *it;
+
+      if (it.added () && track.resident ())
+      {
+         // the track was moved in the container
+         // this is the destination position
+      }
+
+      if (it.added () && track.resident ())
+      {
+         // the track was moved in the container
+         // this is the source position
+      }
+   }
+}
+```
+
 <h3 id="member-function-changed"><code>changed</code></h3>
 ```c++
 bool  changed () const;
 ```
 
 <p>Returns <code>true</code> <em>iff</em> the object or one of its children was modified.</p>
+
+<p>Example :</p>
+
+```c++
+void  Observer::document_changed (Note & note)
+{
+   auto & view = note.entity ().use <ViewNote> ();
+
+   if (note.changed ())
+   {
+      // one or more properties of the note changed
+
+      if (note.position.changed ())
+      {
+         view.set_position (note.position);
+      }
+
+      if (note.duration.changed ())
+      {
+         view.set_duration (note.duration);
+      }
+   }
+}
+```
 
 <h3 id="member-function-ancestor"><code>ancestor</code></h3>
 ```c++
@@ -164,6 +259,24 @@ void   disable_in_undo ();
 ```
 
 <p>Disables the record state modification in history of the object and its subtree if any.</p>
+
+<p>Example :</p>
+
+```c++
+void  add_user (Root & root)
+{
+   // emplace a new User of the document to store
+   // user specific data. User is constructed with
+   // the unique user id number given at document
+   // creation
+
+   User & user = root.users.emplace <User> (root.document ().user ());
+
+   // we don't want the scroll position in the document
+   // to be part of undo
+   user.scroll_position.disable_in_undo ();
+}
+```
 
 <h3 id="member-function-inherit_in_undo"><code>inherit_in_undo</code></h3>
 ```c++
@@ -188,18 +301,95 @@ void  revert () const;
 
 <p>Reverts all the changes make to the object and its children if any.</p>
 
+<p>Example :</p>
+
+```c++
+// initially, note.position == 1
+
+note.position = 2;
+note.revert ();
+
+// now, note.position == 1
+```
+
 <h3 id="member-function-begin cbegin"><code>begin cbegin</code></h3>
+```c++
+iterator       begin ();
+const_iterator begin () const;
+const_iterator cbegin () const;
+```
+
+<p>Returns an iterator to the beginning.</p>
+
+<p>See <a href="../reference/Collection.iterator.md"><code>Collection::iterator</code></a> for more details.</p>
+
 <h3 id="member-function-end cend"><code>end cend</code></h3>
+```c++
+iterator       end ();
+const_iterator end () const;
+const_iterator cend () const;
+```
+
+<p>Returns an iterator to the end.</p>
+
+<p>See <a href="../reference/Collection.iterator.md"><code>Collection::iterator</code></a> for more details.</p>
+
 <h3 id="member-function-rbegin crbegin"><code>rbegin crbegin</code></h3>
+```c++
+reverse_iterator       rbegin ();
+const_reverse_iterator rbegin () const;
+const_reverse_iterator crbegin () const;
+```
+
+<p>Returns a reverse iterator to the beginning.</p>
+
+<p>See <a href="../reference/Collection.iterator.md"><code>Collection::iterator</code></a> for more details.</p>
+
 <h3 id="member-function-rend crend"><code>rend crend</code></h3>
+```c++
+reverse_iterator       rend ();
+const_reverse_iterator rend () const;
+const_reverse_iterator crend () const;
+```
+
+<p>Returns a reverse iterator to the end.</p>
+
+<p>See <a href="../reference/Collection.iterator.md"><code>Collection::iterator</code></a> for more details.</p>
+
 <h3 id="member-function-gbegin gcbegin"><code>gbegin gcbegin</code></h3>
+```c++
+collection_iterator       gbegin ();
+const_collection_iterator gbegin () const;
+const_collection_iterator gcbegin () const;
+```
+
+<p>Returns a generic <code>collection_iterator</code> to the beginning.</p>
+
+<p>Generic iterators are used to iterate over any template class <code>Collection</code> instance, whatever the specialization of the template class.</p>
+
+<p>See <a href="../reference/collection_iterator.md"><code>collection_iterator</code></a> for more details.</p>
+
 <h3 id="member-function-gend gcend"><code>gend gcend</code></h3>
+```c++
+collection_iterator       gbegin ();
+const_collection_iterator gbegin () const;
+const_collection_iterator gcbegin () const;
+```
+
+<p>Returns a generic <code>collection_iterator</code> to the end.</p>
+
+<p>Generic iterators are used to iterate over any template class <code>Collection</code> instance, whatever the specialization of the template class.</p>
+
+<p>See <a href="../reference/collection_iterator.md"><code>collection_iterator</code></a> for more details.</p>
+
 <h3 id="member-function-clear"><code>clear</code></h3>
 ```c++
 void  clear ();
 ```
 
 <p>Removes all the elements from the container.</p>
+
+<p>This is equivalent to calling <code>erase</code> on every non-removed element of the container.</p>
 
 <h3 id="member-function-insert"><code>insert</code></h3>
 ```c++
@@ -258,6 +448,8 @@ iterator splice (Collection & other, iterator it);
 <p>Moves element at position <code>it</code> from <code>other</code> to <code>*this</code>. Returns an <code>iterator</code> to that element.</p>
 
 <blockquote><h6>Note</h6> <code>other</code> and <code>*this</code> might <em>not</em> refer to the same object.</blockquote>
+
+<p>To detect move in a container, see <a href="../reference/Collection.iterator.md"><code>Collection::iterator</code></a> for mode details.</p>
 
 <p><sup><a href="Class.md">previous</a> | <a href="Collection.iterator.md">next</a></sup></p>
 

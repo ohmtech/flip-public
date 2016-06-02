@@ -40,6 +40,7 @@ td > p {margin-left: 6px; height: 12px;}
 .warning {margin-top:21px; margin-bottom:22px; padding-left: 8px; padding-right: 8px; background-color: #f8e3e1; border-color: #c5443e; border-style: solid; border-width: 1px; display: block;}
 .warning strong {margin-right: 8px;}
 .warning p {margin-top: 7px;}
+.caption p {color: black; font-size: 10px; margin-bottom: 10px;}
 img {margin-top:10px; margin-bottom:10px;}
 ul {margin-left: 17px; margin-bottom: 10px;}
 ol {margin-left: 17px; margin-bottom: 10px;}
@@ -86,7 +87,11 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 <li><a href="../reference/Collection.html">Collection</a></li>
 <li><a href="../reference/Collection.iterator.html">Collection::iterator</a></li>
 <li><a href="../reference/collection_iterator.html">collection_iterator</a></li>
+<li><a href="../reference/DataConsumerFile.html">DataConsumerFile</a></li>
+<li><a href="../reference/DataConsumerMemory.html">DataConsumerMemory</a></li>
 <li><a href="../reference/DataModel.html">DataModel</a></li>
+<li><a href="../reference/DataProviderFile.html">DataProviderFile</a></li>
+<li><a href="../reference/DataProviderMemory.html">DataProviderMemory</a></li>
 <li><a href="../reference/Document.html">Document</a>	<ul>
 	</ul>
 </li>
@@ -98,9 +103,12 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 <li><a href="../reference/EnumClass.html">EnumClass</a></li>
 <li><a href="../reference/Float.html">Float</a></li>
 <li><a href="../reference/History.html">History</a></li>
+<li><a href="../reference/Hub.html">Hub</a></li>
 <li><a href="../reference/Int.html">Int</a></li>
 <li><a href="../reference/Message.html">Message</a></li>
 <li><a href="../reference/Mold.html">Mold</a></li>
+<li><a href="../reference/MulticastServiceExplorer.html">MulticastServiceExplorer</a></li>
+<li><a href="../reference/MulticastServiceProvider.html">MulticastServiceProvider</a></li>
 <li><a href="../reference/Object.html">Object</a></li>
 <li><a href="../reference/ObjectRef.html">ObjectRef</a></li>
 <li><a href="../reference/Optional.html">Optional</a></li>
@@ -115,7 +123,7 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 
 <div id="content">
 <div class="nav" align="right">
-<a href="DataModel.html">previous</a><span>&nbsp;</span><a href="DocumentObserver.html">next</a></div>
+<a href="DataProviderMemory.html">previous</a><span>&nbsp;</span><a href="DocumentObserver.html">next</a></div>
 
 <h1>Document Class Reference</h1>
 
@@ -180,7 +188,7 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 <tr><td><pre>Document (const DataModelBase &amp; data_model, uint64_t user_id, uint32_t manufacturer_id, uint32_t component_id);</pre></td></tr>
 </table></div>
 
-<p>Constructs the document from a data model, an optional observer, and optional validator, a unique user id, a manufacturer id as as a component id.</p>
+<p>Constructs the document from a data model, an optional observer, and optional validator, a unique user id, a manufacturer id and a component id.</p>
 
 <p>The data model represents the blueprint or template the document is going to rely on. The data model is previously defined and used for the document.</p>
 
@@ -191,6 +199,8 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 <p>The component id shall represents the component the document represents in a four char code format. Typically this could be <code>gui</code>.</p>
 
 <div class="warning"><p><strong>WARNING:</strong> the tuple make of user identifier, manufacturer id and component id    must be guanranteed unique for every documents connected together</p></div>
+
+<p>See <a href="../reference/Ref.html"><code>Ref</code></a> for more details about user identifiers.</p>
 
 <hr /><h3 id="member-function-destructor">Destructor</h3>
 <div class="codeblock"><table>
@@ -206,7 +216,22 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 
 <p>Sets the label (ie. name) of the current modifications of the document. This metadata will be added to the transaction at <code>commit</code> stage.</p>
 
+<p>This is typically use to display the undo/redo name in the Edit menu of the menubar.</p>
+
 <p>If called multiple times before <code>commit</code>, only the last state of the metadata is taken into account at <code>commit</code> stage.</p>
+
+<p>Example :</p>
+
+<div class="codeblock"><table>
+<tr><td><pre>Root &amp; root = document.root &lt;Root&gt; ();</pre></td></tr>
+<tr><td><pre>root.notes.emplace &lt;Note&gt; (2.0, 4.0);</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>document.set_label (&quot;Add note&quot;);</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>Transaction tx = document.commit ();</pre></td></tr>
+<tr><td><pre>// the transaction contains the new note modification in &apos;root.notes&apos;</pre></td></tr>
+<tr><td><pre>// as well as the metadata label &quot;Add note&quot;</pre></td></tr>
+</table></div>
 
 <hr /><h3 id="member-function-set_metadata"><code>set_metadata</code></h3>
 <div class="codeblock"><table>
@@ -216,6 +241,10 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 <p>Sets the metadata <code>value</code> for <code>key</code> of the current modifications of the document. This metadata will be added to the transaction at <code>commit</code> stage.</p>
 
 <p>If called multiple times before <code>commit</code>, only the last state of the metadata is taken into account at <code>commit</code> stage.</p>
+
+<p>This is a more general version of <code>set_label</code>. Actually, <code>set_label</code> calls this methods with the <code>key</code> <code>"label"</code>.</p>
+
+<p>This can be used to present even more textual informations for undo/redo operations, for example detailing the nature of the change.</p>
 
 <hr /><h3 id="member-function-commit"><code>commit</code></h3>
 <div class="codeblock"><table>
@@ -239,6 +268,8 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 </table></div>
 
 <p>Pushes the transactions in the push stack to the upstream and empty the push stack. If no upstream is present then this function will just empty the push stack.</p>
+
+<div class="warning"><p><strong>WARNING:</strong> Even if not connected to an upstream, it is important to call <code>push</code>    regularly to empty the push stack.</p></div>
 
 <hr /><h3 id="member-function-pull"><code>pull</code></h3>
 <div class="codeblock"><table>
@@ -330,12 +361,16 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 
 <p>The resulting object can be used with concrete backends format such as <code>BackEndBinary</code> or <code>BackEndMl</code> to store them on a media.</p>
 
+<p>See <a href="../reference/BackEndMl.html"><code>BackEndMl</code></a> or <a href="../reference/BackEndBinary.html"><code>BackEndBinary</code></a> for an example of use of this method.</p>
+
 <hr /><h3 id="member-function-read"><code>read</code></h3>
 <div class="codeblock"><table>
 <tr><td><pre>void  read (BackEndIR &amp; backend);</pre></td></tr>
 </table></div>
 
 <p>Read from an intermediate representation format backend. Internally this will create a transaction that represents the difference between the new backend and the current state of the document. As such, the document modification are not commited at the end of this operation.</p>
+
+<p>See <a href="../reference/BackEndMl.html"><code>BackEndMl</code></a> or <a href="../reference/BackEndBinary.html"><code>BackEndBinary</code></a> for an example of use of this method.</p>
 
 <hr /><h3 id="member-function-root"><code>root</code></h3>
 <div class="codeblock"><table>
@@ -351,6 +386,8 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 
 <p>Returns an object given its unique flip reference number. The function will throw if the reference number does not exist in the document or if the resulting object cannot be casted to <code>T</code>.</p>
 
+<p>See <a href="../reference/Ref.html"><code>Ref</code></a> for more details.</p>
+
 <hr /><h3 id="member-function-object_ptr"><code>object_ptr</code></h3>
 <div class="codeblock"><table>
 <tr><td><pre>template &lt;class T&gt;   T * object_ptr (const Ref &amp; ref);</pre></td></tr>
@@ -358,8 +395,10 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 
 <p>Returns an object given its unique flip reference number. The function will return <code>nullptr</code> if the reference number does not exist in the document or if the resulting object cannot be casted to <code>T</code>.</p>
 
+<p>See <a href="../reference/Ref.html"><code>Ref</code></a> for more details.</p>
+
 <div class="nav" align="right">
-<a href="DataModel.html">previous</a><span>&nbsp;</span><a href="DocumentObserver.html">next</a></div>
+<a href="DataProviderMemory.html">previous</a><span>&nbsp;</span><a href="DocumentObserver.html">next</a></div>
 
 <div class="bottomspacer">&nbsp;</div>
 </div>

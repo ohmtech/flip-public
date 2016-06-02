@@ -162,7 +162,7 @@ public:
                   impl_remove () override;
 
    inline virtual void
-                  impl_make (Transaction & tx, ImplUndoRedoMode parent_mode) const override;
+                  impl_make (Transaction & tx, ImplUndoRedoMode parent_mode, TxPostProcessInfo & ppinfo) const override;
    inline virtual bool
                   impl_is_reset () const override;
    inline virtual void
@@ -191,6 +191,8 @@ public:
                   impl_erase (const KeyRandom & key) override;
    inline virtual void
                   impl_move (const KeyRandom & key, CollectionBase & other, const KeyRandom & other_key) override;
+   inline virtual void
+                  impl_relocate (const KeyRandom & key, CollectionBase & other, const KeyRandom & other_key) override;
    inline virtual bool
                   impl_is_moving (const KeyRandom & key) const override;
 

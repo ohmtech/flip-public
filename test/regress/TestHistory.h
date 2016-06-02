@@ -97,21 +97,33 @@ private:
    template <class HistoryStoreImpl, class... Args>
    void           run_005 (Args &&... args);
    template <class HistoryStoreImpl, class... Args>
+   void           run_005b (Args &&... args);
+   template <class HistoryStoreImpl, class... Args>
    void           run_006 (Args &&... args);
    template <class HistoryStoreImpl, class... Args>
    void           run_007 (Args &&... args);
    template <class HistoryStoreImpl, class... Args>
    void           run_008 (Args &&... args);
    template <class HistoryStoreImpl, class... Args>
+   void           run_008b (Args &&... args);
+   template <class HistoryStoreImpl, class... Args>
    void           run_009 (Args &&... args);
+   template <class HistoryStoreImpl, class... Args>
+   void           run_009b (Args &&... args);
    template <class HistoryStoreImpl, class... Args>
    void           run_010 (Args &&... args);
    template <class HistoryStoreImpl, class... Args>
+   void           run_010b (Args &&... args);
+   template <class HistoryStoreImpl, class... Args>
    void           run_011 (Args &&... args);
+   template <class HistoryStoreImpl, class... Args>
+   void           run_011b (Args &&... args);
    template <class HistoryStoreImpl, class... Args>
    void           run_012 (Args &&... args);
    template <class HistoryStoreImpl, class... Args>
    void           run_013 (Args &&... args);
+   template <class HistoryStoreImpl, class... Args>
+   void           run_013b (Args &&... args);
 
    template <class HistoryStoreImpl, class... Args>
    void           run_016 (Args &&... args);

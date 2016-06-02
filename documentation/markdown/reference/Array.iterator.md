@@ -17,6 +17,8 @@ class const_reverse_iterator;
 
 <p><code>Array::iterator</code> satisfies the <code>BidirectionalIterator</code> C++ concept.</p>
 
+<blockquote><h6>W A R N I N G</h6> Unlike the C++ standard library, when an element is erased from a container, and if iterating over the container before <code>commit</code>, the element is still present until the modification is commited, but the iterator is marked as removed.</blockquote>
+
 <h2>Template Parameters</h2>
 
 <table><tr><td><code>T</code></td><td>The type of the elements. <code>T</code> must inherit from <code>flip::Object</code></td></tr>
@@ -51,6 +53,33 @@ bool added () const;
 
 <blockquote><h6>Note</h6> When an object is moved in the container, then the destination iterator is considered as added while the object is considered as resident.</blockquote>
 
+<p>Example :</p>
+
+```c++
+void  Observer::document_changed (Array <Track> & tracks)
+{
+   auto it = tracks.begin ();
+   auto it_end = tracks.end ();
+
+   for (; it != it_end ; ++it)
+   {
+      Track & track = *it;
+
+      if (it.added () && track.resident ())
+      {
+         // the track was moved in the container
+         // this is the destination position
+      }
+
+      if (it.removed () && track.resident ())
+      {
+         // the track was moved in the container
+         // this is the source position
+      }
+   }
+}
+```
+
 <h3 id="member-function-removed"><code>removed</code></h3>
 ```c++
 bool removed () const;
@@ -59,6 +88,33 @@ bool removed () const;
 <p>Returns <code>true</code> <em>iff</em> the iterator was removed to the container.</p>
 
 <blockquote><h6>Note</h6> When an object is moved in the container, then the source iterator is considered as removed while the object is considered as resident.</blockquote>
+
+<p>Example :</p>
+
+```c++
+void  Observer::document_changed (Array <Track> & tracks)
+{
+   auto it = tracks.begin ();
+   auto it_end = tracks.end ();
+
+   for (; it != it_end ; ++it)
+   {
+      Track & track = *it;
+
+      if (it.added () && track.resident ())
+      {
+         // the track was moved in the container
+         // this is the destination position
+      }
+
+      if (it.removed () && track.resident ())
+      {
+         // the track was moved in the container
+         // this is the source position
+      }
+   }
+}
+```
 
 <h3 id="member-function-resident"><code>resident</code></h3>
 ```c++

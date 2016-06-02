@@ -69,7 +69,7 @@ public:
    void           impl_internal_set (bool value);
 
    // Type
-   virtual void   impl_make (Transaction & tx, ImplUndoRedoMode parent_mode) const override;
+   virtual void   impl_make (Transaction & tx, ImplUndoRedoMode parent_mode, TxPostProcessInfo & ppinfo) const override;
    virtual void   impl_set_class (const ClassBase & class_base) override;
    virtual bool   impl_is_reset () const override;
    virtual void   impl_reset () override;

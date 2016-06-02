@@ -19,6 +19,7 @@
 #include "flip/detail/KeyFloat.h"
 #include "flip/detail/VMErr.h"
 
+#include <list>
 #include <vector>
 
 #include <cstdint>
@@ -33,7 +34,12 @@ namespace flip
 class DocumentBase;
 class StreamBinIn;
 class StreamBinOut;
+class Transaction;
 enum class Direction;
+
+class flip_API Opcode;
+
+using Opcodes = std::list <Opcode>;
 
 class flip_API Opcode
 {
@@ -68,11 +74,12 @@ public:
    void           write (StreamBinOut & sbo) const;
    void           read (StreamBinIn & sbi);
 
-   int            execute (DocumentBase & document, Direction direction, uint8_t flags);
-   void           consolidate (Direction direction);
+   int            execute (DocumentBase & document, Direction direction, uint8_t flags, Transaction & tx, Opcodes::iterator it);
    bool           is_executed () const;
 
    bool           is_in_undo () const;
+
+   void           invert_inplace ();
 
 
 
@@ -91,6 +98,7 @@ protected:
 private:
 
    friend class Journal;
+   friend class Type;
 
    enum Command : uint8_t
    {
@@ -139,13 +147,13 @@ private:
    int            execute_enum_set (DocumentBase & document, Direction direction, uint8_t flags);
    int            execute_object_ref_set (DocumentBase & document, Direction direction, uint8_t flags);
    int            execute_blob_set (DocumentBase & document, Direction direction, uint8_t flags);
-   int            execute_collection_insert_erase (DocumentBase & document, Direction direction, uint8_t flags);
+   int            execute_collection_insert_erase (DocumentBase & document, Direction direction, uint8_t flags, Direction tx_direction, Transaction & tx, Opcodes::iterator it);
    int            execute_collection_insert (DocumentBase & document, uint8_t flags);
-   int            execute_collection_erase (DocumentBase & document, uint8_t flags);
+   int            execute_collection_erase (DocumentBase & document, uint8_t flags, Direction tx_direction, Transaction & tx, Opcodes::iterator it);
    int            execute_collection_move (DocumentBase & document, Direction direction, uint8_t flags);
-   int            execute_array_insert_erase (DocumentBase & document, Direction direction, uint8_t flags);
+   int            execute_array_insert_erase (DocumentBase & document, Direction direction, uint8_t flags, Direction tx_direction, Transaction & tx, Opcodes::iterator it);
    int            execute_array_insert (DocumentBase & document, uint8_t flags);
-   int            execute_array_erase (DocumentBase & document, uint8_t flags);
+   int            execute_array_erase (DocumentBase & document, uint8_t flags, Direction tx_direction, Transaction & tx, Opcodes::iterator it);
    int            execute_array_move (DocumentBase & document, Direction direction, uint8_t flags);
    int            execute_message_push (DocumentBase & document, Direction direction, uint8_t flags);
 
@@ -159,7 +167,6 @@ private:
    // value type
    Data           _old;
    Data           _new;
-   Data           _correction;
 
    // container type
    Key            _key;

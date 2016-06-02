@@ -40,6 +40,7 @@ td > p {margin-left: 6px; height: 12px;}
 .warning {margin-top:21px; margin-bottom:22px; padding-left: 8px; padding-right: 8px; background-color: #f8e3e1; border-color: #c5443e; border-style: solid; border-width: 1px; display: block;}
 .warning strong {margin-right: 8px;}
 .warning p {margin-top: 7px;}
+.caption p {color: black; font-size: 10px; margin-bottom: 10px;}
 img {margin-top:10px; margin-bottom:10px;}
 ul {margin-left: 17px; margin-bottom: 10px;}
 ol {margin-left: 17px; margin-bottom: 10px;}
@@ -69,7 +70,7 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 
 <div id="content">
 <div class="nav" align="right">
-<a href="control.html">previous</a><span>&nbsp;</span><a href="remote.html">next</a></div>
+<a href="control.html">previous</a><span>&nbsp;</span><a href="signal.html">next</a></div>
 
 <h1>Observing the Model</h1>
 
@@ -191,10 +192,47 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 
 <div class="important"><p><strong>Important:</strong> When an object is <code>changed</code> this means that subtree it represents have changed, maybe somewhere deep in the tree.</p></div>
 
-<p>The next chapter, <a href="../guide/remote.html">Working with a Remote Server</a> will guide you through setting up a collaboration network.</p>
+<a name="//apple_ref/cpp/Section/Listening to Container Elements Move" class="dashAnchor"></a>
+<h2><a name="splice">Listening to Container Elements Move</a></h2>
+
+<p>Containers like <code>Array</code> or <code>Collection</code> have a <code>splice</code> operation which allows to move elements from one container or in the same container for <code>Array</code>.</p>
+
+<p>If <code>splice</code> is used, then the document needs to be observed in a slightly different way, to be able to detect moves in the hierarchy.</p>
+
+<p>An element moved is neither <code>added</code> or <code>removed</code> so it is resident. However the iterator that wrap the object can be also <code>added</code> or <code>removed</code>. When no splice operation is called, the iterator state is always the same as the element it wraps.</p>
+
+<p>Then when an element is moving, the difference between the iterator state and the element state allows to observe moves, as shown in the example below.</p>
+
+<div class="codeblock"><table>
+<tr><td><pre>void  Observer::document_changed (Song &amp; song)</pre></td></tr>
+<tr><td><pre>{</pre></td></tr>
+<tr><td><pre>   if (song.tracks.changed ())</pre></td></tr>
+<tr><td><pre>   {</pre></td></tr>
+<tr><td><pre>      auto it = song.tracks.begin ();</pre></td></tr>
+<tr><td><pre>      auto it_end = song.tracks.end ();</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>      for (; it != it_end ; ++it)</pre></td></tr>
+<tr><td><pre>      {</pre></td></tr>
+<tr><td><pre>         auto &amp; track = *it;</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>         if (it.removed () &amp;&amp; track.resident ())</pre></td></tr>
+<tr><td><pre>         {</pre></td></tr>
+<tr><td><pre>            // The track is moving from this position...</pre></td></tr>
+<tr><td><pre>         }</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>         if (it.added () &amp;&amp; track.resident ())</pre></td></tr>
+<tr><td><pre>         {</pre></td></tr>
+<tr><td><pre>            // ... to this position</pre></td></tr>
+<tr><td><pre>         }</pre></td></tr>
+<tr><td><pre>      }</pre></td></tr>
+<tr><td><pre>   }</pre></td></tr>
+<tr><td><pre>}</pre></td></tr>
+</table></div>
+
+<p>The next chapter, <a href="../guide/signal.html">Signalling the Model</a> will show how to send non-persistent messages to objects of the model.</p>
 
 <div class="nav" align="right">
-<a href="control.html">previous</a><span>&nbsp;</span><a href="remote.html">next</a></div>
+<a href="control.html">previous</a><span>&nbsp;</span><a href="signal.html">next</a></div>
 
 <div class="bottomspacer">&nbsp;</div>
 </div>

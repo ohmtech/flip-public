@@ -34,6 +34,7 @@ class History
 
 public:
    using iterator = typename HistoryStoreImpl::iterator;
+   using const_iterator = typename HistoryStoreImpl::const_iterator;
 
    template <class... Args>
                   History (DocumentBase & document, Args &&... args);
@@ -42,12 +43,23 @@ public:
    HistoryStoreImpl &
                   store ();
 
-   std::string    version ();
+   std::string    version () const;
 
    iterator       begin ();
+   const_iterator begin () const;
+   const_iterator cbegin () const;
+
    iterator       end ();
+   const_iterator end () const;
+   const_iterator cend () const;
+
    iterator       last_undo ();
+   const_iterator last_undo () const;
+   const_iterator clast_undo () const;
+
    iterator       first_redo ();
+   const_iterator first_redo () const;
+   const_iterator cfirst_redo () const;
 
    void           clear ();
    iterator       erase (iterator it);

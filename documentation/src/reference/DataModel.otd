@@ -38,6 +38,11 @@ Sets the format revision of the data model.
 The name must be in the \code {ascii-7} character set,
 with exception of control characters as well as \code {del} character.
 
+The format revision is used to discriminate between two data models.
+This is typically used for document conversion from one data model
+to another one, for example when upgrading to a new version of the model
+with more properties.
+
 Example:
 
 \codeblock [language=c++] ***

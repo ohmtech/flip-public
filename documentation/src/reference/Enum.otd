@@ -17,6 +17,15 @@ template <class T> class Enum;
 \code {flip::Enum} is a type that represents an enumeration.
 The enumeration must start from the value 0.
 
+Because every enumeration receive a textual name, it is has the main
+advantage, over a \code {flip::Int}, to make a markup language representation
+more easy to understand, as the textual name will be used instead of just
+a number.
+
+See \link [id=EnumClass] {\code {EnumClass}} to see how to declare
+an enumeration. In particular, the enumeration itself must be declared
+before an \code {Enum} member can be declared in the model.
+
 
 
 /*\\\ PARAMETERS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/

@@ -40,6 +40,7 @@ td > p {margin-left: 6px; height: 12px;}
 .warning {margin-top:21px; margin-bottom:22px; padding-left: 8px; padding-right: 8px; background-color: #f8e3e1; border-color: #c5443e; border-style: solid; border-width: 1px; display: block;}
 .warning strong {margin-right: 8px;}
 .warning p {margin-top: 7px;}
+.caption p {color: black; font-size: 10px; margin-bottom: 10px;}
 img {margin-top:10px; margin-bottom:10px;}
 ul {margin-left: 17px; margin-bottom: 10px;}
 ol {margin-left: 17px; margin-bottom: 10px;}
@@ -88,7 +89,11 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 <li><a href="../reference/Collection.html">Collection</a></li>
 <li><a href="../reference/Collection.iterator.html">Collection::iterator</a></li>
 <li><a href="../reference/collection_iterator.html">collection_iterator</a></li>
+<li><a href="../reference/DataConsumerFile.html">DataConsumerFile</a></li>
+<li><a href="../reference/DataConsumerMemory.html">DataConsumerMemory</a></li>
 <li><a href="../reference/DataModel.html">DataModel</a></li>
+<li><a href="../reference/DataProviderFile.html">DataProviderFile</a></li>
+<li><a href="../reference/DataProviderMemory.html">DataProviderMemory</a></li>
 <li><a href="../reference/Document.html">Document</a></li>
 <li><a href="../reference/DocumentObserver.html">DocumentObserver</a></li>
 <li><a href="../reference/DocumentServer.html">DocumentServer</a></li>
@@ -98,9 +103,12 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 <li><a href="../reference/EnumClass.html">EnumClass</a></li>
 <li><a href="../reference/Float.html">Float</a></li>
 <li><a href="../reference/History.html">History</a></li>
+<li><a href="../reference/Hub.html">Hub</a></li>
 <li><a href="../reference/Int.html">Int</a></li>
 <li><a href="../reference/Message.html">Message</a></li>
 <li><a href="../reference/Mold.html">Mold</a></li>
+<li><a href="../reference/MulticastServiceExplorer.html">MulticastServiceExplorer</a></li>
+<li><a href="../reference/MulticastServiceProvider.html">MulticastServiceProvider</a></li>
 <li><a href="../reference/Object.html">Object</a></li>
 <li><a href="../reference/ObjectRef.html">ObjectRef</a></li>
 <li><a href="../reference/Optional.html">Optional</a></li>
@@ -123,10 +131,15 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 </table>
 
 <div class="codeblock"><table>
-<tr><td><pre>class Class;</pre></td></tr>
+<tr><td><pre>template &lt;class T&gt; class Class;</pre></td></tr>
 </table></div>
 
 <p><code>flip::Class</code> is a type that represents a declaration of a flip Class. A concrete instance of this class is acquired using an instance of the <a href="../reference/DataModel.html"><code>DataModel</code></a></p>
+
+<h2>Template Parameters</h2>
+
+<table><tr><td><p><code>T</code></p></td><td><p>The type to declare. <code>T</code> must inherit from <code>flip::Object</code></p></td></tr>
+</table>
 
 <h2>Member Functions Synopsys</h2>
 
@@ -156,14 +169,69 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 
 <p>This function returns a reference to the <code>Class</code> to allow call chaining.</p>
 
+<p>Example :</p>
+
+<div class="codeblock"><table>
+<tr><td><pre>class Model : public DataModel &lt;Model&gt; {};</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>class Root : public Object</pre></td></tr>
+<tr><td><pre>{</pre></td></tr>
+<tr><td><pre>public:</pre></td></tr>
+<tr><td><pre>   Int   value;</pre></td></tr>
+<tr><td><pre>};</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>auto &amp; root_class = Model::declare &lt;Root&gt; ();</pre></td></tr>
+<tr><td><pre>// &apos;root_class&apos; is of type &apos;Class &lt;Root&gt;&apos;</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>root_class</pre></td></tr>
+<tr><td><pre>   .name (&quot;myapp.Root&quot;)</pre></td></tr>
+<tr><td><pre>   .member &lt;Int, &amp;Root::value&gt; (&quot;value&quot;);</pre></td></tr>
+</table></div>
+
 <hr /><h3 id="member-function-inherit"><code>inherit</code></h3>
 <div class="codeblock"><table>
 <tr><td><pre>template &lt;class U&gt;   Class &amp;  inherit ();</pre></td></tr>
 </table></div>
 
-<p>Inherits from class <code>U</code> passed as a template parameter.</p>
+<p>Inherits from class <code>U</code> passed as a template parameter. Multiple inheritance is not supported.</p>
 
 <p>This function returns a reference to the <code>Class</code> to allow call chaining.</p>
+
+<p>Example :</p>
+
+<div class="codeblock"><table>
+<tr><td><pre>class Model : public DataModel &lt;Model&gt; {};</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>class A : public Object</pre></td></tr>
+<tr><td><pre>{</pre></td></tr>
+<tr><td><pre>public:</pre></td></tr>
+<tr><td><pre>   Int   value;</pre></td></tr>
+<tr><td><pre>};</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>class B : public A</pre></td></tr>
+<tr><td><pre>{</pre></td></tr>
+<tr><td><pre>public:</pre></td></tr>
+<tr><td><pre>   Float value2;</pre></td></tr>
+<tr><td><pre>};</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>// first declare base class</pre></td></tr>
+<tr><td><pre>Model::declare &lt;A&gt; ()</pre></td></tr>
+<tr><td><pre>   .name (&quot;myapp.A&quot;)</pre></td></tr>
+<tr><td><pre>   .member &lt;Int, &amp;A::value&gt; (&quot;value&quot;);</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>// then declare inherited classes</pre></td></tr>
+<tr><td><pre>Model::declare &lt;B&gt; ()</pre></td></tr>
+<tr><td><pre>   .name (&quot;myapp.B&quot;)</pre></td></tr>
+<tr><td><pre>   .inherit &lt;A&gt; ()</pre></td></tr>
+<tr><td><pre>   .member &lt;Float, &amp;B::value2&gt; (&quot;value2&quot;);</pre></td></tr>
+</table></div>
+
+<p>Inheriting imports all members of superclass in the class, therefore :</p>
+
+<ul>
+<li><code>inherit</code> must be done first before <code>member</code> declarations</li>
+<li>All member names must be different, taking into account inherited names</li>
+</ul>
 
 <hr /><h3 id="member-function-member"><code>member</code></h3>
 <div class="codeblock"><table>
@@ -174,7 +242,27 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 
 <div class="warning"><p><strong>WARNING:</strong> flip Member declaration must follow the same order as in the C++ class declaration.</p></div>
 
+<p>All member names must be different.</p>
+
 <p>This function returns a reference to the <code>Class</code> to allow call chaining.</p>
+
+<p>Example :</p>
+
+<div class="codeblock"><table>
+<tr><td><pre>class Model : public DataModel &lt;Model&gt; {};</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>class Root : public Object</pre></td></tr>
+<tr><td><pre>{</pre></td></tr>
+<tr><td><pre>public:</pre></td></tr>
+<tr><td><pre>   Int   value;</pre></td></tr>
+<tr><td><pre>   Float value2;</pre></td></tr>
+<tr><td><pre>};</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>Model::declare &lt;Root&gt; ()</pre></td></tr>
+<tr><td><pre>   .name (&quot;myapp.Root&quot;)</pre></td></tr>
+<tr><td><pre>   .member &lt;Int, &amp;Root::value&gt; (&quot;value&quot;)</pre></td></tr>
+<tr><td><pre>   .member &lt;Float, &amp;Root::value2&gt; (&quot;value2&quot;);</pre></td></tr>
+</table></div>
 
 <hr /><h3 id="member-function-name"><code>name</code></h3>
 <div class="codeblock"><table>
@@ -189,6 +277,12 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 </table></div>
 
 <p>Returns information on the members of the class. This allows for automatic introspection of an instance of the class.</p>
+
+<p>Example : \codeblock [language=c++] *** void  introspect (Root & root) {    for (const auto & member : root.get_class ().members ())    {       auto & obj = member._representative.from (root);       const char * name_0 = member._name_0;</p>
+
+<p>// on the first loop iteration,       // 'obj' represents a reference to 'root.value'       // 'name_0' is "value"</p>
+
+<p>// on the second loop iteration,       // 'obj' represents a reference to 'root.value2'       // 'name_0' is "value2"    } } ***</p>
 
 <div class="nav" align="right">
 <a href="Bool.html">previous</a><span>&nbsp;</span><a href="Collection.html">next</a></div>

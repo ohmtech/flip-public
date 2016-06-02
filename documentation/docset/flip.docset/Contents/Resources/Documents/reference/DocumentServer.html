@@ -40,6 +40,7 @@ td > p {margin-left: 6px; height: 12px;}
 .warning {margin-top:21px; margin-bottom:22px; padding-left: 8px; padding-right: 8px; background-color: #f8e3e1; border-color: #c5443e; border-style: solid; border-width: 1px; display: block;}
 .warning strong {margin-right: 8px;}
 .warning p {margin-top: 7px;}
+.caption p {color: black; font-size: 10px; margin-bottom: 10px;}
 img {margin-top:10px; margin-bottom:10px;}
 ul {margin-left: 17px; margin-bottom: 10px;}
 ol {margin-left: 17px; margin-bottom: 10px;}
@@ -87,9 +88,12 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 
 <table><tr><td><p><a href="#member-function-constructor">Constructor</a></p></td><td><p>Constructs the <code>DocumentServer</code></p></td></tr>
 <tr><td><p><a href="#member-function-destructor">Destructor</a></p></td><td><p>Destructs the <code>DocumentServer</code></p></td></tr>
-<tr><td><p><code><a href="#member-function-add">add</a></code></p></td><td><p>Attach a new client to the server</p></td></tr>
-<tr><td><p><code><a href="#member-function-remove">remove</a></code></p></td><td><p>Detach a new client to the server</p></td></tr>
+<tr><td><p><code><a href="#member-function-listen_connecting">listen_connecting</a></code></p></td><td><p>Reacts just before a client join the document</p></td></tr>
+<tr><td><p><code><a href="#member-function-listen_connected">listen_connected</a></code></p></td><td><p>Reacts just after a client join the document</p></td></tr>
+<tr><td><p><code><a href="#member-function-listen_disconnected">listen_disconnected</a></code></p></td><td><p>Reacts just after a client left the document</p></td></tr>
 <tr><td><p><code><a href="#member-function-send_tx_if">send_tx_if</a></code></p></td><td><p>Send a transaction to every client meeting a condition</p></td></tr>
+<tr><td><p><code><a href="#member-function-reply_signal">reply_signal</a></code></p></td><td><p>Replies to a signal sent from one client</p></td></tr>
+<tr><td><p><code><a href="#member-function-send_signal_if">send_signal_if</a></code></p></td><td><p>Broadcasts a signal selectively</p></td></tr>
 </table>
 
 <a name="//apple_ref/cpp/Section/Manipulating" class="dashAnchor"></a>
@@ -147,6 +151,42 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 
 <p>The session identifier represents a unique number accross documents uniquely identifying this document. When the document is changed on the server side, the session identifier is used as a way to identify the server acting as a user.</p>
 
+<p>Example, server side :</p>
+
+<div class="codeblock"><table>
+<tr><td><pre>#include &quot;flip/contrib/transport_tcp/PortTransportServerTcp.h&quot;</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>// Setup a server for session number 1234567890123</pre></td></tr>
+<tr><td><pre>DocumentValidatorVoid validator;</pre></td></tr>
+<tr><td><pre>DocumentServer document_server (Model::use (), validator, 1234567890123ULL);</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>// Setup a socket listening on TCP port 9090 to accept new connections.</pre></td></tr>
+<tr><td><pre>PortTransportServerTcp port (document_server, 9090);</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>for (;;)</pre></td></tr>
+<tr><td><pre>{</pre></td></tr>
+<tr><td><pre>   // process incoming connections and transfers</pre></td></tr>
+<tr><td><pre>   port.process ();</pre></td></tr>
+<tr><td><pre>}</pre></td></tr>
+</table></div>
+
+<p>Example, client side :</p>
+
+<div class="codeblock"><table>
+<tr><td><pre>#include &quot;flip/contrib/transport_tcp/CarrierTransportSocketTcp.h&quot;</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>Document document (Model::use (), 123456789ULL, &apos;appl&apos;, &apos;gui &apos;);</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>// Setup a socket connecting on TCP port 9090 of server.</pre></td></tr>
+<tr><td><pre>CarrierTransportSocketTcp carrier (document, &quot;flip.myserver.com&quot;, 9090);</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>for (;;)</pre></td></tr>
+<tr><td><pre>{</pre></td></tr>
+<tr><td><pre>   // process incoming connections and transfers</pre></td></tr>
+<tr><td><pre>   carrier.process ();</pre></td></tr>
+<tr><td><pre>}</pre></td></tr>
+</table></div>
+
 <a name="//apple_ref/cpp/Method/destructor" class="dashAnchor"></a>
 <hr /><h3 id="member-function-destructor">Destructor</h3>
 <div class="codeblock"><table>
@@ -155,21 +195,72 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 
 <p>Destructor.</p>
 
-<a name="//apple_ref/cpp/Method/add" class="dashAnchor"></a>
-<hr /><h3 id="member-function-add"><code>add</code></h3>
+<a name="//apple_ref/cpp/Method/listen_connecting" class="dashAnchor"></a>
+<hr /><h3 id="member-function-listen_connecting"><code>listen_connecting</code></h3>
 <div class="codeblock"><table>
-<tr><td><pre>void  add (TransportBase &amp; transport);</pre></td></tr>
+<tr><td><pre>void  listen_connecting (std::function &lt;void (PortBase &amp;)&gt; func);</pre></td></tr>
 </table></div>
 
-<p>Attach a new client to the server through its transport representation.</p>
+<p>Example :</p>
 
-<a name="//apple_ref/cpp/Method/remove" class="dashAnchor"></a>
-<hr /><h3 id="member-function-remove"><code>remove</code></h3>
 <div class="codeblock"><table>
-<tr><td><pre>void  remove (TransportBase &amp; transport);</pre></td></tr>
+<tr><td><pre>DocumentServer server = ...;</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>// listen on connections and create a specific Client class</pre></td></tr>
+<tr><td><pre>// in the root of the document for private data</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>server.listen_connecting ([&amp;server](PortBase &amp; port){</pre></td></tr>
+<tr><td><pre>   Root &amp; root = server.root &lt;Root&gt; ();</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>   if (root._clients.count_if ([&amp;port](Client &amp; client){</pre></td></tr>
+<tr><td><pre>      return client.user () == port.user ();</pre></td></tr>
+<tr><td><pre>   }) == 0)</pre></td></tr>
+<tr><td><pre>   {</pre></td></tr>
+<tr><td><pre>      root._clients.emplace (port.user ());</pre></td></tr>
+<tr><td><pre>   }</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>   Transaction tx = server.commit ();</pre></td></tr>
+<tr><td><pre>   server.send_tx_if (tx, [](PortBase &amp;){return true;});</pre></td></tr>
+<tr><td><pre>});</pre></td></tr>
 </table></div>
 
-<p>Detach a new client to the server through its transport representation.</p>
+<a name="//apple_ref/cpp/Method/listen_connected" class="dashAnchor"></a>
+<hr /><h3 id="member-function-listen_connected"><code>listen_connected</code></h3>
+<div class="codeblock"><table>
+<tr><td><pre>void  listen_connected (std::function &lt;void (PortBase &amp;)&gt; func);</pre></td></tr>
+</table></div>
+
+<p>Example :</p>
+
+<div class="codeblock"><table>
+<tr><td><pre>DocumentServer server = ...;</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>// hypothetic class representing a monitoring system for administration</pre></td></tr>
+<tr><td><pre>MonitoringSystem monitor = ...;</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>server.listen_connected ([&amp;monitor](PortBase &amp; port){</pre></td></tr>
+<tr><td><pre>   monitor.add_user (port.user ());</pre></td></tr>
+<tr><td><pre>});</pre></td></tr>
+</table></div>
+
+<a name="//apple_ref/cpp/Method/listen_disconnected" class="dashAnchor"></a>
+<hr /><h3 id="member-function-listen_disconnected"><code>listen_disconnected</code></h3>
+<div class="codeblock"><table>
+<tr><td><pre>void  listen_disconnected (std::function &lt;void (PortBase &amp;)&gt; func);</pre></td></tr>
+</table></div>
+
+<p>Example :</p>
+
+<div class="codeblock"><table>
+<tr><td><pre>DocumentServer server = ...;</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>// hypothetic class representing a monitoring system for administration</pre></td></tr>
+<tr><td><pre>MonitoringSystem monitor = ...;</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>listen_disconnected ([&amp;monitor](PortBase &amp; port){</pre></td></tr>
+<tr><td><pre>   monitor.remove_user (port.user ());</pre></td></tr>
+<tr><td><pre>});</pre></td></tr>
+</table></div>
 
 <a name="//apple_ref/cpp/Method/send_tx_if" class="dashAnchor"></a>
 <hr /><h3 id="member-function-send_tx_if"><code>send_tx_if</code></h3>
@@ -179,16 +270,117 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 
 <p>Send transaction <code>tx</code> to every client meeting condition using unary function <code>p</code>.</p>
 
-<p>Example:</p>
+<p>Example :</p>
 
 <div class="codeblock"><table>
-<tr><td><pre>// DocumentServer server;</pre></td></tr>
-<tr><td><pre>// Transaction tx;</pre></td></tr>
+<tr><td><pre>DocumentServer server = ...;</pre></td></tr>
 <tr><td><pre></pre></td></tr>
-<tr><td><pre>server.send_tx_if (tx, [](TransportBase &amp;){return true;});</pre></td></tr>
+<tr><td><pre>// listen on connections and create a specific Client class</pre></td></tr>
+<tr><td><pre>// in the root of the document for private data</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>server.listen_connecting ([&amp;server](PortBase &amp; port){</pre></td></tr>
+<tr><td><pre>   Root &amp; root = server.root &lt;Root&gt; ();</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>   if (root._clients.count_if ([&amp;port](Client &amp; client){</pre></td></tr>
+<tr><td><pre>      return client.user () == port.user ();</pre></td></tr>
+<tr><td><pre>   }) == 0)</pre></td></tr>
+<tr><td><pre>   {</pre></td></tr>
+<tr><td><pre>      root._clients.emplace (port.user ());</pre></td></tr>
+<tr><td><pre>   }</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>   Transaction tx = server.commit ();</pre></td></tr>
+<tr><td><pre>   server.send_tx_if (tx, [](PortBase &amp;){return true;});</pre></td></tr>
+<tr><td><pre>});</pre></td></tr>
 </table></div>
 
 <p>Sends the transaction to all attached clients.</p>
+
+<a name="//apple_ref/cpp/Method/reply_signal" class="dashAnchor"></a>
+<hr /><h3 id="member-function-reply_signal"><code>reply_signal</code></h3>
+<div class="codeblock"><table>
+<tr><td><pre>void  reply_signal (const SignalData &amp; data);</pre></td></tr>
+</table></div>
+
+<p>Replies to a signal sent from a client, when the signal on the client is configured on the client side to pass through local machine boundaries.</p>
+
+<p>Example :</p>
+
+<div class="codeblock"><table>
+<tr><td><pre>class Root : public Object</pre></td></tr>
+<tr><td><pre>{</pre></td></tr>
+<tr><td><pre>   enum</pre></td></tr>
+<tr><td><pre>   {</pre></td></tr>
+<tr><td><pre>      Signal_SIGN_UPLOAD_REQUEST = 0,</pre></td></tr>
+<tr><td><pre>      Signal_SIGN_UPLOAD_SIGNATURE,</pre></td></tr>
+<tr><td><pre>   };</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>   // from client to server</pre></td></tr>
+<tr><td><pre>   Signal &lt;std::string&gt; signal_sign_upload_request;</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>   // from client to server</pre></td></tr>
+<tr><td><pre>   Signal &lt;std::string&gt; signal_sign_upload_signature;</pre></td></tr>
+<tr><td><pre>};</pre></td></tr>
+</table></div>
+
+<p>The following example demonstrates a client sending a signal to the server to sign a request to upload data on a server.</p>
+
+<div class="codeblock"><table>
+<tr><td><pre>/*   Client side   */</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>// don&apos;t forget to move cnx so that it is not destroyed</pre></td></tr>
+<tr><td><pre>auto cnx = root.signal_sign_upload_signature.connect ([](std::string signature){</pre></td></tr>
+<tr><td><pre>   // the client receives the reply to its sign request</pre></td></tr>
+<tr><td><pre>});</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>// send the sign request</pre></td></tr>
+<tr><td><pre>root.signal_sign_upload_request (&quot;string to sign&quot;);</pre></td></tr>
+</table></div>
+
+<p>The following example shows how a server is handling the signal and reply to it.</p>
+
+<div class="codeblock"><table>
+<tr><td><pre>/*   Server side   */</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>DocumentServer = ...;</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>// don&apos;t forget to move cnx so that it is not destroyed</pre></td></tr>
+<tr><td><pre>auto cnx = root.signal_sign_upload_request.connect ([&amp;root, &amp;server](std::string str_to_sign){</pre></td></tr>
+<tr><td><pre>   auto signature = sign_request (str_to_sign);</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>   server.reply_signal (</pre></td></tr>
+<tr><td><pre>      root.signal_sign_upload_signature.make (signature)</pre></td></tr>
+<tr><td><pre>   ;</pre></td></tr>
+<tr><td><pre>});</pre></td></tr>
+</table></div>
+
+<a name="//apple_ref/cpp/Method/send_signal_if" class="dashAnchor"></a>
+<hr /><h3 id="member-function-send_signal_if"><code>send_signal_if</code></h3>
+<div class="codeblock"><table>
+<tr><td><pre>template &lt;class UnaryPredicate&gt;</pre></td></tr>
+<tr><td><pre>void  send_signal_if (const SignalData &amp; data, UnaryPredicate p);</pre></td></tr>
+</table></div>
+
+<p>Broadcasts a signal selectively to clients.</p>
+
+<p>Example :</p>
+
+<p>The following example shows how a server is handling the previous signal but broadcast the signature to every connected clients.</p>
+
+<div class="codeblock"><table>
+<tr><td><pre>/*   Server side   */</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>DocumentServer = ...;</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>// don&apos;t forget to move cnx so that it is not destroyed</pre></td></tr>
+<tr><td><pre>auto cnx = root.signal_sign_upload_request.connect ([&amp;root, &amp;server](std::string str_to_sign){</pre></td></tr>
+<tr><td><pre>   auto signature = sign_request (str_to_sign);</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>   server.send_signal_if (</pre></td></tr>
+<tr><td><pre>      root.signal_sign_upload_signature.make (signature),</pre></td></tr>
+<tr><td><pre>      [](){return true;}</pre></td></tr>
+<tr><td><pre>   ;</pre></td></tr>
+<tr><td><pre>});</pre></td></tr>
+</table></div>
 
 <a name="//apple_ref/cpp/Method/set_label" class="dashAnchor"></a>
 <hr /><h3 id="member-function-set_label"><code>set_label</code></h3>
@@ -198,7 +390,22 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 
 <p>Sets the label (ie. name) of the current modifications of the document. This metadata will be added to the transaction at <code>commit</code> stage.</p>
 
+<p>This is typically use to display the undo/redo name in the Edit menu of the menubar.</p>
+
 <p>If called multiple times before <code>commit</code>, only the last state of the metadata is taken into account at <code>commit</code> stage.</p>
+
+<p>Example :</p>
+
+<div class="codeblock"><table>
+<tr><td><pre>Root &amp; root = document.root &lt;Root&gt; ();</pre></td></tr>
+<tr><td><pre>root.notes.emplace &lt;Note&gt; (2.0, 4.0);</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>document.set_label (&quot;Add note&quot;);</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>Transaction tx = document.commit ();</pre></td></tr>
+<tr><td><pre>// the transaction contains the new note modification in &apos;root.notes&apos;</pre></td></tr>
+<tr><td><pre>// as well as the metadata label &quot;Add note&quot;</pre></td></tr>
+</table></div>
 
 <a name="//apple_ref/cpp/Method/set_metadata" class="dashAnchor"></a>
 <hr /><h3 id="member-function-set_metadata"><code>set_metadata</code></h3>
@@ -209,6 +416,10 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 <p>Sets the metadata <code>value</code> for <code>key</code> of the current modifications of the document. This metadata will be added to the transaction at <code>commit</code> stage.</p>
 
 <p>If called multiple times before <code>commit</code>, only the last state of the metadata is taken into account at <code>commit</code> stage.</p>
+
+<p>This is a more general version of <code>set_label</code>. Actually, <code>set_label</code> calls this methods with the <code>key</code> <code>"label"</code>.</p>
+
+<p>This can be used to present even more textual informations for undo/redo operations, for example detailing the nature of the change.</p>
 
 <a name="//apple_ref/cpp/Method/commit" class="dashAnchor"></a>
 <hr /><h3 id="member-function-commit"><code>commit</code></h3>
@@ -235,6 +446,8 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 </table></div>
 
 <p>Pushes the transactions in the push stack to the upstream and empty the push stack. If no upstream is present then this function will just empty the push stack.</p>
+
+<div class="warning"><p><strong>WARNING:</strong> Even if not connected to an upstream, it is important to call <code>push</code>    regularly to empty the push stack.</p></div>
 
 <a name="//apple_ref/cpp/Method/pull" class="dashAnchor"></a>
 <hr /><h3 id="member-function-pull"><code>pull</code></h3>
@@ -333,6 +546,8 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 
 <p>The resulting object can be used with concrete backends format such as <code>BackEndBinary</code> or <code>BackEndMl</code> to store them on a media.</p>
 
+<p>See <a href="../reference/BackEndMl.html"><code>BackEndMl</code></a> or <a href="../reference/BackEndBinary.html"><code>BackEndBinary</code></a> for an example of use of this method.</p>
+
 <a name="//apple_ref/cpp/Method/read" class="dashAnchor"></a>
 <hr /><h3 id="member-function-read"><code>read</code></h3>
 <div class="codeblock"><table>
@@ -340,6 +555,8 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 </table></div>
 
 <p>Read from an intermediate representation format backend. Internally this will create a transaction that represents the difference between the new backend and the current state of the document. As such, the document modification are not commited at the end of this operation.</p>
+
+<p>See <a href="../reference/BackEndMl.html"><code>BackEndMl</code></a> or <a href="../reference/BackEndBinary.html"><code>BackEndBinary</code></a> for an example of use of this method.</p>
 
 <a name="//apple_ref/cpp/Method/root" class="dashAnchor"></a>
 <hr /><h3 id="member-function-root"><code>root</code></h3>
@@ -357,6 +574,8 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 
 <p>Returns an object given its unique flip reference number. The function will throw if the reference number does not exist in the document or if the resulting object cannot be casted to <code>T</code>.</p>
 
+<p>See <a href="../reference/Ref.html"><code>Ref</code></a> for more details.</p>
+
 <a name="//apple_ref/cpp/Method/object_ptr" class="dashAnchor"></a>
 <hr /><h3 id="member-function-object_ptr"><code>object_ptr</code></h3>
 <div class="codeblock"><table>
@@ -364,6 +583,8 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 </table></div>
 
 <p>Returns an object given its unique flip reference number. The function will return <code>nullptr</code> if the reference number does not exist in the document or if the resulting object cannot be casted to <code>T</code>.</p>
+
+<p>See <a href="../reference/Ref.html"><code>Ref</code></a> for more details.</p>
 
 <div class="nav" align="right">
 <a href="DocumentObserver.html">previous</a><span>&nbsp;</span><a href="DocumentValidator.html">next</a></div>

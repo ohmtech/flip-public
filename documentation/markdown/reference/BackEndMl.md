@@ -59,12 +59,62 @@ void  write (DataConsumerBase & consumer, const BackEndIR & ir);
 
 <p>Format the data from the intermediate representation of the document and feed them to the consumer.</p>
 
+<p>Example :</p>
+
+```c++
+#include "flip/BackEndMl.h"
+#include "flip/BackEndIR.h"
+#include "flip/contrib/DataConsumerFile.h"
+
+
+Document document (Model::use (), user_id, manufacturer_id, component_id);
+
+[...]
+
+// put the result of document serialisation in a file
+DataConsumerFile consumer ("/path/to/file");
+
+// get the backend intermediate representation
+BackEndIR backend = document.write ();
+
+// write the backend intermediate representation to markup language, using the consumer
+backend.write <BackEndMl> (consumer);
+
+// now the file is filled with the document serialisation in markup language format
+```
+
 <h3 id="member-function-read"><code>read</code></h3>
 ```c++
 void   read (DataProviderBase & provider, BackEndIR & ir);
 ```
 
 <p>Parse the data from the data provider and fill the intermediate representation of the document.</p>
+
+<p>Example :</p>
+
+```c++
+#include "flip/BackEndMl.h"
+#include "flip/BackEndIR.h"
+#include "flip/cotnrib/DataProviderFile.h"
+
+
+DataProviderFile provider ("/path/to/file");
+
+// tell the backend to automatically recognize the markup language format
+BackEndIR backend;
+backend.register_backend <BackEndMl> ();
+
+bool ok_flag = backend.read (provider);
+if (!ok_flag) return;   // a corruption occured
+
+Document document (Model::use (), user_id, manufacturer_id, component_id);
+
+// change the document with the content of the backend
+document.read (backend);
+
+// commit the changes
+document.commit ();
+```
 
 <p><sup><a href="BackEndIR.md">previous</a> | <a href="Blob.md">next</a></sup></p>
 

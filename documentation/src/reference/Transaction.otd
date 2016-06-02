@@ -13,17 +13,8 @@
 class Transaction;
 ***
 
-\code {flip::Transaction} is a type that allows signalling of flip objects
-in a type safe way.
-
-
-
-/*\\\ PARAMETERS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
-
-\parameter {TYPE} {A \code {uint32_t} unique number for the class of the object
-that represents the signal type}
-\parameter {Args...} {A variable number of arguments that compose the parameters
-of the signal}
+\code {flip::Transaction} is a type representing a record of the modifications
+on a document.
 
 
 

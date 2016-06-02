@@ -20,6 +20,13 @@ class const_reverse_iterator;
 
 \code {Array::iterator} satisfies the \code {BidirectionalIterator} C++ concept.
 
+\warning {
+Unlike the C++ standard library, when an element is erased from a container,
+and if iterating over the container before \code {commit},
+the element is still present until the
+modification is commited, but the iterator is marked as removed.
+}
+
 
 
 /*\\\ PARAMETERS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
@@ -54,6 +61,34 @@ Returns \code {true} \emph {iff} the iterator was added to the container.
 \note {When an object is moved in the container, then the destination iterator is considered
 as added while the object is considered as resident.}
 
+Example :
+
+\codeblock [language=c++] ***
+void  Observer::document_changed (Array <Track> & tracks)
+{
+   auto it = tracks.begin ();
+   auto it_end = tracks.end ();
+
+   for (; it != it_end ; ++it)
+   {
+      Track & track = *it;
+
+      if (it.added () && track.resident ())
+      {
+         // the track was moved in the container
+         // this is the destination position
+      }
+
+      if (it.removed () && track.resident ())
+      {
+         // the track was moved in the container
+         // this is the source position
+      }
+   }
+}
+***
+
+
 //----------------------------------------------------------------------------
 
 \method {removed}
@@ -67,6 +102,34 @@ Returns \code {true} \emph {iff} the iterator was removed to the container.
 
 \note {When an object is moved in the container, then the source iterator is considered
 as removed while the object is considered as resident.}
+
+Example :
+
+\codeblock [language=c++] ***
+void  Observer::document_changed (Array <Track> & tracks)
+{
+   auto it = tracks.begin ();
+   auto it_end = tracks.end ();
+
+   for (; it != it_end ; ++it)
+   {
+      Track & track = *it;
+
+      if (it.added () && track.resident ())
+      {
+         // the track was moved in the container
+         // this is the destination position
+      }
+
+      if (it.removed () && track.resident ())
+      {
+         // the track was moved in the container
+         // this is the source position
+      }
+   }
+}
+***
+
 
 //----------------------------------------------------------------------------
 

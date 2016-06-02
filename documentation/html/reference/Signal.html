@@ -40,6 +40,7 @@ td > p {margin-left: 6px; height: 12px;}
 .warning {margin-top:21px; margin-bottom:22px; padding-left: 8px; padding-right: 8px; background-color: #f8e3e1; border-color: #c5443e; border-style: solid; border-width: 1px; display: block;}
 .warning strong {margin-right: 8px;}
 .warning p {margin-top: 7px;}
+.caption p {color: black; font-size: 10px; margin-bottom: 10px;}
 img {margin-top:10px; margin-bottom:10px;}
 ul {margin-left: 17px; margin-bottom: 10px;}
 ol {margin-left: 17px; margin-bottom: 10px;}
@@ -86,7 +87,11 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 <li><a href="../reference/Collection.html">Collection</a></li>
 <li><a href="../reference/Collection.iterator.html">Collection::iterator</a></li>
 <li><a href="../reference/collection_iterator.html">collection_iterator</a></li>
+<li><a href="../reference/DataConsumerFile.html">DataConsumerFile</a></li>
+<li><a href="../reference/DataConsumerMemory.html">DataConsumerMemory</a></li>
 <li><a href="../reference/DataModel.html">DataModel</a></li>
+<li><a href="../reference/DataProviderFile.html">DataProviderFile</a></li>
+<li><a href="../reference/DataProviderMemory.html">DataProviderMemory</a></li>
 <li><a href="../reference/Document.html">Document</a></li>
 <li><a href="../reference/DocumentObserver.html">DocumentObserver</a></li>
 <li><a href="../reference/DocumentServer.html">DocumentServer</a></li>
@@ -96,9 +101,12 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 <li><a href="../reference/EnumClass.html">EnumClass</a></li>
 <li><a href="../reference/Float.html">Float</a></li>
 <li><a href="../reference/History.html">History</a></li>
+<li><a href="../reference/Hub.html">Hub</a></li>
 <li><a href="../reference/Int.html">Int</a></li>
 <li><a href="../reference/Message.html">Message</a></li>
 <li><a href="../reference/Mold.html">Mold</a></li>
+<li><a href="../reference/MulticastServiceExplorer.html">MulticastServiceExplorer</a></li>
+<li><a href="../reference/MulticastServiceProvider.html">MulticastServiceProvider</a></li>
 <li><a href="../reference/Object.html">Object</a></li>
 <li><a href="../reference/ObjectRef.html">ObjectRef</a></li>
 <li><a href="../reference/Optional.html">Optional</a></li>
@@ -123,15 +131,22 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 </table>
 
 <div class="codeblock"><table>
-<tr><td><pre>template &lt;uint32_t TYPE, class... Args&gt;   class Signal;</pre></td></tr>
+<tr><td><pre>template &lt;class... Args&gt;   class Signal;</pre></td></tr>
 </table></div>
 
 <p><code>flip::Signal</code> is a type that allows signalling of flip objects in a type safe way.</p>
 
+<p>Signals are only local and targetted at an object. They are not broadcasted to the other clients in a collaboration case, and they are not part of an observer. It is therefore not part of the document model.</p>
+
+<p>However, if multiple documents are using a <code>Hub</code> on a local machine in different threads or processes, the signal will be delivered on the local machine.</p>
+
+<p><code>Signal</code>s can also be a way to communicate directly with the server.</p>
+
+<p>When messages should be part of a document model and broadcasted then <a href="../reference/Message.html"><code>Message</code></a> shall be used instead.</p>
+
 <h2>Template Parameters</h2>
 
-<table><tr><td><p><code>TYPE</code></p></td><td><p>A <code>uint32_t</code> unique number for the class of the object that represents the signal type</p></td></tr>
-<tr><td><p><code>Args...</code></p></td><td><p>A variable number of arguments that compose the parameters of the signal</p></td></tr>
+<table><tr><td><p><code>Args...</code></p></td><td><p>A variable number of arguments that compose the parameters of the signal</p></td></tr>
 </table>
 
 <h2>Member Functions Synopsys</h2>
@@ -146,10 +161,32 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 
 <h3 id="member-function-constructor">Constructor</h3>
 <div class="codeblock"><table>
-<tr><td><pre>Signal (Object &amp; object);</pre></td></tr>
+<tr><td><pre>Signal (uint32_t type, Object &amp; object);</pre></td></tr>
 </table></div>
 
-<p>Constructor. Constructs the object by linking it to <code>object</code>.</p>
+<p>Constructor. Constructs the object by linking it to <code>object</code>. <code>type</code> is a unique number for the class of the object that represents the signal type.</p>
+
+<p>Example :</p>
+
+<div class="codeblock"><table>
+<tr><td><pre>class Form : public Object</pre></td></tr>
+<tr><td><pre>{</pre></td></tr>
+<tr><td><pre>public:</pre></td></tr>
+<tr><td><pre>   enum</pre></td></tr>
+<tr><td><pre>   {</pre></td></tr>
+<tr><td><pre>      Signal_OPEN_VIEW = 0,</pre></td></tr>
+<tr><td><pre>      Signal_CLOSE_VIEW,</pre></td></tr>
+<tr><td><pre>   };</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>   Form ()</pre></td></tr>
+<tr><td><pre>   : signal_open_view (Signal_OPEN_VIEW, *this)</pre></td></tr>
+<tr><td><pre>   , signal_close_view (Signal_CLOSE_VIEW, *this)</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>   Signal &lt;int /* width */, int /* height */&gt; signal_open_view;</pre></td></tr>
+<tr><td><pre>   Signal &lt;&gt; signal_close_view;</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>};</pre></td></tr>
+</table></div>
 
 <hr /><h3 id="member-function-destructor">Destructor</h3>
 <div class="codeblock"><table>
@@ -163,9 +200,14 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 <tr><td><pre>void  operator () (Args... args);</pre></td></tr>
 </table></div>
 
-<p>Notify all connection listeners for this <code>TYPE</code> of signal and this object as identified by its unique flip reference number.</p>
+<p>Notify all connection listeners for this <code>type</code> of signal and this object as identified by its unique flip reference number.</p>
 
 <p>All documents in the local document tree are also notified, and if the transport is configured to let those signal pass through, the server will be notified too.</p>
+
+<div class="codeblock"><table>
+<tr><td><pre>form.signal_open_view (1280, 1024);</pre></td></tr>
+<tr><td><pre>form.signal_close_view ();</pre></td></tr>
+</table></div>
 
 <hr /><h3 id="member-function-connect"><code>connect</code></h3>
 <div class="codeblock"><table>
@@ -179,6 +221,20 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 </ol>
 
 <p>Connect a listener to this <code>Signal</code>. Returns a <code>SignalConnection</code>. This last type should be stored in a way to ensure that the listener could be signalled as long as the <code>SignalConnection</code> is alive.</p>
+
+<div class="codeblock"><table>
+<tr><td><pre>SignalConnection cnx = form.signal_open_view.connect ([](int width, int height){</pre></td></tr>
+<tr><td><pre>   // open view witdh x height</pre></td></tr>
+<tr><td><pre>});</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>SignalConnection cnx2 = form.signal_close_view.connect ([](){</pre></td></tr>
+<tr><td><pre>   // close view</pre></td></tr>
+<tr><td><pre>});</pre></td></tr>
+</table></div>
+
+<p>Note that <code>cnx</code> and <code>cnx2</code> in the above example needs to be stored. If they go below the function scope, they will be destroyed and therefore the signal connection will be broken.</p>
+
+<p><code>SignalConnections</code> cannot be copied, but can be moved with <code>std::move</code>.</p>
 
 <div class="nav" align="right">
 <a href="Ref.html">previous</a><span>&nbsp;</span><a href="String.html">next</a></div>

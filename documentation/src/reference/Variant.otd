@@ -22,6 +22,12 @@ present.
 
 Internally the \code {Variant} is just a \code {Collection} with a constraint on size.
 
+\important {
+   A variant must be filled with exactly an element before \code {commit}
+   is called. As a result, a \code {Variant} cannot be a member of the
+   root class of a document.
+}
+
 
 
 /*\\\ PARAMETERS \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/

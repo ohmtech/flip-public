@@ -28,6 +28,7 @@
 #include "flip/detail/DocumentBase.h"
 #include "flip/detail/TypeTraits.h"
 
+#include <algorithm>
 #include <type_traits>
 
 
@@ -687,6 +688,16 @@ typename Array <T>::iterator  Array <T>::splice (iterator pos, Array & other, it
 
    auto & obj = *it;
 
+   if (this == &other)
+   {
+      if (pos == it) return it;  // no move, abort
+
+      iterator it_next = it;
+      ++it_next;
+
+      if (pos == it_next) return it;   // no move, abort
+   }
+
    assert (!obj.removed ());
    assert (obj.impl_parent_ptr () != nullptr);
 
@@ -856,9 +867,8 @@ void  Array <T>::revert ()
             obj.impl_change_parent (nullptr);
             obj.impl_remove ();
             obj.impl_unbind (document ());
+            obj.impl_entity_reset ();
          }
-
-         obj.impl_entity_reset ();
 
          _map.erase (it);
       }
@@ -1096,7 +1106,7 @@ Name : impl_make
 */
 
 template <class T>
-void  Array <T>::impl_make (Transaction & tx, ImplUndoRedoMode parent_mode) const
+void  Array <T>::impl_make (Transaction & tx, ImplUndoRedoMode parent_mode, TxPostProcessInfo & ppinfo) const
 {
    auto mode = impl_make_undo_redo_mode (parent_mode);
 
@@ -1117,13 +1127,33 @@ void  Array <T>::impl_make (Transaction & tx, ImplUndoRedoMode parent_mode) cons
          else
          {
             auto & old_parent = obj.parent ().template before <Array <T>> ();
-            auto old_it = old_parent.find_if ([&obj](T & elem) {
-               return &elem == &obj;
-            });
-            assert (old_it != old_parent.end ());
-            auto & old_key = old_it.base ()->first;
+
+            auto old_it = std::find_if (
+               old_parent._map.begin (), old_parent._map.end (),
+               [&obj, &key](typename Map::value_type & other_pair){
+                  return (&other_pair.second.get () == &obj) && (other_pair.first != key);
+               }
+            );
+            assert (old_it != old_parent._map.end ());
+            auto & old_key = old_it->first;
+
+#if ! defined (NDEBUG)
+            if (ref () == old_parent.ref ()) assert (key != old_key);
+#endif
 
             tx.push_array_move (ref (), impl_make_tx_flags (mode), key, old_parent.ref (), old_key);
+
+            if (old_parent.removed ())
+            {
+               Type * tl_ptr = &old_parent;
+
+               for (; tl_ptr->impl_parent_ptr () != nullptr ;)
+               {
+                  tl_ptr = tl_ptr->impl_parent_ptr ();
+               }
+
+               ppinfo.push (tl_ptr->ref (), tx.last ());
+            }
          }
       }
 
@@ -1133,7 +1163,10 @@ void  Array <T>::impl_make (Transaction & tx, ImplUndoRedoMode parent_mode) cons
          mode_alt = ImplUndoRedoMode::ForceEnable;
       }
 
-      if (obj.changed ()) obj.impl_make (tx, mode_alt);
+      if (!(pair.second.removed () && ! pair.second._obj_sptr.unique ()))
+      {
+         if (obj.changed ()) obj.impl_make (tx, mode_alt, ppinfo);
+      }
 
       if (pair.second.removed ())
       {
@@ -1227,10 +1260,7 @@ void  Array <T>::impl_synchronize ()
       {
          if (it->second._obj_sptr.unique ())
          {
-            if (obj.is_bound ())
-            {
-               obj.impl_unbind (document ());
-            }
+            if (obj.is_bound ()) obj.impl_unbind (document ());
 
             obj.impl_entity_reset ();
          }
@@ -1380,7 +1410,7 @@ void  Array <T>::impl_reinsert (const KeyFloat & key)
 
    it->second._state = ElementState::RESIDENT;
 
-   auto obj_sptr = it->second._obj_sptr;
+   auto && obj_sptr = it->second._obj_sptr;
 
    obj_sptr->impl_change_parent (this);
 
@@ -1442,16 +1472,13 @@ void  Array <T>::impl_erase (const KeyFloat & key)
 
    if (it->second.added ())
    {
-      if (obj_sptr->is_bound ())
+      // case where underlying object is being moved
+      if (obj_sptr.unique ())
       {
-         // case where underlying object is being moved
-         if (obj_sptr.unique ())
-         {
-            obj_sptr->impl_unbind (document ());
-         }
-      }
+         if (obj_sptr->is_bound ()) obj_sptr->impl_unbind (document ());
 
-      obj_sptr->impl_entity_reset ();
+         obj_sptr->impl_entity_reset ();
+      }
 
       _map.erase (it);
 
@@ -1480,22 +1507,22 @@ void  Array <T>::impl_move (const KeyFloat & key, ArrayBase & other, const KeyFl
 {
    auto & src = dynamic_cast <Array <T> &> (other);
 
-   auto it = src._map.find (other_key);
-   assert (it != src._map.end ());
+   auto src_it = src._map.find (other_key);
+   assert (src_it != src._map.end ());
 
-   auto obj_sptr = it->second._obj_sptr;
+   auto obj_sptr = src_it->second._obj_sptr;
 
-   if (it->second.added ())
+   if (src_it->second.added ())
    {
-      src._map.erase (it);
+      src._map.erase (src_it);
 
       src.impl_incr_modification_cnt (-1);
    }
    else
    {
-      assert (it->second.resident ());
+      assert (src_it->second.resident ());
 
-      it->second._state = ElementState::REMOVED;
+      src_it->second._state = ElementState::REMOVED;
 
       src.impl_incr_modification_cnt (1);
    }
@@ -1511,6 +1538,53 @@ void  Array <T>::impl_move (const KeyFloat & key, ArrayBase & other, const KeyFl
 #else
    assert (pair.second);
 #endif
+
+   impl_incr_modification_cnt (1);
+}
+
+
+
+/*
+==============================================================================
+Name : impl_relocate
+==============================================================================
+*/
+
+template <class T>
+void  Array <T>::impl_relocate (const KeyFloat & key, ArrayBase & other, const KeyFloat & other_key)
+{
+   auto & src = dynamic_cast <Array <T> &> (other);
+
+   auto src_it = src._map.find (other_key);
+   assert (src_it != src._map.end ());
+
+   auto obj_sptr = src_it->second._obj_sptr;
+
+   if (src_it->second.added ())
+   {
+      src._map.erase (src_it);
+
+      src.impl_incr_modification_cnt (-1);
+   }
+   else
+   {
+      assert (src_it->second.resident ());
+
+      src_it->second._state = ElementState::REMOVED;
+
+      src.impl_incr_modification_cnt (1);
+   }
+
+   if (this != &other)
+   {
+      obj_sptr->impl_change_parent (this);
+   }
+
+   auto dst_it = _map.find (key);
+
+   assert (dst_it->second._state == ElementState::REMOVED);
+
+   dst_it->second._state = ElementState::RESIDENT;
 
    impl_incr_modification_cnt (1);
 }

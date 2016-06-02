@@ -126,6 +126,8 @@ public:
       ClipFrames  clip_frames;
    };
 
+   class Model2 :  public DataModel <Model2> {};
+
                   TestMold () = default;
    virtual        ~TestMold () = default;
 
@@ -157,6 +159,7 @@ private:
    void           run_004 ();
    void           run_005 ();
    void           run_006 ();
+   void           run_007 ();
 
 
 

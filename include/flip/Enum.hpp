@@ -264,7 +264,7 @@ Name : impl_make
 */
 
 template <class T>
-void  Enum <T>::impl_make (Transaction & tx, ImplUndoRedoMode parent_mode) const
+void  Enum <T>::impl_make (Transaction & tx, ImplUndoRedoMode parent_mode, TxPostProcessInfo & /* ppinfo */) const
 {
    if (_value == _value_before) return;   // abort
 

@@ -40,6 +40,7 @@ td > p {margin-left: 6px; height: 12px;}
 .warning {margin-top:21px; margin-bottom:22px; padding-left: 8px; padding-right: 8px; background-color: #f8e3e1; border-color: #c5443e; border-style: solid; border-width: 1px; display: block;}
 .warning strong {margin-right: 8px;}
 .warning p {margin-top: 7px;}
+.caption p {color: black; font-size: 10px; margin-bottom: 10px;}
 img {margin-top:10px; margin-bottom:10px;}
 ul {margin-left: 17px; margin-bottom: 10px;}
 ol {margin-left: 17px; margin-bottom: 10px;}
@@ -69,7 +70,7 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 
 <div id="content">
 <div class="nav" align="right">
-<a href="Collection.iterator.html">previous</a><span>&nbsp;</span><a href="DataModel.html">next</a></div>
+<a href="Collection.iterator.html">previous</a><span>&nbsp;</span><a href="DataConsumerFile.html">next</a></div>
 
 <a name="//apple_ref/cpp/Class/collection_iterator" class="dashAnchor"></a>
 <h1>collection_iterator Class Reference</h1>
@@ -82,7 +83,9 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 <tr><td><pre>using const_collection_iterator = ...;</pre></td></tr>
 </table></div>
 
-<p><code>collection_iterator</code> satisfies the <code>BidirectionalIterator</code> C++ concept. It is a generic iterator that can be used to iterate other any specialization of <code>Collection</code>.</p>
+<p><code>collection_iterator</code> satisfies the <code>BidirectionalIterator</code> C++ concept. It is a generic iterator that can be used to iterate other any specialization of template class <code>Collection</code>.</p>
+
+<p>All specializations of template class <code>Collection</code> inherit from <code>CollectionBase</code> which has the methods <code>gbegin</code>, <code>gcbegin</code>, <code>gend</code>, <code>gcend</code> which return iterators of type <code>collection_iterator</code> or <code>const_collection_iterator</code>.</p>
 
 <h2>Member Types</h2>
 
@@ -117,6 +120,8 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 
 <p>Returns the key associated to the iterator.</p>
 
+<p>The key is guaranteed unique in the container.</p>
+
 <a name="//apple_ref/cpp/Method/added" class="dashAnchor"></a>
 <hr /><h3 id="member-function-added"><code>added</code></h3>
 <div class="codeblock"><table>
@@ -125,7 +130,7 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 
 <p>Returns <code>true</code> <em>iff</em> the iterator was added to the container.</p>
 
-<div class="note"><p><strong>Note:</strong> When an object is moved in the container, then the destination iterator is considered as added while the object is considered as resident.</p></div>
+<div class="note"><p><strong>Note:</strong> When an object is moved in the container, then the destination iterator is considered as added while the object is considered as resident. See <a href="../reference/Collection.iterator.html">Collection::iterator</a> for an example of it.</p></div>
 
 <a name="//apple_ref/cpp/Method/removed" class="dashAnchor"></a>
 <hr /><h3 id="member-function-removed"><code>removed</code></h3>
@@ -135,7 +140,7 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 
 <p>Returns <code>true</code> <em>iff</em> the iterator was removed to the container.</p>
 
-<div class="note"><p><strong>Note:</strong> When an object is moved in the container, then the source iterator is considered as removed while the object is considered as resident.</p></div>
+<div class="note"><p><strong>Note:</strong> When an object is moved in the container, then the source iterator is considered as removed while the object is considered as resident. See <a href="../reference/Collection.iterator.html">Collection::iterator</a> for an example of it.</p></div>
 
 <a name="//apple_ref/cpp/Method/resident" class="dashAnchor"></a>
 <hr /><h3 id="member-function-resident"><code>resident</code></h3>
@@ -146,7 +151,7 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 <p>Returns <code>true</code> <em>iff</em> the iterator was neither added or removed.</p>
 
 <div class="nav" align="right">
-<a href="Collection.iterator.html">previous</a><span>&nbsp;</span><a href="DataModel.html">next</a></div>
+<a href="Collection.iterator.html">previous</a><span>&nbsp;</span><a href="DataConsumerFile.html">next</a></div>
 
 <div class="bottomspacer">&nbsp;</div>
 </div>

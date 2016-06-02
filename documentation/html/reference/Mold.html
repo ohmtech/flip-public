@@ -40,6 +40,7 @@ td > p {margin-left: 6px; height: 12px;}
 .warning {margin-top:21px; margin-bottom:22px; padding-left: 8px; padding-right: 8px; background-color: #f8e3e1; border-color: #c5443e; border-style: solid; border-width: 1px; display: block;}
 .warning strong {margin-right: 8px;}
 .warning p {margin-top: 7px;}
+.caption p {color: black; font-size: 10px; margin-bottom: 10px;}
 img {margin-top:10px; margin-bottom:10px;}
 ul {margin-left: 17px; margin-bottom: 10px;}
 ol {margin-left: 17px; margin-bottom: 10px;}
@@ -86,7 +87,11 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 <li><a href="../reference/Collection.html">Collection</a></li>
 <li><a href="../reference/Collection.iterator.html">Collection::iterator</a></li>
 <li><a href="../reference/collection_iterator.html">collection_iterator</a></li>
+<li><a href="../reference/DataConsumerFile.html">DataConsumerFile</a></li>
+<li><a href="../reference/DataConsumerMemory.html">DataConsumerMemory</a></li>
 <li><a href="../reference/DataModel.html">DataModel</a></li>
+<li><a href="../reference/DataProviderFile.html">DataProviderFile</a></li>
+<li><a href="../reference/DataProviderMemory.html">DataProviderMemory</a></li>
 <li><a href="../reference/Document.html">Document</a></li>
 <li><a href="../reference/DocumentObserver.html">DocumentObserver</a></li>
 <li><a href="../reference/DocumentServer.html">DocumentServer</a></li>
@@ -96,11 +101,14 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 <li><a href="../reference/EnumClass.html">EnumClass</a></li>
 <li><a href="../reference/Float.html">Float</a></li>
 <li><a href="../reference/History.html">History</a></li>
+<li><a href="../reference/Hub.html">Hub</a></li>
 <li><a href="../reference/Int.html">Int</a></li>
 <li><a href="../reference/Message.html">Message</a></li>
 <li><a href="../reference/Mold.html">Mold</a>	<ul>
 	</ul>
 </li>
+<li><a href="../reference/MulticastServiceExplorer.html">MulticastServiceExplorer</a></li>
+<li><a href="../reference/MulticastServiceProvider.html">MulticastServiceProvider</a></li>
 <li><a href="../reference/Object.html">Object</a></li>
 <li><a href="../reference/ObjectRef.html">ObjectRef</a></li>
 <li><a href="../reference/Optional.html">Optional</a></li>
@@ -115,7 +123,7 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 
 <div id="content">
 <div class="nav" align="right">
-<a href="Message.html">previous</a><span>&nbsp;</span><a href="Object.html">next</a></div>
+<a href="Message.html">previous</a><span>&nbsp;</span><a href="MulticastServiceExplorer.html">next</a></div>
 
 <h1>Mold Class Reference</h1>
 
@@ -126,7 +134,7 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 <tr><td><pre>class Mold;</pre></td></tr>
 </table></div>
 
-<p><code>flip::Mold</code> is a convencience type to make copies of flip objects. It is typically used in implementations of user interface copy/paste feature.</p>
+<p><code>flip::Mold</code> is a convencience type to make copies of flip objects. It is typically used in implementations of user interface copy/paste feature or making clones of an object.</p>
 
 <p>The <code>Mold</code> itself is used in two ways :</p>
 
@@ -166,12 +174,51 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 
 <hr /><h3 id="member-function-make"><code>make</code></h3>
 <div class="codeblock"><table>
-<tr><td><pre>template &lt;class T&gt;   void  make (T &amp; obj, bool skip_container_flag = false);</pre></td></tr>
+<tr><td><pre>template &lt;class T&gt;   void  make (const T &amp; obj, bool skip_container_flag = false);</pre></td></tr>
 </table></div>
 
 <p>Add a flip object <code>obj</code> of type <code>T</code> to the current mold. If <code>skip_container_flag</code> is <code>true</code>, the mold will not contain the content of any flip container in the object sub-model tree.</p>
 
 <div class="important"><p><strong>Important:</strong> This function can only be used in version (1) or (2) of the constructor.</p></div>
+
+<p>Example :</p>
+
+<div class="codeblock"><table>
+<tr><td><pre>class Note : public Object</pre></td></tr>
+<tr><td><pre>{</pre></td></tr>
+<tr><td><pre>public:</pre></td></tr>
+<tr><td><pre>   Float position;</pre></td></tr>
+<tr><td><pre>   Float duration;</pre></td></tr>
+<tr><td><pre>};</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>class Clip : public Object</pre></td></tr>
+<tr><td><pre>{</pre></td></tr>
+<tr><td><pre>public:</pre></td></tr>
+<tr><td><pre>   Float position;</pre></td></tr>
+<tr><td><pre>   Collection &lt;Note&gt; notes;</pre></td></tr>
+<tr><td><pre>};</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>class Track : public Object</pre></td></tr>
+<tr><td><pre>{</pre></td></tr>
+<tr><td><pre>public:</pre></td></tr>
+<tr><td><pre>   String name;</pre></td></tr>
+<tr><td><pre>   Array &lt;Clip&gt; clips;</pre></td></tr>
+<tr><td><pre>};</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>std::vector &lt;uint8_t&gt; data;</pre></td></tr>
+<tr><td><pre>StreamBinOut sbo (data);</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>// we can use the StreamBinOut not only for molds</pre></td></tr>
+<tr><td><pre>// here, remember track unique reference identifier</pre></td></tr>
+<tr><td><pre>sbo &lt;&lt; track.ref ();</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>Mold mold (Model::use (), sbo);</pre></td></tr>
+<tr><td><pre>mold.make (clip); // copies clip position and all notes properties</pre></td></tr>
+<tr><td><pre>mold.make (clip.ancestor &lt;Track&gt; (), true);  // only track.name</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>mold.cure ();</pre></td></tr>
+<tr><td><pre>// now &apos;data&apos; is filled with a serialisation of the molded objects</pre></td></tr>
+</table></div>
 
 <hr /><h3 id="member-function-cure"><code>cure</code></h3>
 <div class="codeblock"><table>
@@ -195,8 +242,30 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 
 <div class="important"><p><strong>Important:</strong> Those functions can only be used in the version (1) or (3) of the constructor.</p></div>
 
+<p>Example :</p>
+
+<div class="codeblock"><table>
+<tr><td><pre>std::vector &lt;uint8_t&gt; data = ...;   // from previous serialisation</pre></td></tr>
+<tr><td><pre>StreamBinIn sbi (data);</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>// we can multiple molds in a StreamBinIn so run until we reach</pre></td></tr>
+<tr><td><pre>// the end of stream</pre></td></tr>
+<tr><td><pre>while (!sbi.is_eos ())</pre></td></tr>
+<tr><td><pre>{</pre></td></tr>
+<tr><td><pre>   // we used the StreamBinOut not only for mold (see above)</pre></td></tr>
+<tr><td><pre>   Ref track_ref;</pre></td></tr>
+<tr><td><pre>   sbi &gt;&gt; track_ref;</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>   Mold mold (Model::use (), sbi);</pre></td></tr>
+<tr><td><pre>   // sbi stream is advanced by the mold size, and filled with deserialized data</pre></td></tr>
+<tr><td><pre></pre></td></tr>
+<tr><td><pre>   // make a clip copy and put it in to the track clips</pre></td></tr>
+<tr><td><pre>   track.clips.emplace (mold);</pre></td></tr>
+<tr><td><pre>}</pre></td></tr>
+</table></div>
+
 <div class="nav" align="right">
-<a href="Message.html">previous</a><span>&nbsp;</span><a href="Object.html">next</a></div>
+<a href="Message.html">previous</a><span>&nbsp;</span><a href="MulticastServiceExplorer.html">next</a></div>
 
 <div class="bottomspacer">&nbsp;</div>
 </div>
