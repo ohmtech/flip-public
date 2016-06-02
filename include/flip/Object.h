@@ -103,7 +103,7 @@ public:
    virtual void   impl_add () override;
    virtual void   impl_remove () override;
 
-   virtual void   impl_make (Transaction & tx, ImplUndoRedoMode mode) const override;
+   virtual void   impl_make (Transaction & tx, ImplUndoRedoMode mode, TxPostProcessInfo & ppinfo) const override;
 
    virtual bool   impl_is_reset () const override;
    virtual void   impl_reset () override;

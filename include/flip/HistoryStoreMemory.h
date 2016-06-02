@@ -36,18 +36,27 @@ class flip_API HistoryStoreMemory
 public:
 
    using iterator = std::list <Transaction>::iterator;
+   using const_iterator = std::list <Transaction>::const_iterator;
 
                   HistoryStoreMemory (const std::string & version);
    virtual        ~HistoryStoreMemory () = default;
 
-   std::string    version ();
+   std::string    version () const;
 
    void           set_max_size (size_t size);
 
    iterator       begin ();
+   const_iterator begin () const;
+
    iterator       end ();
+   const_iterator end () const;
+
    iterator       last_undo ();
+   const_iterator last_undo () const;
+
    iterator       first_redo ();
+   const_iterator first_redo () const;
+
    void           set_first_redo (iterator it);
 
    void           clear ();

@@ -15,6 +15,7 @@
 
 #include "flip/config.h"
 #include "flip/Entity.h"
+#include "flip/Transaction.h"
 #include "flip/Ref.h"
 
 #include <memory>
@@ -62,6 +63,10 @@ public:
    T &            ancestor ();
    template <class T>
    const T &      ancestor () const;
+   template <class T>
+   T *            ancestor_ptr ();
+   template <class T>
+   const T *      ancestor_ptr () const;
 
    // life cycle
    bool           added () const;
@@ -97,6 +102,15 @@ public:
                   ForceEnable,
    };
 
+   class flip_API TxPostProcessInfo
+   {
+   public:
+      void        push (Ref ref, Opcodes::iterator it);
+
+      std::list <std::pair <Ref, Opcodes::iterator>>
+                  _ref_it_list;
+   };
+
    virtual void   impl_set_class (const ClassBase & class_base) = 0;
    virtual void   impl_bind (DocumentBase & document, Ref & ref);
    virtual void   impl_unbind (DocumentBase & document);
@@ -113,7 +127,7 @@ public:
    void           impl_incr_modification_cnt_no_propagation (int mod_cnt);
    int            impl_get_total_modification_cnt () const;
 
-   virtual void   impl_make (Transaction & tx, ImplUndoRedoMode mode) const = 0;
+   virtual void   impl_make (Transaction & tx, ImplUndoRedoMode mode, TxPostProcessInfo & ppinfo) const = 0;
    ImplUndoRedoMode
                   impl_make_undo_redo_mode (ImplUndoRedoMode parent_mode) const;
    uint8_t        impl_make_tx_flags (ImplUndoRedoMode mode) const;

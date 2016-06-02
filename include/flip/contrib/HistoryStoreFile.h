@@ -38,11 +38,13 @@ class flip_API HistoryStoreFile
 public:
 
    class flip_API iterator;
+   class flip_API const_iterator;
 
-   class flip_API TransactionProxy
+   template <class Iterator>
+   class TransactionProxy
    {
    public:
-                  TransactionProxy (iterator & parent);
+                  TransactionProxy (Iterator & parent);
       virtual     ~TransactionProxy () {}
 
       TransactionProxy &
@@ -55,7 +57,7 @@ public:
       std::string label () const;
       std::string metadata (const std::string & key) const;
 
-                  operator Transaction ();
+                  operator Transaction () const;
 
    private:
                   TransactionProxy () = delete;
@@ -63,7 +65,7 @@ public:
       TransactionProxy &
                   operator = (const TransactionProxy & rhs) = delete;
 
-      iterator &  _parent;
+      Iterator &  _parent;
    };
 
    class flip_API iterator
@@ -81,33 +83,77 @@ public:
       bool        operator == (const iterator & rhs) const;
       bool        operator != (const iterator & rhs) const;
 
-      TransactionProxy &
+      TransactionProxy <iterator> &
                   operator * ();
-      TransactionProxy *
+      TransactionProxy <iterator> *
                   operator -> ();
 
    private:
       friend class HistoryStoreFile;
-      friend class TransactionProxy;
+      friend class TransactionProxy <iterator>;
+      friend class const_iterator;
 
       HistoryStoreFile *
                   _parent_ptr = nullptr;
       int64_t     _id = 0LL;
-      TransactionProxy
+      TransactionProxy <iterator>
+                  _proxy;
+   };
+
+   class flip_API const_iterator
+   {
+   public:
+                  const_iterator ();
+                  const_iterator (const const_iterator & rhs);
+                  const_iterator (const iterator & rhs);
+      virtual     ~const_iterator () = default;
+
+      const_iterator &
+                  operator = (const const_iterator & rhs);
+
+      const_iterator &
+                  operator ++ ();
+      const_iterator &
+                  operator -- ();
+
+      bool        operator == (const const_iterator & rhs) const;
+      bool        operator != (const const_iterator & rhs) const;
+
+      const TransactionProxy <const_iterator> &
+                  operator * () const;
+      const TransactionProxy <const_iterator> *
+                  operator -> () const;
+
+   private:
+      friend class HistoryStoreFile;
+      friend class TransactionProxy <const_iterator>;
+
+      const HistoryStoreFile *
+                  _parent_ptr = nullptr;
+      int64_t     _id = 0LL;
+      TransactionProxy <const_iterator>
                   _proxy;
    };
 
                   HistoryStoreFile (const std::string & version, const char * path_0);
    virtual        ~HistoryStoreFile ();
 
-   std::string    version ();
+   std::string    version () const;
 
    void           set_max_size (size_t size);
 
    iterator       begin ();
+   const_iterator begin () const;
+
    iterator       end ();
+   const_iterator end () const;
+
    iterator       last_undo ();
+   const_iterator last_undo () const;
+
    iterator       first_redo ();
+   const_iterator first_redo () const;
+
    void           set_first_redo (iterator it);
 
    void           clear ();
@@ -118,9 +164,9 @@ public:
 
 /*\\\ INTERNAL \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
 
-   int64_t        get_next (int64_t row_id);
-   int64_t        get_prev (int64_t row_id);
-   std::string    get_metadata (int64_t row_id, const std::string & key);
+   int64_t        get_next (int64_t row_id) const;
+   int64_t        get_prev (int64_t row_id) const;
+   std::string    get_metadata (int64_t row_id, const std::string & key) const;
    Transaction    get_transaction (int64_t row_id);
    void           set_transaction (int64_t row_id, Transaction tx);
 
@@ -173,7 +219,7 @@ private:
 
 
 
-//#include  "flip/HistoryStoreFile.hpp"
+#include  "flip/contrib/HistoryStoreFile.hpp"
 
 
 

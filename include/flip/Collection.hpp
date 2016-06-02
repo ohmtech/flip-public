@@ -28,6 +28,7 @@
 #include "flip/detail/DocumentBase.h"
 #include "flip/detail/TypeTraits.h"
 
+#include <algorithm>
 #include <type_traits>
 
 
@@ -833,15 +834,13 @@ void  Collection <T>::revert ()
 
       if (it->second.added ())
       {
-
          if (it->second._obj_sptr.unique ())
          {
             obj.impl_change_parent (nullptr);
             obj.impl_remove ();
             obj.impl_unbind (document ());
+            obj.impl_entity_reset ();
          }
-
-         obj.impl_entity_reset ();
 
          _map.erase (it);
       }
@@ -1079,7 +1078,7 @@ Name : impl_make
 */
 
 template <class T>
-void  Collection <T>::impl_make (Transaction & tx, ImplUndoRedoMode parent_mode) const
+void  Collection <T>::impl_make (Transaction & tx, ImplUndoRedoMode parent_mode, TxPostProcessInfo & ppinfo) const
 {
    auto mode = impl_make_undo_redo_mode (parent_mode);
 
@@ -1100,13 +1099,33 @@ void  Collection <T>::impl_make (Transaction & tx, ImplUndoRedoMode parent_mode)
          else
          {
             auto & old_parent = obj.parent ().template before <Collection <T>> ();
-            auto old_it = old_parent.find_if ([&obj](T & elem) {
-               return &elem == &obj;
-            });
-            assert (old_it != old_parent.end ());
-            auto & old_key = old_it.base ()->first;
+
+            auto old_it = std::find_if (
+               old_parent._map.begin (), old_parent._map.end (),
+               [&obj, &key](typename Map::value_type & other_pair){
+                  return (&other_pair.second.get () == &obj) && (other_pair.first != key);
+               }
+            );
+            assert (old_it != old_parent._map.end ());
+            auto & old_key = old_it->first;
+
+#if ! defined (NDEBUG)
+            if (ref () == old_parent.ref ()) assert (key != old_key);
+#endif
 
             tx.push_collection_move (ref (), impl_make_tx_flags (mode), key, old_parent.ref (), old_key);
+
+            if (old_parent.removed ())
+            {
+               Type * tl_ptr = &old_parent;
+
+               for (; tl_ptr->impl_parent_ptr () != nullptr ;)
+               {
+                  tl_ptr = tl_ptr->impl_parent_ptr ();
+               }
+
+               ppinfo.push (tl_ptr->ref (), tx.last ());
+            }
          }
       }
 
@@ -1116,7 +1135,10 @@ void  Collection <T>::impl_make (Transaction & tx, ImplUndoRedoMode parent_mode)
          mode_alt = ImplUndoRedoMode::ForceEnable;
       }
 
-      if (obj.changed ()) obj.impl_make (tx, mode_alt);
+      if (!(pair.second.removed () && ! pair.second._obj_sptr.unique ()))
+      {
+         if (obj.changed ()) obj.impl_make (tx, mode_alt, ppinfo);
+      }
 
       if (pair.second.removed ())
       {
@@ -1210,10 +1232,7 @@ void  Collection <T>::impl_synchronize ()
       {
          if (it->second._obj_sptr.unique ())
          {
-            if (obj.is_bound ())
-            {
-               obj.impl_unbind (document ());
-            }
+            if (obj.is_bound ()) obj.impl_unbind (document ());
 
             obj.impl_entity_reset ();
          }
@@ -1363,7 +1382,7 @@ void  Collection <T>::impl_reinsert (const KeyRandom & key)
 
    it->second._state = ElementState::RESIDENT;
 
-   auto obj_sptr = it->second._obj_sptr;
+   auto && obj_sptr = it->second._obj_sptr;
 
    obj_sptr->impl_change_parent (this);
 
@@ -1425,16 +1444,13 @@ void  Collection <T>::impl_erase (const KeyRandom & key)
 
    if (it->second.added ())
    {
-      if (obj_sptr->is_bound ())
+      // case where underlying object is being moved
+      if (obj_sptr.unique ())
       {
-         // case where underlying object is being moved
-         if (obj_sptr.unique ())
-         {
-            obj_sptr->impl_unbind (document ());
-         }
-      }
+         if (obj_sptr->is_bound ()) obj_sptr->impl_unbind (document ());
 
-      obj_sptr->impl_entity_reset ();
+         obj_sptr->impl_entity_reset ();
+      }
 
       _map.erase (it);
 
@@ -1463,27 +1479,30 @@ void  Collection <T>::impl_move (const KeyRandom & key, CollectionBase & other, 
 {
    auto & src = dynamic_cast <Collection <T> &> (other);
 
-   auto it = src._map.find (other_key);
-   assert (it != src._map.end ());
+   auto src_it = src._map.find (other_key);
+   assert (src_it != src._map.end ());
 
-   auto obj_sptr = it->second._obj_sptr;
+   auto obj_sptr = src_it->second._obj_sptr;
 
-   if (it->second.added ())
+   if (src_it->second.added ())
    {
-      src._map.erase (it);
+      src._map.erase (src_it);
 
       src.impl_incr_modification_cnt (-1);
    }
    else
    {
-      assert (it->second.resident ());
+      assert (src_it->second.resident ());
 
-      it->second._state = ElementState::REMOVED;
+      src_it->second._state = ElementState::REMOVED;
 
       src.impl_incr_modification_cnt (1);
    }
 
-   obj_sptr->impl_change_parent (this);
+   if (this != &other)
+   {
+      obj_sptr->impl_change_parent (this);
+   }
 
    auto pair = _map.insert (std::make_pair (key, ObjectWrapper <T> (obj_sptr)));
 #if defined (NDEBUG)
@@ -1491,6 +1510,53 @@ void  Collection <T>::impl_move (const KeyRandom & key, CollectionBase & other, 
 #else
    assert (pair.second);
 #endif
+
+   impl_incr_modification_cnt (1);
+}
+
+
+
+/*
+==============================================================================
+Name : impl_relocate
+==============================================================================
+*/
+
+template <class T>
+void  Collection <T>::impl_relocate (const KeyRandom & key, CollectionBase & other, const KeyRandom & other_key)
+{
+   auto & src = dynamic_cast <Collection <T> &> (other);
+
+   auto src_it = src._map.find (other_key);
+   assert (src_it != src._map.end ());
+
+   auto obj_sptr = src_it->second._obj_sptr;
+
+   if (src_it->second.added ())
+   {
+      src._map.erase (src_it);
+
+      src.impl_incr_modification_cnt (-1);
+   }
+   else
+   {
+      assert (src_it->second.resident ());
+
+      src_it->second._state = ElementState::REMOVED;
+
+      src.impl_incr_modification_cnt (1);
+   }
+
+   if (this != &other)
+   {
+      obj_sptr->impl_change_parent (this);
+   }
+
+   auto dst_it = _map.find (key);
+
+   assert (dst_it->second._state == ElementState::REMOVED);
+
+   dst_it->second._state = ElementState::RESIDENT;
 
    impl_incr_modification_cnt (1);
 }

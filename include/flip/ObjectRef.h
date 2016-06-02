@@ -82,7 +82,7 @@ public:
 
    // Type
    inline virtual void
-                  impl_make (Transaction & tx, ImplUndoRedoMode parent_mode) const override;
+                  impl_make (Transaction & tx, ImplUndoRedoMode parent_mode, TxPostProcessInfo & /* ppinfo */) const override;
    inline virtual void
                   impl_set_class (const ClassBase & class_base) override;
    inline virtual bool

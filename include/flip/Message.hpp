@@ -198,7 +198,7 @@ Name : impl_make
 */
 
 template <class... Args>
-void  Message <Args...>::impl_make (Transaction & tx, ImplUndoRedoMode parent_mode) const
+void  Message <Args...>::impl_make (Transaction & tx, ImplUndoRedoMode parent_mode, TxPostProcessInfo & /* ppinfo */) const
 {
    auto mode = impl_make_undo_redo_mode (parent_mode);
    auto flags = impl_make_tx_flags (mode);

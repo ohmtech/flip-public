@@ -69,7 +69,7 @@ Name : version
 */
 
 template <class HistoryStoreImpl>
-std::string History <HistoryStoreImpl>::version ()
+std::string History <HistoryStoreImpl>::version () const
 {
    return _store.version ();
 }
@@ -94,6 +94,38 @@ typename History <HistoryStoreImpl>::iterator History <HistoryStoreImpl>::begin 
 
 /*
 ==============================================================================
+Name : begin
+Description :
+   Returns an iterator to the first element of the history.
+==============================================================================
+*/
+
+template <class HistoryStoreImpl>
+typename History <HistoryStoreImpl>::const_iterator History <HistoryStoreImpl>::begin () const
+{
+   return _store.begin ();
+}
+
+
+
+/*
+==============================================================================
+Name : cbegin
+Description :
+   Returns an iterator to the first element of the history.
+==============================================================================
+*/
+
+template <class HistoryStoreImpl>
+typename History <HistoryStoreImpl>::const_iterator History <HistoryStoreImpl>::cbegin () const
+{
+   return _store.begin ();
+}
+
+
+
+/*
+==============================================================================
 Name : end
 Description :
    Returns an iterator to the last element past the history.
@@ -102,6 +134,38 @@ Description :
 
 template <class HistoryStoreImpl>
 typename History <HistoryStoreImpl>::iterator History <HistoryStoreImpl>::end ()
+{
+   return _store.end ();
+}
+
+
+
+/*
+==============================================================================
+Name : end
+Description :
+   Returns an iterator to the last element past the history.
+==============================================================================
+*/
+
+template <class HistoryStoreImpl>
+typename History <HistoryStoreImpl>::const_iterator History <HistoryStoreImpl>::end () const
+{
+   return _store.end ();
+}
+
+
+
+/*
+==============================================================================
+Name : cend
+Description :
+   Returns an iterator to the last element past the history.
+==============================================================================
+*/
+
+template <class HistoryStoreImpl>
+typename History <HistoryStoreImpl>::const_iterator History <HistoryStoreImpl>::cend () const
 {
    return _store.end ();
 }
@@ -133,6 +197,52 @@ typename History <HistoryStoreImpl>::iterator History <HistoryStoreImpl>::last_u
 
 /*
 ==============================================================================
+Name : last_undo
+Description :
+   Returns an iterator to the last undo or 'end ()' if it does not exist.
+
+   Dereferencing the iterator returns a transaction proxy that allows to
+   replace the last undo point with a new transaction.
+
+Note :
+   If both last undo and first redo exist, the following assertion is true :
+   last_undo () ++ == first_redo ()
+==============================================================================
+*/
+
+template <class HistoryStoreImpl>
+typename History <HistoryStoreImpl>::const_iterator History <HistoryStoreImpl>::last_undo () const
+{
+   return _store.last_undo ();
+}
+
+
+
+/*
+==============================================================================
+Name : clast_undo
+Description :
+   Returns an iterator to the last undo or 'end ()' if it does not exist.
+
+   Dereferencing the iterator returns a transaction proxy that allows to
+   replace the last undo point with a new transaction.
+
+Note :
+   If both last undo and first redo exist, the following assertion is true :
+   last_undo () ++ == first_redo ()
+==============================================================================
+*/
+
+template <class HistoryStoreImpl>
+typename History <HistoryStoreImpl>::const_iterator History <HistoryStoreImpl>::clast_undo () const
+{
+   return _store.last_undo ();
+}
+
+
+
+/*
+==============================================================================
 Name : first_redo
 Description :
    Returns an iterator to the first redo or 'end ()' if it does not exist.
@@ -144,6 +254,44 @@ Note :
 
 template <class HistoryStoreImpl>
 typename History <HistoryStoreImpl>::iterator History <HistoryStoreImpl>::first_redo ()
+{
+   return _store.first_redo ();
+}
+
+
+
+/*
+==============================================================================
+Name : first_redo
+Description :
+   Returns an iterator to the first redo or 'end ()' if it does not exist.
+Note :
+   If both last undo and first redo exist, the following assertion is true :
+   last_undo () ++ == first_redo ()
+==============================================================================
+*/
+
+template <class HistoryStoreImpl>
+typename History <HistoryStoreImpl>::const_iterator History <HistoryStoreImpl>::first_redo () const
+{
+   return _store.first_redo ();
+}
+
+
+
+/*
+==============================================================================
+Name : cfirst_redo
+Description :
+   Returns an iterator to the first redo or 'end ()' if it does not exist.
+Note :
+   If both last undo and first redo exist, the following assertion is true :
+   last_undo () ++ == first_redo ()
+==============================================================================
+*/
+
+template <class HistoryStoreImpl>
+typename History <HistoryStoreImpl>::const_iterator History <HistoryStoreImpl>::cfirst_redo () const
 {
    return _store.first_redo ();
 }

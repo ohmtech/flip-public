@@ -79,7 +79,7 @@ public:
 
    // Type
    virtual void   impl_set_class (const ClassBase & /* class_base */) override {flip_FATAL;}   // COV_NF_LINE
-   virtual void   impl_make (Transaction & /* tx */, ImplUndoRedoMode /* parent_mode */) const override {flip_FATAL;}  // COV_NF_LINE
+   virtual void   impl_make (Transaction & /* tx */, ImplUndoRedoMode /* parent_mode */, TxPostProcessInfo & /* ppinfo */) const override {flip_FATAL;}  // COV_NF_LINE
    virtual bool   impl_is_reset () const override {flip_FATAL;}   // COV_NF_LINE
    virtual void   impl_reset () override {flip_FATAL;}   // COV_NF_LINE
    virtual void   impl_validate () override {flip_FATAL;}   // COV_NF_LINE
@@ -96,6 +96,7 @@ public:
    virtual Type & impl_emplace (const KeyFloat & /* key */, const ClassBase & /* class_base */) {flip_FATAL;} // COV_NF_LINE
    virtual void   impl_erase (const KeyFloat & /* key */) {flip_FATAL;}   // COV_NF_LINE
    virtual void   impl_move (const KeyFloat & /* key */, ArrayBase & /* other */, const KeyFloat & /* other_key */) {flip_FATAL;}  // COV_NF_LINE
+   virtual void   impl_relocate (const KeyFloat & /* key */, ArrayBase & /* other */, const KeyFloat & /* other_key */) {flip_FATAL;}  // COV_NF_LINE
    virtual bool   impl_is_moving (const KeyFloat & /* key */) const {flip_FATAL;}  // COV_NF_LINE
 
 
