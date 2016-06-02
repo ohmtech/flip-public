@@ -79,6 +79,8 @@ void  TestMold::run ()
       .member <Clips, &Song::clips> ("clips")
       .member <ClipFrames, &Song::clip_frames> ("clip_frames");
 
+   Model2::version ("test.mold2");
+
    run_000 ();
    run_000b ();
    run_000c ();
@@ -88,6 +90,7 @@ void  TestMold::run ()
    run_004 ();
    run_005 ();
    run_006 ();
+   run_007 ();
 }
 
 
@@ -122,6 +125,9 @@ void  TestMold::run_000 ()
    Mold mold (Model::use ());
    mold.make (clip);
 
+   flip_TEST (mold.has <Clip> ());
+   flip_TEST (!mold.has <ClipFrame> ());
+
    Clip clip2 = mold.cast <Clip> ();
    flip_TEST (clip2.color == 1LL);
    flip_TEST (clip2.active == true);
@@ -151,6 +157,9 @@ void  TestMold::run_000b ()
    Mold mold (Model::use ());
    mold.make (clip);
 
+   flip_TEST (mold.has <Clip> ());
+   flip_TEST (!mold.has <ClipFrame> ());
+
    Clip clip2 = mold.cast <Clip> ();
    flip_TEST (clip2.color == 1LL);
    flip_TEST (clip2.notes.begin ()->position == 2.5);
@@ -171,7 +180,11 @@ void  TestMold::run_000c ()
 
    Mold mold (Model::use ());
    mold.make (event);
+
+   flip_TEST (mold.has <Event> ());
+
    Event event2 = mold.cast <Event> ();
+   flip_TEST (!mold.has <ClipFrame> ());
 
    flip_TEST (event2.position == 1.0);
    flip_TEST (event2.value == 2LL);
@@ -227,6 +240,9 @@ void  TestMold::run_001 ()
    clip.chunk = std::vector <uint8_t> ();
    clip.content = Clip::Content::Audio;
 
+   flip_TEST (mold.has <Clip> ());
+   flip_TEST (!mold.has <ClipFrame> ());
+
    Clip clip2 = mold.cast <Clip> ();
    flip_TEST (clip2.color == 3LL);
    flip_TEST (clip2.active == true);
@@ -235,6 +251,8 @@ void  TestMold::run_001 ()
    flip_TEST (clip2.chunk == std::vector <uint8_t> ({0x23}));
 #endif
    flip_TEST (clip2.content == Clip::Content::Midi);
+
+   flip_TEST (mold.has <Clip> ());
 
    clip = mold.cast <Clip> ();
    flip_TEST (clip.color == 3LL);
@@ -275,13 +293,19 @@ void  TestMold::run_002 ()
 
    clip.color = 0LL;
 
+   flip_TEST (mold.has <Clip> ());
+
    Clip clip2 = mold.cast <Clip> ();
    flip_TEST (clip2.color == 3LL);
+
+   flip_TEST (mold.has <Clip> ());
 
    clip = mold.cast <Clip> ();
    flip_TEST (clip.color == 3LL);
 
 #if (flip_COMPILER != flip_COMPILER_MSVC) // initializer list support
+   flip_TEST (mold.has <ClipFrame> ());
+
    ClipFrame clip_frame2 = mold.cast <ClipFrame> ();
    flip_TEST (clip_frame2.clip_ref == &clip);
    flip_TEST (clip_frame2.position == 0.5);
@@ -317,6 +341,9 @@ void  TestMold::run_003 ()
    auto mold = Mold {Model::use ()};
    mold.make (clip);
 
+   flip_TEST (mold.has <Clip> ());
+   flip_TEST (!mold.has <ClipFrame> ());
+
    Clip clip2 = mold.cast <Clip> ();
    flip_TEST (clip2.color == 1LL);
    flip_TEST (clip2.active == true);
@@ -350,6 +377,9 @@ void  TestMold::run_004 ()
    Mold mold (Model::use ());
    mold = std::move (other_mold);
 
+   flip_TEST (mold.has <Clip> ());
+   flip_TEST (!mold.has <ClipFrame> ());
+
    Clip clip2 = mold.cast <Clip> ();
    flip_TEST (clip2.color == 1LL);
    flip_TEST (clip2.active == true);
@@ -382,6 +412,9 @@ void  TestMold::run_005 ()
    Mold mold (std::move (other_mold));
    mold.make (clip);
 
+   flip_TEST (mold.has <Clip> ());
+   flip_TEST (!mold.has <ClipFrame> ());
+
    Clip clip2 = mold.cast <Clip> ();
    flip_TEST (clip2.color == 1LL);
    flip_TEST (clip2.active == true);
@@ -408,12 +441,14 @@ void  TestMold::run_006 ()
 #if (flip_COMPILER != flip_COMPILER_MSVC) // initializer list support
    clip.chunk = std::vector <uint8_t> ({0x23});
 #endif
-   clip.impl_set_class (Class <Clip>::use ());
 
    const Clip & const_clip = clip;
 
    auto mold = Mold {Model::use ()};
    mold.make (const_clip);
+
+   flip_TEST (mold.has <Clip> ());
+   flip_TEST (!mold.has <ClipFrame> ());
 
    Clip clip2 = mold.cast <Clip> ();
    flip_TEST (clip2.color == 1LL);
@@ -422,6 +457,41 @@ void  TestMold::run_006 ()
 #if (flip_COMPILER != flip_COMPILER_MSVC) // initializer list support
    flip_TEST (clip2.chunk == std::vector <uint8_t> ({0x23}));
 #endif
+}
+
+
+
+/*
+==============================================================================
+Name : run_007
+==============================================================================
+*/
+
+void  TestMold::run_007 ()
+{
+   Clip clip;
+   clip.color = 1LL;
+   clip.active = true;
+   clip.name = "test";
+
+   std::vector <uint8_t> data;
+
+   {
+      StreamBinOut sbo (data);
+      Mold mold (Model::use (), sbo);
+      mold.make (clip);
+      mold.cure ();
+   }
+
+   {
+      StreamBinIn sbi (data);
+      Mold mold (Model::use (), sbi);
+   }
+
+   {
+      StreamBinIn sbi (data);
+      flip_CHECK_THROW (Mold mold (Model2::use (), sbi));
+   }
 }
 
 

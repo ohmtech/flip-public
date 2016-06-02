@@ -541,8 +541,10 @@ void  TestDocument::run_003 ()
    flip_TEST (root._coll_a.begin ()->_int == 3LL);
    flip_TEST (root._coll_a.begin ()->_float == 4.3);
    flip_TEST (root._coll_a.begin ()->_ref_a == &root._b);
-   flip_TEST (tx.use_metadata_map ().size () == 1);
-   flip_TEST (tx.use_metadata_map () ["label"] == "change");
+   flip_TEST (tx.impl_use_metadata_map ().size () == 1);
+   flip_TEST (tx.has_metadata ("label"));
+   flip_TEST (!tx.has_metadata ("diff"));
+   flip_TEST (tx.impl_use_metadata_map () ["label"] == "change");
 
    ok_flag = document.execute_backward (tx);
    flip_TEST (ok_flag);
@@ -556,8 +558,10 @@ void  TestDocument::run_003 ()
 
    document.set_label ("revert");
    Transaction tx2 = document.commit ();
-   flip_TEST (tx.use_metadata_map ().size () == 1);
-   flip_TEST (tx2.use_metadata_map () ["label"] == "revert");
+   flip_TEST (tx2.impl_use_metadata_map ().size () == 1);
+   flip_TEST (tx2.has_metadata ("label"));
+   flip_TEST (!tx2.has_metadata ("label "));
+   flip_TEST (tx2.impl_use_metadata_map () ["label"] == "revert");
 
    flip_TEST (root._coll_a.count_if ([](A &){return true;}) == 0);
 }
@@ -1590,22 +1594,63 @@ void  TestDocument::run_024 ()
 {
    Document document (Model::use (), 123456789UL, 'appl', 'gui ');
 
-   Root & root = document.root <Root> ();
+   {
+      Root & root = document.root <Root> ();
 
-   flip_TEST (&root.ancestor <Root> () == &root);
-   flip_TEST (&root._a.ancestor <Root> () == &root);
-   flip_TEST (&root._a.ancestor <A> () == &root._a);
-   flip_TEST (&root._b.ancestor <Root> () == &root);
-   flip_TEST (&root._b.ancestor <A> () == &root._b);
-   flip_TEST (&root._b.ancestor <B> () == &root._b);
+      flip_TEST (&root.ancestor <Root> () == &root);
+      flip_TEST (&root._a.ancestor <Root> () == &root);
+      flip_TEST (&root._a.ancestor <A> () == &root._a);
+      flip_TEST (&root._b.ancestor <Root> () == &root);
+      flip_TEST (&root._b.ancestor <A> () == &root._b);
+      flip_TEST (&root._b.ancestor <B> () == &root._b);
 
-   flip_CHECK_THROW (root.ancestor <A> ());
-   flip_CHECK_THROW (root.ancestor <B> ());
-   flip_CHECK_THROW (root._a.ancestor <B> ());
+      flip_CHECK_THROW (root.ancestor <A> ());
+      flip_CHECK_THROW (root.ancestor <B> ());
+      flip_CHECK_THROW (root._a.ancestor <B> ());
 
-   B & b = dynamic_cast <B &> (*root._b._coll.emplace <B> ());
+      flip_TEST (root.ancestor_ptr <Root> () == &root);
+      flip_TEST (root._a.ancestor_ptr <Root> () == &root);
+      flip_TEST (root._a.ancestor_ptr <A> () == &root._a);
+      flip_TEST (root._b.ancestor_ptr <Root> () == &root);
+      flip_TEST (root._b.ancestor_ptr <A> () == &root._b);
+      flip_TEST (root._b.ancestor_ptr <B> () == &root._b);
 
-   flip_TEST (&b.ancestor <Root> () == &root);
+      flip_TEST (root.ancestor_ptr <A> () == nullptr);
+      flip_TEST (root.ancestor_ptr <B> () == nullptr);
+      flip_TEST (root._a.ancestor_ptr <B> () == nullptr);
+
+      B & b = dynamic_cast <B &> (*root._b._coll.emplace <B> ());
+
+      flip_TEST (&b.ancestor <Root> () == &root);
+
+      flip_TEST (b.ancestor_ptr <Root> () == &root);
+   }
+
+   {
+      const Root & root = document.root <Root> ();
+
+      flip_TEST (&root.ancestor <Root> () == &root);
+      flip_TEST (&root._a.ancestor <Root> () == &root);
+      flip_TEST (&root._a.ancestor <A> () == &root._a);
+      flip_TEST (&root._b.ancestor <Root> () == &root);
+      flip_TEST (&root._b.ancestor <A> () == &root._b);
+      flip_TEST (&root._b.ancestor <B> () == &root._b);
+
+      flip_CHECK_THROW (root.ancestor <A> ());
+      flip_CHECK_THROW (root.ancestor <B> ());
+      flip_CHECK_THROW (root._a.ancestor <B> ());
+
+      flip_TEST (root.ancestor_ptr <Root> () == &root);
+      flip_TEST (root._a.ancestor_ptr <Root> () == &root);
+      flip_TEST (root._a.ancestor_ptr <A> () == &root._a);
+      flip_TEST (root._b.ancestor_ptr <Root> () == &root);
+      flip_TEST (root._b.ancestor_ptr <A> () == &root._b);
+      flip_TEST (root._b.ancestor_ptr <B> () == &root._b);
+
+      flip_TEST (root.ancestor_ptr <A> () == nullptr);
+      flip_TEST (root.ancestor_ptr <B> () == nullptr);
+      flip_TEST (root._a.ancestor_ptr <B> () == nullptr);
+   }
 }
 
 

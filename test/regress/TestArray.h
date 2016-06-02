@@ -203,6 +203,19 @@ private:
    void           run_070 ();
    void           run_071 ();
    void           run_071b ();
+   void           run_072 ();
+   void           run_072b ();
+   void           run_073 ();
+   void           run_074 ();
+   void           run_075 ();
+   void           run_075b ();
+   void           run_076 ();
+   void           run_076b ();
+   void           run_077 ();
+   void           run_077b ();
+   void           run_078 ();
+   void           run_078b ();
+   void           run_079 ();
 
    /*void            document_changed (Array <A> & array);*/
 

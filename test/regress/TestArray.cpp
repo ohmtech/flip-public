@@ -165,6 +165,19 @@ void  TestArray::run ()
    run_070 ();
    run_071 ();
    run_071b ();
+   run_072 ();
+   run_072b ();
+   run_073 ();
+   run_074 ();
+   run_075 ();
+   run_075b ();
+   run_076 ();
+   run_076b ();
+   run_077 ();
+   run_077b ();
+   run_078 ();
+   run_078b ();
+   run_079 ();
 }
 
 
@@ -1834,9 +1847,10 @@ void  TestArray::run_027c ()
 
    document.commit ();
 
-   root._array.splice (root._array.end (), root._array, it);
+   auto it2 = root._array.splice (root._array.end (), root._array, it);
 
-   flip_TEST (root._array.count_if ([](A &){return true;}) == 2);
+   flip_TEST (it2 == it);
+   flip_TEST (root._array.count_if ([](A &){return true;}) == 1);
    flip_TEST (root._array.begin ()->_int == 2LL);
    flip_TEST (&root._array.begin ()->parent ().before <Array <A>> () == &root._array);
    flip_TEST (&root._array.begin ()->parent <Array <A>> () == &root._array);
@@ -1985,9 +1999,10 @@ void  TestArray::run_027f ()
 
    auto tx = document.commit ();
 
-   root._array.splice (root._array.end (), root._array, it);
+   auto it2 = root._array.splice (root._array.end (), root._array, it);
 
-   flip_TEST (root._array.count_if ([](A &){return true;}) == 2);
+   flip_TEST (it2 == it);
+   flip_TEST (root._array.count_if ([](A &){return true;}) == 1);
    flip_TEST (root._array.begin ()->_int == 2LL);
    flip_TEST (&root._array.begin ()->parent <Array <A>> () == &root._array);
 
@@ -3896,6 +3911,446 @@ void  TestArray::run_071b ()
 #endif
 
    document.commit ();
+}
+
+
+
+/*
+==============================================================================
+Name : run_072
+==============================================================================
+*/
+
+void  TestArray::run_072 ()
+{
+   Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+
+   Root & root = document.root <Root> ();
+
+   auto it = root._array3.emplace (root._array3.end ());
+   B & b = *it;
+   auto it2 = b._array.emplace (b._array.end ());
+   A & a = *it2;
+   a._int = 2LL;
+
+   B & b2 = *root._array3.emplace (root._array3.end ());
+
+   document.commit ();
+
+   auto it3 = b2._array.splice (b2._array.end (), b._array, it2);
+
+   auto tx = document.commit ();
+
+   auto ok_flag = document.execute_backward (tx);
+   flip_TEST (ok_flag);
+
+   ok_flag = document.execute_forward (tx);
+   flip_TEST (ok_flag);
+
+   document.commit ();
+
+   flip_TEST (a.is_bound ());
+   flip_TEST (a._int.is_bound ());
+   flip_TEST (a._int == 2LL);
+   flip_TEST (a._int.before () == 2LL);
+   flip_TEST (&a.parent <Type> () == &b2._array);
+   flip_TEST (b._array.count_if ([](A & elem){return elem._int == 2LL;}) == 0);
+   flip_TEST (b2._array.count_if ([](A & elem){return elem._int == 2LL;}) == 1);
+}
+
+
+
+/*
+==============================================================================
+Name : run_072b
+==============================================================================
+*/
+
+void  TestArray::run_072b ()
+{
+   Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+
+   Root & root = document.root <Root> ();
+
+   auto it = root._array3.emplace (root._array3.end ());
+   B & b = *it;
+   auto it2 = b._array.emplace (b._array.end ());
+   A & a = *it2;
+   a._int = 2LL;
+
+   B & b2 = *root._array3.emplace (root._array3.end ());
+
+   document.commit ();
+
+   auto it3 = b2._array.splice (b2._array.end (), b._array, it2);
+
+   auto tx = document.commit ();
+
+   auto ok_flag = document.execute_backward (tx);
+   flip_TEST (ok_flag);
+
+   ok_flag = document.execute_forward (tx);
+   flip_TEST (ok_flag);
+
+   ok_flag = document.execute_backward (tx);
+   flip_TEST (ok_flag);
+
+   document.commit ();
+
+   flip_TEST (a.is_bound ());
+   flip_TEST (a._int.is_bound ());
+   flip_TEST (a._int == 2LL);
+   flip_TEST (a._int.before () == 2LL);
+   flip_TEST (&a.parent <Type> () == &b._array);
+   flip_TEST (b._array.count_if ([](A & elem){return elem._int == 2LL;}) == 1);
+   flip_TEST (b2._array.count_if ([](A & elem){return elem._int == 2LL;}) == 0);
+}
+
+
+
+/*
+==============================================================================
+Name : run_073
+==============================================================================
+*/
+
+void  TestArray::run_073 ()
+{
+   Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+
+   Root & root = document.root <Root> ();
+
+   auto it = root._array3.emplace (root._array3.end ());
+   B & b = *it;
+   auto it2 = b._array.emplace (b._array.end ());
+   A & a = *it2;
+   a._int = 2LL;
+
+   document.commit ();
+
+   B & b2 = *root._array3.emplace (root._array3.end ());
+
+   auto it3 = b2._array.splice (b2._array.end (), b._array, it2);
+
+   auto tx = document.commit ();
+
+   auto ok_flag = document.execute_backward (tx);
+   flip_TEST (ok_flag);
+
+   document.commit ();
+
+   ok_flag = document.execute_forward (tx);
+   flip_TEST (ok_flag);
+
+   document.commit ();
+
+   flip_TEST (a.is_bound ());
+   flip_TEST (a._int.is_bound ());
+   flip_TEST (a._int == 2LL);
+   flip_TEST (a._int.before () == 2LL);
+   flip_TEST (&a.parent <Type> () != &b._array);
+   flip_TEST (b._array.count_if ([](A & elem){return elem._int == 2LL;}) == 0);
+}
+
+
+
+/*
+==============================================================================
+Name : run_074
+==============================================================================
+*/
+
+void  TestArray::run_074 ()
+{
+   Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+
+   Root & root = document.root <Root> ();
+
+   auto it = root._array.emplace (root._array.end ());
+
+   document.commit ();
+
+   A & a = *it;
+
+   a._int = 3LL;
+   root._array2.splice (root._array2.end (), root._array, it);
+
+   auto tx = document.commit ();
+
+   auto ok_flag = document.execute_backward (tx);
+   flip_TEST (ok_flag);
+}
+
+
+
+/*
+==============================================================================
+Name : run_075
+==============================================================================
+*/
+
+void  TestArray::run_075 ()
+{
+   Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+
+   Root & root = document.root <Root> ();
+
+   auto it = root._array.emplace (root._array.end ());
+
+   document.commit ();
+
+   auto it2 = root._array2.splice (root._array2.end (), root._array, it);
+   root._array.splice (root._array.end (), root._array2, it2);
+
+   auto tx = document.commit ();
+
+   auto ok_flag = document.execute_backward (tx);
+   flip_TEST (ok_flag);
+}
+
+
+
+/*
+==============================================================================
+Name : run_075b
+==============================================================================
+*/
+
+void  TestArray::run_075b ()
+{
+   Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+
+   Root & root = document.root <Root> ();
+
+   auto it = root._array.emplace (root._array.end ());
+
+   document.commit ();
+
+   auto it2 = root._array2.splice (root._array2.end (), root._array, it);
+   root._array.splice (root._array.begin (), root._array2, it2);
+
+   auto tx = document.commit ();
+
+   auto ok_flag = document.execute_backward (tx);
+   flip_TEST (ok_flag);
+}
+
+
+
+/*
+==============================================================================
+Name : run_076
+==============================================================================
+*/
+
+void  TestArray::run_076 ()
+{
+   Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+
+   Root & root = document.root <Root> ();
+
+   auto it = root._array3.emplace (root._array3.end ());
+   B & b = *it;
+
+   auto it2 = root._array3.emplace (root._array3.begin ());
+   B & b2 = *it2;
+   auto it3 = b2._array.emplace (b2._array.end ());
+
+   document.commit ();
+
+   b._array.splice (b._array.end (), b2._array, it3);
+   root._array3.erase (it2);
+
+   auto tx = document.commit ();
+
+   auto ok_flag = document.execute_backward (tx);
+   flip_TEST (ok_flag);
+
+   ok_flag = document.execute_forward (tx);
+   flip_TEST (ok_flag);
+}
+
+
+
+/*
+==============================================================================
+Name : run_076b
+==============================================================================
+*/
+
+void  TestArray::run_076b ()
+{
+   Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+
+   Root & root = document.root <Root> ();
+
+   auto it = root._array3.emplace (root._array3.end ());
+   B & b = *it;
+
+   auto it2 = root._array3.emplace (root._array3.end ());
+   B & b2 = *it2;
+   auto it3 = b2._array.emplace (b2._array.end ());
+
+   document.commit ();
+
+   b._array.splice (b._array.end (), b2._array, it3);
+   root._array3.erase (it2);
+
+   auto tx = document.commit ();
+
+   auto ok_flag = document.execute_backward (tx);
+   flip_TEST (ok_flag);
+
+   ok_flag = document.execute_forward (tx);
+   flip_TEST (ok_flag);
+}
+
+
+
+/*
+==============================================================================
+Name : run_077
+==============================================================================
+*/
+
+void  TestArray::run_077 ()
+{
+   Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+
+   Root & root = document.root <Root> ();
+
+   B & b = *root._array3.emplace (root._array3.end ());
+   auto it = b._array.emplace (b._array.end ());
+
+   document.commit ();
+
+   B & b2 = *root._array3.emplace (root._array3.end ());
+   b2._array.splice (b2._array.end (), b._array, it);
+
+   auto tx = document.commit ();
+
+   auto ok_flag = document.execute_backward (tx);
+   flip_TEST (ok_flag);
+
+   ok_flag = document.execute_forward (tx);
+   flip_TEST (ok_flag);
+}
+
+
+
+/*
+==============================================================================
+Name : run_077b
+==============================================================================
+*/
+
+void  TestArray::run_077b ()
+{
+   Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+
+   Root & root = document.root <Root> ();
+
+   B & b = *root._array3.emplace (root._array3.end ());
+   auto it = b._array.emplace (b._array.end ());
+
+   document.commit ();
+
+   B & b2 = *root._array3.emplace (root._array3.begin ());
+   b2._array.splice (b2._array.end (), b._array, it);
+
+   auto tx = document.commit ();
+
+   auto ok_flag = document.execute_backward (tx);
+   flip_TEST (ok_flag);
+
+   ok_flag = document.execute_forward (tx);
+   flip_TEST (ok_flag);
+}
+
+
+
+/*
+==============================================================================
+Name : run_078
+==============================================================================
+*/
+
+void  TestArray::run_078 ()
+{
+   Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+
+   Root & root = document.root <Root> ();
+
+   auto it2 = root._array3.emplace (root._array3.end ());
+   B & b2 = *it2;
+   auto it3 = b2._array.emplace (b2._array.end ());
+
+   document.commit ();
+
+   B & b = *root._array3.emplace (root._array3.end ());
+   b._array.splice (b._array.end (), b2._array, it3);
+   root._array3.erase (it2);
+
+   auto tx = document.commit ();
+
+   auto ok_flag = document.execute_backward (tx);
+   flip_TEST (ok_flag);
+
+   ok_flag = document.execute_forward (tx);
+   flip_TEST (ok_flag);
+}
+
+
+
+/*
+==============================================================================
+Name : run_078b
+==============================================================================
+*/
+
+void  TestArray::run_078b ()
+{
+   Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+
+   Root & root = document.root <Root> ();
+
+   auto it2 = root._array3.emplace (root._array3.end ());
+   B & b2 = *it2;
+   auto it3 = b2._array.emplace (b2._array.end ());
+
+   document.commit ();
+
+   B & b = *root._array3.emplace (root._array3.begin ());
+   b._array.splice (b._array.end (), b2._array, it3);
+   root._array3.erase (it2);
+
+   auto tx = document.commit ();
+
+   auto ok_flag = document.execute_backward (tx);
+   flip_TEST (ok_flag);
+
+   ok_flag = document.execute_forward (tx);
+   flip_TEST (ok_flag);
+}
+
+
+
+/*
+==============================================================================
+Name : run_079
+==============================================================================
+*/
+
+void  TestArray::run_079 ()
+{
+   Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+
+   Root & root = document.root <Root> ();
+
+   auto it = root._array.emplace (root._array.end ());
+   auto it2 = root._array.splice (it, root._array, it);
+
+   flip_TEST (it == it2);
 }
 
 

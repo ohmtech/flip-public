@@ -345,6 +345,55 @@ void  TestHistory::run_005 (Args &&... args)
 
 /*
 ==============================================================================
+Name : run_005b
+==============================================================================
+*/
+
+template <class HistoryStoreImpl, class... Args>
+void  TestHistory::run_005b (Args &&... args)
+{
+   Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+   History <HistoryStoreImpl> history (document, args...);
+
+   Root & root = document.root <Root> ();
+
+   root._a._int = 2LL;
+   root._a._float = 3.5;
+
+   document.set_label ("to 2LL, 3.5");
+
+   auto tx = document.commit ();
+   history.add_undo_step (tx);
+
+   flip_TEST (history.clast_undo ()->label () == "to 2LL, 3.5");
+
+   flip_TEST (history.cfirst_redo () == history.cend ());
+
+   history.execute_undo ();
+   flip_TEST (root._a._int == 0LL);
+   flip_TEST (root._a._int.before () == 2LL);
+   flip_TEST (root._a._float == 0.0);
+   flip_TEST (root._a._float.before () == 3.5);
+
+   document.commit ();
+
+   flip_TEST (history.clast_undo () == history.cend ());
+
+   flip_TEST (history.cfirst_redo ()->label () == "to 2LL, 3.5");
+
+   history.execute_redo ();
+   flip_TEST (root._a._int == 2LL);
+   flip_TEST (root._a._int.before () == 0LL);
+   flip_TEST (root._a._float == 3.5);
+   flip_TEST (root._a._float.before () == 0.0);
+
+   document.commit ();
+}
+
+
+
+/*
+==============================================================================
 Name : run_006
 ==============================================================================
 */
@@ -492,6 +541,80 @@ void  TestHistory::run_008 (Args &&... args)
 
 /*
 ==============================================================================
+Name : run_008b
+==============================================================================
+*/
+
+template <class HistoryStoreImpl, class... Args>
+void  TestHistory::run_008b (Args &&... args)
+{
+   Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+   History <HistoryStoreImpl> history (document, args...);
+
+   Root & root = document.root <Root> ();
+
+   root._a._int = 2LL;
+
+   document.set_label ("2LL");
+
+   auto tx = document.commit ();
+   history.add_undo_step (tx);
+
+   //
+
+   root._a._float = 3.5;
+
+   document.set_label ("3.5");
+
+   tx = document.commit ();
+   history.add_undo_step (tx);
+
+   //
+
+   root._a._float = 4.7;
+
+   document.set_label ("4.7");
+
+   tx = document.commit ();
+   history.add_undo_step (tx);
+
+   //
+
+   int i = 0;
+   for (const auto & tx2 : history)
+   {
+      switch (i)
+      {
+      case 0:
+         flip_TEST (tx2.label () == "2LL");
+         flip_TEST (tx2.user () == document.user ());
+         flip_TEST (tx2.actor () == document.actor ());
+         flip_TEST (tx2.nbr () == 1);
+         break;
+
+      case 1:
+         flip_TEST (tx2.label () == "3.5");
+         flip_TEST (tx2.user () == document.user ());
+         flip_TEST (tx2.actor () == document.actor ());
+         flip_TEST (tx2.nbr () == 2);
+         break;
+
+      case 2:
+         flip_TEST (tx2.label () == "4.7");
+         flip_TEST (tx2.user () == document.user ());
+         flip_TEST (tx2.actor () == document.actor ());
+         flip_TEST (tx2.nbr () == 3);
+         break;
+      }
+
+      ++i;
+   }
+}
+
+
+
+/*
+==============================================================================
 Name : run_009
 ==============================================================================
 */
@@ -535,6 +658,75 @@ void  TestHistory::run_009 (Args &&... args)
 
    int i = 0;
    for (auto && tx2 : history)
+   {
+      switch (i)
+      {
+      case 0:
+         flip_TEST (tx2.label () == "3.5");
+         flip_TEST (tx2.user () == document.user ());
+         flip_TEST (tx2.actor () == document.actor ());
+         flip_TEST (tx2.nbr () == 2);
+         break;
+
+      case 1:
+         flip_TEST (tx2.label () == "4.7");
+         flip_TEST (tx2.user () == document.user ());
+         flip_TEST (tx2.actor () == document.actor ());
+         flip_TEST (tx2.nbr () == 3);
+         break;
+      }
+
+      ++i;
+   }
+}
+
+
+
+/*
+==============================================================================
+Name : run_009b
+==============================================================================
+*/
+
+template <class HistoryStoreImpl, class... Args>
+void  TestHistory::run_009b (Args &&... args)
+{
+   Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+   History <HistoryStoreImpl> history (document, args...);
+
+   history.store ().set_max_size (2);
+
+   Root & root = document.root <Root> ();
+
+   root._a._int = 2LL;
+
+   document.set_label ("2LL");
+
+   auto tx = document.commit ();
+   history.add_undo_step (tx);
+
+   //
+
+   root._a._float = 3.5;
+
+   document.set_label ("3.5");
+
+   tx = document.commit ();
+   history.add_undo_step (tx);
+
+   //
+
+   root._a._float = 4.7;
+
+   document.set_label ("4.7");
+
+   tx = document.commit ();
+   history.add_undo_step (tx);
+
+   //
+
+   int i = 0;
+   for (const auto & tx2 : history)
    {
       switch (i)
       {
@@ -634,6 +826,79 @@ void  TestHistory::run_010 (Args &&... args)
 
 /*
 ==============================================================================
+Name : run_010b
+==============================================================================
+*/
+
+template <class HistoryStoreImpl, class... Args>
+void  TestHistory::run_010b (Args &&... args)
+{
+   Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+   History <HistoryStoreImpl> history (document, args...);
+
+   Root & root = document.root <Root> ();
+
+   root._a._int = 2LL;
+
+   document.set_label ("2LL");
+
+   auto tx = document.commit ();
+   history.add_undo_step (tx);
+
+   //
+
+   root._a._float = 3.5;
+
+   document.set_label ("3.5");
+
+   tx = document.commit ();
+   history.add_undo_step (tx);
+
+   //
+
+   root._a._float = 4.7;
+
+   document.set_label ("4.7");
+
+   tx = document.commit ();
+   history.add_undo_step (tx);
+
+   //
+
+   auto it = history.begin ();
+   ++it;
+   history.erase (it);
+
+   //
+
+   int i = 0;
+   for (const auto & tx2 : history)
+   {
+      switch (i)
+      {
+      case 0:
+         flip_TEST (tx2.label () == "2LL");
+         flip_TEST (tx2.user () == document.user ());
+         flip_TEST (tx2.actor () == document.actor ());
+         flip_TEST (tx2.nbr () == 1);
+         break;
+
+      case 1:
+         flip_TEST (tx2.label () == "4.7");
+         flip_TEST (tx2.user () == document.user ());
+         flip_TEST (tx2.actor () == document.actor ());
+         flip_TEST (tx2.nbr () == 3);
+         break;
+      }
+
+      ++i;
+   }
+}
+
+
+
+/*
+==============================================================================
 Name : run_011
 ==============================================================================
 */
@@ -680,6 +945,58 @@ void  TestHistory::run_011 (Args &&... args)
    //
 
    flip_TEST (history.begin () == history.end ());
+}
+
+
+
+/*
+==============================================================================
+Name : run_011b
+==============================================================================
+*/
+
+template <class HistoryStoreImpl, class... Args>
+void  TestHistory::run_011b (Args &&... args)
+{
+   Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+   History <HistoryStoreImpl> history (document, args...);
+
+   Root & root = document.root <Root> ();
+
+   root._a._int = 2LL;
+
+   document.set_label ("2LL");
+
+   auto tx = document.commit ();
+   history.add_undo_step (tx);
+
+   //
+
+   root._a._float = 3.5;
+
+   document.set_label ("3.5");
+
+   tx = document.commit ();
+   history.add_undo_step (tx);
+
+   //
+
+   root._a._float = 4.7;
+
+   document.set_label ("4.7");
+
+   tx = document.commit ();
+   history.add_undo_step (tx);
+
+   //
+
+   history.erase (history.begin ());
+   history.erase (history.begin ());
+   history.erase (history.begin ());
+
+   //
+
+   flip_TEST (history.cbegin () == history.cend ());
 }
 
 
@@ -799,6 +1116,73 @@ void  TestHistory::run_013 (Args &&... args)
 
    flip_TEST (history.first_redo () == history.end ());
    flip_TEST (history.last_undo () == history.end ());
+}
+
+
+
+/*
+==============================================================================
+Name : run_013b
+==============================================================================
+*/
+
+template <class HistoryStoreImpl, class... Args>
+void  TestHistory::run_013b (Args &&... args)
+{
+   Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+   History <HistoryStoreImpl> history (document, args...);
+
+   Root & root = document.root <Root> ();
+
+   root._a._int = 2LL;
+
+   document.set_label ("2LL");
+
+   auto tx = document.commit ();
+   history.add_undo_step (tx);
+
+   //
+
+   root._a._float = 3.5;
+
+   document.set_label ("3.5");
+
+   tx = document.commit ();
+   history.add_undo_step (tx);
+
+   //
+
+   root._a._float = 4.7;
+
+   document.set_label ("4.7");
+
+   tx = document.commit ();
+   history.add_undo_step (tx);
+
+   //
+
+   history.execute_undo ();
+   history.execute_undo ();
+
+   // redo points to 3.5
+
+   auto it = history.begin ();
+   ++it; // 3.5
+
+   history.erase (it);
+
+   flip_TEST (history.cfirst_redo ()->label () == "4.7");
+   flip_TEST (history.clast_undo ()->label () == "2LL");
+
+   history.erase (history.begin ());
+
+   flip_TEST (history.cfirst_redo ()->label () == "4.7");
+   flip_TEST (history.clast_undo () == history.cend ());
+
+   history.erase (history.begin ());
+
+   flip_TEST (history.cfirst_redo () == history.cend ());
+   flip_TEST (history.clast_undo () == history.cend ());
 }
 
 
