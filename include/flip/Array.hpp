@@ -210,7 +210,7 @@ Name : get_class
 template <class T>
 const ClassBase & Array <T>::get_class () const
 {
-   return Class <ArrayBase>::use ();
+   return Class <ArrayBase>::get ();
 }
 
 
@@ -444,7 +444,7 @@ typename Array <T>::iterator  Array <T>::insert (iterator pos, const U & value)
 
    auto obj_sptr = std::shared_ptr <U> (new U (value));
 
-   const auto & class_base = Class <U>::use ();
+   const auto & class_base = Class <U>::get ();
 
    obj_sptr->impl_set_class (class_base);
 
@@ -546,9 +546,9 @@ typename std::enable_if <
       new U (std::forward <Args> (args)...)
    );
 
-   obj_sptr->impl_set_class (Class <U>::use ());
+   obj_sptr->impl_set_class (Class <U>::get ());
 
-   return internal_insert (make_key (pos), Class <U>::use (), obj_sptr);
+   return internal_insert (make_key (pos), Class <U>::get (), obj_sptr);
 }
 
 
@@ -585,10 +585,10 @@ typename Array <T>::iterator  Array <T>::emplace (iterator pos, const Mold & mol
    if (!can_change ()) flip_FATAL;
 
    auto obj_sptr = std::shared_ptr <U> (&dynamic_cast <U &> (
-      *Class <U>::use ().impl_ctor ()
+      *Class <U>::get ().impl_ctor ()
    ));
 
-   auto it = internal_insert (make_key (pos), Class <U>::use (), obj_sptr);
+   auto it = internal_insert (make_key (pos), Class <U>::get (), obj_sptr);
 
    mold.cast <U> (dynamic_cast <U &> (*it));
 
@@ -1320,7 +1320,7 @@ Name : impl_element_class
 template <class T>
 const ClassBase & Array <T>::impl_element_class () const
 {
-   return Class <T>::use ();
+   return Class <T>::get ();
 }
 
 
@@ -1560,20 +1560,11 @@ void  Array <T>::impl_relocate (const KeyFloat & key, ArrayBase & other, const K
 
    auto obj_sptr = src_it->second._obj_sptr;
 
-   if (src_it->second.added ())
-   {
-      src._map.erase (src_it);
+   assert (src_it->second.added ());
 
-      src.impl_incr_modification_cnt (-1);
-   }
-   else
-   {
-      assert (src_it->second.resident ());
+   src._map.erase (src_it);
 
-      src_it->second._state = ElementState::REMOVED;
-
-      src.impl_incr_modification_cnt (1);
-   }
+   src.impl_incr_modification_cnt (-1);
 
    if (this != &other)
    {

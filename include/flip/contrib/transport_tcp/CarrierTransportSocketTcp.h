@@ -93,6 +93,7 @@ private:
    uint16_t       _port;
 
    Socket::Id     _fd = Socket::invalid_id;
+   bool           _connecting_flag = false;
 
    PacketStreamSender
                   _sender;

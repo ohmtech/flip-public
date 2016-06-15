@@ -30,8 +30,6 @@ namespace flip
 
 
 
-/*\\\ PUBLIC \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
-
 /*
 ==============================================================================
 Name : modify
@@ -90,11 +88,132 @@ void  modify_move (Type & obj, T & before, T & current, T && value)
 
 
 
-/*\\\ PROTECTED \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+/*
+==============================================================================
+Name : base
+Description :
+   Return the base type when available.
+==============================================================================
+*/
+
+template <class T>
+typename std::enable_if <
+   is_enum <T>::value, ClassBase &
+>::type  base ()
+{
+   // Enumeration is used but was not previously declared
+   if (EnumClass <typename T::value_type>::use ().name () == nullptr) flip_FATAL;
+
+   return Class <EnumBase>::use ();
+}
 
 
 
-/*\\\ PRIVATE \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
+/*
+==============================================================================
+Name : base
+Description :
+   Return the base type when available.
+==============================================================================
+*/
+
+template <class T>
+typename std::enable_if <
+   is_blob <T>::value, ClassBase &
+>::type  base ()
+{
+   return Class <Blob>::use ();
+}
+
+
+
+/*
+==============================================================================
+Name : base
+Description :
+   Return the base type when available.
+==============================================================================
+*/
+
+template <class T>
+typename std::enable_if <
+   is_object_ref <T>::value, ClassBase &
+>::type  base ()
+{
+   return Class <ObjectRefBase>::use ();
+}
+
+
+
+/*
+==============================================================================
+Name : base
+Description :
+   Return the base type when available.
+==============================================================================
+*/
+
+template <class T>
+typename std::enable_if <
+   is_collection <T>::value, ClassBase &
+>::type  base ()
+{
+   return Class <CollectionBase>::use ();
+}
+
+
+
+/*
+==============================================================================
+Name : base
+Description :
+   Return the base type when available.
+==============================================================================
+*/
+
+template <class T>
+typename std::enable_if <
+   is_array <T>::value, ClassBase &
+>::type  base ()
+{
+   return Class <ArrayBase>::use ();
+}
+
+
+
+/*
+==============================================================================
+Name : base
+Description :
+   Return the base type when available.
+==============================================================================
+*/
+
+template <class T>
+typename std::enable_if <
+   is_message <T>::value, ClassBase &
+>::type  base ()
+{
+   return Class <MessageBase>::use ();
+}
+
+
+
+/*
+==============================================================================
+Name : base
+Description :
+   Return the base type when available.
+==============================================================================
+*/
+
+template <class T>
+typename std::enable_if <
+   ! (is_enum <T>::value || is_blob <T>::value || is_object_ref <T>::value || is_collection <T>::value || is_array <T>::value || is_message <T>::value), ClassBase &
+>::type  base ()
+{
+   return Class <T>::use ();
+}
 
 
 

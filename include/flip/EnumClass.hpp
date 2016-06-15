@@ -130,6 +130,27 @@ EnumClass <T> & EnumClass <T>::use ()
 
 
 
+/*
+==============================================================================
+Name : get
+==============================================================================
+*/
+
+template <class T>
+const EnumClass <T> &   EnumClass <T>::get ()
+{
+   const auto & enum_class = use ();
+
+#if ! defined (NDEBUG)
+   // EnumClass <T> is not declared
+   if (enum_class.name () == nullptr) flip_FATAL;
+#endif
+
+   return enum_class;
+}
+
+
+
 /*\\\ INTERNAL \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
 
 

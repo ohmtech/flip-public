@@ -49,6 +49,8 @@ public:
    void           deny (const TxId & tx_id);
    void           finish ();
 
+   void           reset ();
+
    size_t         size () const;
 
 

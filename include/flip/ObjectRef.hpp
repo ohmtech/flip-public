@@ -178,7 +178,7 @@ Name : get_class
 template <class T>
 const ClassBase & ObjectRef <T>::get_class () const
 {
-   return Class <ObjectRefBase>::use ();
+   return Class <ObjectRefBase>::get ();
 }
 
 

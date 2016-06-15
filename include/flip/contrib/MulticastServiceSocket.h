@@ -37,9 +37,9 @@ public:
                   MulticastServiceSocket (uint32_t multicast_ip, uint16_t port);
    virtual        ~MulticastServiceSocket ();
 
-   void           send (uint32_t ip, uint16_t port, const std::vector <uint8_t> & data);
+   bool           send (uint32_t ip, uint16_t port, const std::vector <uint8_t> & data);
    bool           has_receive ();
-   void           receive (uint32_t & ip, uint16_t & port, std::vector <uint8_t> & data);
+   bool           receive (uint32_t & ip, uint16_t & port, std::vector <uint8_t> & data);
 
 
 

@@ -21,6 +21,7 @@
 
 #include "flip/Class.h"
 #include "flip/detail/def.h"
+#include "flip/detail/fnc.h"
 #include "flip/detail/StreamBinIn.h"
 #include "flip/detail/StreamBinOut.h"
 
@@ -45,7 +46,7 @@ Description :
 template <class T>
 void  Mold::make (const T & obj, bool skip_container_flag)
 {
-   const ClassBase & class_base = Class <T>::use ();
+   const ClassBase & class_base = base <T> ();
 
    auto type_id = class_base.type_id (_model);
 
@@ -113,7 +114,7 @@ Name : cast
 template <class T>
 void  Mold::cast (T & obj) const
 {
-   const ClassBase & class_base = Class <T>::use ();
+   const ClassBase & class_base = base <T> ();
 
    auto type_id = class_base.type_id (_model);
 
@@ -142,7 +143,7 @@ Name : has
 template <class T>
 bool  Mold::has () const
 {
-   const ClassBase & class_base = Class <T>::use ();
+   const ClassBase & class_base = base <T> ();
 
    auto type_id = class_base.type_id (_model);
 

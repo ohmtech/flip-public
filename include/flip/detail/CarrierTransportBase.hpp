@@ -40,7 +40,7 @@ Name : enable_signal_passthrough
 template <class Type>
 void  CarrierTransportBase::enable_signal_passthrough (uint32_t type)
 {
-   uint32_t type_id = Class <Type>::use ().type_id (listener ().carrier_data_model ());
+   uint32_t type_id = Class <Type>::get ().type_id (listener ().carrier_data_model ());
 
    _signal_passthrough_set.insert (std::make_pair (type_id, type));
 }
