@@ -51,6 +51,8 @@ public:
    Class &        member (const char * name_0);
 
    static Class & use ();
+   static const Class &
+                  get ();
 
    // ClassBase
    virtual bool   abstract () const override;

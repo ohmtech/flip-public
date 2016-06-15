@@ -322,12 +322,14 @@ void  TestHubLocal::run_002 ()
 
       document2.pull ();
 
+      // COV_NF_START
       while (root._int != 2LL)
       {
          port2.process ();
          carrier2.process ();
          document2.pull ();
       }
+      // COV_NF_END
    }
 }
 
@@ -558,12 +560,14 @@ void  TestHubLocal::run_003b ()
 
       flip_TEST (root._int == 3LL);
 
+      // COV_NF_START
       while (root._int != 3LL)
       {
          port.process ();
          carrier.process ();
          document.pull ();
       }
+      // COV_NF_END
    }
 
    {

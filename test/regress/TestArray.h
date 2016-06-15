@@ -140,6 +140,7 @@ private:
    void           run_020 ();
    void           run_020b ();
    void           run_020c ();
+   void           run_020d ();
    void           run_021 ();
    void           run_022 ();
    void           run_022b ();

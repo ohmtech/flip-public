@@ -39,7 +39,7 @@ public:
 
    class Model : public DataModel <Model> {};
 
-   class Root
+   class Root  // COV_NF_LINE
    :  public Object
    {
    public:

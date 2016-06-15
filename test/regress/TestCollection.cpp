@@ -100,6 +100,7 @@ void  TestCollection::run ()
    run_020 ();
    run_020b ();
    run_020c ();
+   run_020d ();
    run_021 ();
    run_022 ();
    run_022b ();
@@ -1385,7 +1386,13 @@ void  TestCollection::run_020 ()
 
    root._coll.emplace (2LL, 0.0);
 
+   flip_TEST (root.is_in_undo_enabled ());
+   flip_TEST (root._coll.is_in_undo_enabled ());
+
    root._coll.disable_in_undo ();
+
+   flip_TEST (root.is_in_undo_enabled ());
+   flip_TEST (!root._coll.is_in_undo_enabled ());
 
    flip_TEST (root._coll.count_if ([](A & elem){return elem._int == 2LL;}) == 1);
 
@@ -1412,7 +1419,15 @@ void  TestCollection::run_020b ()
 
    auto it = root._coll.emplace (2LL, 0.0);
 
+   flip_TEST (root.is_in_undo_enabled ());
+   flip_TEST (root._coll.is_in_undo_enabled ());
+   flip_TEST (it->_int.is_in_undo_enabled ());
+
    it->_int.disable_in_undo ();
+
+   flip_TEST (root.is_in_undo_enabled ());
+   flip_TEST (root._coll.is_in_undo_enabled ());
+   flip_TEST (!it->_int.is_in_undo_enabled ());
 
    flip_TEST (root._coll.count_if ([](A & elem){return elem._int == 2LL;}) == 1);
 
@@ -1446,7 +1461,15 @@ void  TestCollection::run_020c ()
 
    auto it = root._coll.emplace (2LL, 0.0);
 
+   flip_TEST (root.is_in_undo_enabled ());
+   flip_TEST (root._coll.is_in_undo_enabled ());
+   flip_TEST (it->is_in_undo_enabled ());
+
    it->disable_in_undo ();
+
+   flip_TEST (root.is_in_undo_enabled ());
+   flip_TEST (root._coll.is_in_undo_enabled ());
+   flip_TEST (!it->is_in_undo_enabled ());
 
    flip_TEST (root._coll.count_if ([](A & elem){return elem._int == 2LL;}) == 1);
 
@@ -1462,6 +1485,57 @@ void  TestCollection::run_020c ()
    flip_TEST (ok_flag);
 
    flip_TEST (root._coll.count_if ([](A & elem){return elem._int == 2LL;}) == 1);
+}
+
+
+
+/*
+==============================================================================
+Name : run_020d
+==============================================================================
+*/
+
+void  TestCollection::run_020d ()
+{
+   Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+
+   Root & root = document.root <Root> ();
+
+   auto it = root._coll.emplace (2LL, 0.0);
+
+   flip_TEST (root.is_in_undo_enabled ());
+   flip_TEST (root._coll.is_in_undo_enabled ());
+   flip_TEST (it->is_in_undo_enabled ());
+
+   it->disable_in_undo ();
+
+   flip_TEST (root.is_in_undo_enabled ());
+   flip_TEST (root._coll.is_in_undo_enabled ());
+   flip_TEST (!it->is_in_undo_enabled ());
+
+   it->inherit_in_undo ();
+
+   flip_TEST (root.is_in_undo_enabled ());
+   flip_TEST (root._coll.is_in_undo_enabled ());
+   flip_TEST (it->is_in_undo_enabled ());
+
+   root._coll.disable_in_undo ();
+
+   flip_TEST (root.is_in_undo_enabled ());
+   flip_TEST (!root._coll.is_in_undo_enabled ());
+   flip_TEST (!it->is_in_undo_enabled ());
+
+   root._coll.inherit_in_undo ();
+
+   flip_TEST (root.is_in_undo_enabled ());
+   flip_TEST (root._coll.is_in_undo_enabled ());
+   flip_TEST (it->is_in_undo_enabled ());
+
+   root.disable_in_undo ();
+
+   flip_TEST (!root.is_in_undo_enabled ());
+   flip_TEST (!root._coll.is_in_undo_enabled ());
+   flip_TEST (!it->is_in_undo_enabled ());
 }
 
 

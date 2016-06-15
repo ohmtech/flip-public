@@ -146,7 +146,7 @@ Name : get_class
 template <class T>
 const ClassBase & Enum <T>::get_class () const
 {
-   return Class <EnumBase>::use ();
+   return Class <EnumBase>::get ();
 }
 
 
@@ -369,7 +369,7 @@ Name : impl_synchronize
 template <class T>
 const EnumClassBase &  Enum <T>::impl_enum_class () const
 {
-   return EnumClass <T>::use ();
+   return EnumClass <T>::get ();
 }
 
 

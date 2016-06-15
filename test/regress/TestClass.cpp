@@ -44,6 +44,10 @@ void  TestClass::run ()
 {
    Model::version ("the.version");
 
+#if ! defined (NDEBUG)
+   flip_CHECK_THROW (Class <A>::get ());
+#endif
+
    Model::declare <A> ()
       .name ("A")
       .member <Int, &A::_int> ("int")

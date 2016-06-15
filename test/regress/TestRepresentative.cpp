@@ -42,6 +42,26 @@ Name : run
 
 void  TestRepresentative::run ()
 {
+   Model::version ("test.representative");
+
+   Model::declare <ABase> ()
+      .name ("ABase")
+      .member <Int, &ABase::_int_base> ("int_base")
+      .member <Float, &ABase::_float_base> ("float_base");
+
+   Model::declare <A> ()
+      .name ("A")
+      .inherit <ABase> ()
+      .member <Int, &A::_int> ("int")
+      .member <Float, &A::_float> ("float");
+
+   Model::declare <B> ()
+      .name ("B")
+      .member <Int, &B::_int> ("int")
+      .member <Float, &B::_float> ("float")
+      .member <Collection <A>, &B::_coll> ("coll")
+      .member <A, &B::_obj> ("obj");
+
    run_000 ();
    run_001 ();
    run_002 ();

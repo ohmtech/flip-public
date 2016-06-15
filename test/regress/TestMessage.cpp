@@ -842,7 +842,7 @@ Name : run_003
 void  TestMessage::run_003 ()
 {
    bool fired_flag = false;
-   double value_float = 0.f;
+   float value_float = 0.f;
    double value_double = 0.0;
    int value_int = 0;
 

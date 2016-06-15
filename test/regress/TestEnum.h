@@ -83,7 +83,7 @@ public:
                   EnumUndefined_Value,
    };
 
-   class Root4
+   class Root4 // COV_NF_LINE
    :  public Object
    {
    public:

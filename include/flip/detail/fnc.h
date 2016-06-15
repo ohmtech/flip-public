@@ -13,7 +13,9 @@
 
 /*\\\ INCLUDE FILES \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
 
+#include "flip/Class.h"
 #include "flip/detail/def.h"
+#include "flip/detail/TypeTraits.h"
 
 #include <memory>
 #include <type_traits>
@@ -41,6 +43,43 @@ void              modify_move (Type & obj, T & before, T & current, T && value);
 FILE *   win32_fopen (const char * path_utf8_0, const wchar_t * mode_0);
 
 #endif
+
+
+
+template <class U>
+typename std::enable_if <
+   is_enum <U>::value, ClassBase &
+>::type        base ();
+
+template <class U>
+typename std::enable_if <
+   is_blob <U>::value, ClassBase &
+>::type        base ();
+
+template <class U>
+typename std::enable_if <
+   is_object_ref <U>::value, ClassBase &
+>::type        base ();
+
+template <class U>
+typename std::enable_if <
+   is_collection <U>::value, ClassBase &
+>::type        base ();
+
+template <class U>
+typename std::enable_if <
+   is_array <U>::value, ClassBase &
+>::type        base ();
+
+template <class U>
+typename std::enable_if <
+   is_message <U>::value, ClassBase &
+>::type        base ();
+
+template <class U>
+typename std::enable_if <
+   ! (is_enum <U>::value || is_blob <U>::value || is_object_ref <U>::value || is_collection <U>::value || is_array <U>::value || is_message <U>::value), ClassBase &
+>::type        base ();
 
 
 

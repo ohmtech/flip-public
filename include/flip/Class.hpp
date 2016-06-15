@@ -63,7 +63,7 @@ Class <T> & Class <T>::declare ()
    ClassRegistry::use ().register_ (typeid (T), instance);
 
    return instance;
-}
+}  // COV_NF_LINE
 
 
 
@@ -117,7 +117,7 @@ Class <T> & Class <T>::inherit ()
    );
 
    return *this;
-}
+}  // COV_NF_LINE
 
 
 
@@ -172,6 +172,27 @@ Class <T> & Class <T>::use ()
 #else
    #error Unsupported type registry mode
 #endif
+}  // COV_NF_LINE
+
+
+
+/*
+==============================================================================
+Name : get
+==============================================================================
+*/
+
+template <class T>
+const Class <T> & Class <T>::get ()
+{
+   const auto & class_ = use ();
+
+#if ! defined (NDEBUG)
+   // Class <T> is not declared
+   if (class_.name () == nullptr) flip_FATAL;
+#endif
+
+   return class_;
 }  // COV_NF_LINE
 
 
@@ -299,10 +320,10 @@ typename std::enable_if <
 >::type  Class <T>::base ()
 {
    // Enumeration is used but was not previously declared
-   if (EnumClass <typename U::value_type>::use ().name () == nullptr) flip_FATAL;
+   if (EnumClass <typename U::value_type>::get ().name () == nullptr) flip_FATAL;
 
    return Class <EnumBase>::use ();
-}
+}  // COV_NF_LINE
 
 
 

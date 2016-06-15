@@ -91,6 +91,8 @@ void  TestMold::run ()
    run_005 ();
    run_006 ();
    run_007 ();
+   run_008 ();
+   run_008b ();
 }
 
 
@@ -207,7 +209,7 @@ void  TestMold::run_000d_concept ()
    Mold mold (Model::use ());
    mold.make (*abstract_ptr);
    Abstract abstract2 = mold.cast <Abstract> ();*/
-}
+}  // COV_NF_LINE
 
 
 
@@ -491,6 +493,76 @@ void  TestMold::run_007 ()
    {
       StreamBinIn sbi (data);
       flip_CHECK_THROW (Mold mold (Model2::use (), sbi));
+   }
+}
+
+
+
+/*
+==============================================================================
+Name : run_008
+==============================================================================
+*/
+
+void  TestMold::run_008 ()
+{
+   Mold mold (Model::use ());
+
+   {
+      Clips clips;
+
+      {
+         Clip & clip = *clips.emplace ();
+         clip.color = 1LL;
+         clip.active = true;
+         clip.name = "test";
+      }
+
+      {
+         Clip & clip = *clips.emplace ();
+         clip.color = 15LL;
+         clip.active = false;
+         clip.name = "test2";
+      }
+
+      mold.make (clips);
+   }
+
+   {
+      Clips clips2 = mold.cast <Clips> ();
+
+      flip_TEST (std::distance (clips2.begin (), clips2.end ()) == 2);
+      flip_TEST (std::count_if (clips2.begin (), clips2.end (), [](const Clip & clip){
+         return (clip.color == 1) && (clip.active == true) && (clip.name == "test");
+      }) == 1);
+      flip_TEST (std::count_if (clips2.begin (), clips2.end (), [](const Clip & clip){
+         return (clip.color == 15) && (clip.active == false) && (clip.name == "test2");
+      }) == 1);
+   }
+}
+
+
+
+/*
+==============================================================================
+Name : run_008b
+==============================================================================
+*/
+
+void  TestMold::run_008b ()
+{
+   Mold mold (Model::use ());
+
+   {
+      Float value = 2.5;
+
+      mold.make (value);
+   }
+
+   {
+      Float value = mold.cast <Float> ();
+
+      flip_TEST (value == 2.5);
    }
 }
 

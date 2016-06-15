@@ -67,6 +67,7 @@ void  TestServer::run ()
    run_006 ();
    run_007 ();
    run_008 ();
+   run_009 ();
 }
 
 
@@ -648,6 +649,43 @@ void  TestServer::run_008 ()
    flip_TEST (client_signal_flag);
 
    server.port_factory_remove (port_01);
+}
+
+
+
+/*
+==============================================================================
+Name : run_009
+==============================================================================
+*/
+
+void  TestServer::run_009 ()
+{
+   Document document (Model::use (), 123456789UL, 'appl', 'gui ');
+
+   Root & root = document.root <Root> ();
+
+   root._tempo = 120.0;
+   document.commit ();
+   document.push ();
+
+   DocumentValidatorVoid validator;
+   DocumentServer server (Model::use (), validator, 123456789ULL);
+
+   PortDirect port;
+   server.port_factory_add (port);
+
+   CarrierDirect carrier (document, port);
+
+   root._tempo = 130.0;
+   document.commit ();
+   document.push ();
+
+   document.pull ();
+
+   flip_TEST (root._tempo == 0.0);
+
+   server.port_factory_remove (port);
 }
 
 

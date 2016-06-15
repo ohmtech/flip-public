@@ -47,6 +47,8 @@ public:
 
    static EnumClass &
                   use ();
+   static const EnumClass &
+                  get ();
 
 
 

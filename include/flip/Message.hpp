@@ -126,7 +126,7 @@ Name : get_class
 template <class... Args>
 const ClassBase & Message <Args...>::get_class () const
 {
-   return Class <MessageBase>::use ();
+   return Class <MessageBase>::get ();
 }
 
 

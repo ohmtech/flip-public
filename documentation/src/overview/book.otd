@@ -1,4 +1,4 @@
-\book [id=overview] {Flip Overview}
+\book [id=overview, type=guide] {Flip Overview}
 
 Flip is a data model library, designed as a framework, real-time collaboration-oriented,
 transactional, portable and compact.
