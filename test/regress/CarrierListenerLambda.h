@@ -47,7 +47,7 @@ public:
 
    // CarrierListener
    virtual const DataModelBase &
-                  carrier_data_model () override {flip_FATAL;}
+                  carrier_data_model () override {flip_FATAL;} // COV_NF_LINE
    virtual uint64_t
                   carrier_user () override;
    virtual void   carrier_receive_beir (const BackEndIR & backend) override;

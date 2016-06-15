@@ -284,6 +284,8 @@ void  TestTransaction::run ()
 
    run_140 ();
    run_140b ();
+
+   run_141 ();
 }
 
 
@@ -6376,6 +6378,36 @@ void  TestTransaction::run_140b ()
 
    flip_CHECK_THROW (document.impl_execute_no_error (tx, Direction::BACKWARD));
    flip_TEST (validator.called_flag == true);
+}
+
+
+
+/*
+==============================================================================
+Name : run_141
+==============================================================================
+*/
+
+void  TestTransaction::run_141 ()
+{
+   ValidatorFail validator;
+   Document document (Model::use (), validator, 123456789UL, 'appl', 'gui ');
+   Root & root = document.root <Root> ();
+
+   std::vector <uint8_t> data;
+   StreamBinOut sbo (data);
+   sbo << uint64_t (1) << uint64_t (1) << uint64_t (0);
+
+   StreamBinIn sbi (data);
+
+   Ref ref;
+   ref.read (sbi);
+
+   Transaction tx;
+   tx.push_object_ref_set (root._ref_a.ref (), 0, Ref::null, ref);
+
+   bool ok_flag = document.execute_forward (tx);
+   flip_TEST (!ok_flag);
 }
 
 

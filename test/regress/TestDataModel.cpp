@@ -572,14 +572,14 @@ void  TestDataModel::run_011 ()
 
    //
 
-   class A0 : public Object {};
-   class A1 : public Object {};
-   class A2 : public Object {};
-   class A3 : public Object {};
-   class A4 : public Object {};
-   class A5 : public Object {};
-   class A6 : public Object {};
-   class A7 : public Object {};
+   class A0 : public Object {};  // COV_NF_LINE
+   class A1 : public Object {};  // COV_NF_LINE
+   class A2 : public Object {};  // COV_NF_LINE
+   class A3 : public Object {};  // COV_NF_LINE
+   class A4 : public Object {};  // COV_NF_LINE
+   class A5 : public Object {};  // COV_NF_LINE
+   class A6 : public Object {};  // COV_NF_LINE
+   class A7 : public Object {};  // COV_NF_LINE
 
    flip_CHECK_THROW (Model::declare <A0> ().name (""));
    flip_CHECK_THROW (Model::declare <A1> ().name ("\0"));   // same
@@ -592,7 +592,7 @@ void  TestDataModel::run_011 ()
 
    //
 
-   class B : public Object
+   class B : public Object // COV_NF_LINE
    {
    public:
       Int x;
@@ -653,7 +653,7 @@ void  TestDataModel::run_012 ()
 {
    class Model : public DataModel <Model> {};
 
-   class A : public Object
+   class A : public Object // COV_NF_LINE
    {
    public:
       Int x;

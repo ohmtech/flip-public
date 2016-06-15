@@ -14,6 +14,7 @@
 /*\\\ INCLUDE FILES \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
 
 #include "flip/Collection.h"
+#include "flip/DataModel.h"
 #include "flip/Float.h"
 #include "flip/Int.h"
 #include "flip/Object.h"
@@ -67,6 +68,8 @@ private:
    void           run_010 ();
    void           run_011 ();
    void           run_012 ();
+
+   class Model : public DataModel <Model> {};
 
    class ABase
    :  public Object
