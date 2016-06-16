@@ -1,0 +1,27 @@
+language: cpp
+dist: trusty
+sudo: required
+
+matrix:
+   include:
+      -  os: osx
+         compiler: clang
+         env: CONFIGURATION=Debug
+         install:
+            - git clone https://chromium.googlesource.com/external/gyp
+            - export PYTHONPATH=$PYTHONPATH:$(pwd)/gyp/pylib
+            - export PATH=$PATH:$(pwd)/gyp
+      -  os: osx
+         compiler: clang
+         env: CONFIGURATION=Release
+         install:
+            - git clone https://chromium.googlesource.com/external/gyp
+            - export PYTHONPATH=$PYTHONPATH:$(pwd)/gyp/pylib
+            - export PATH=$PATH:$(pwd)/gyp
+
+
+
+script:
+   - python configure.py
+   - python build.py -c $CONFIGURATION
+   - python run.py -c $CONFIGURATION
