@@ -1,6 +1,7 @@
 # flip
 
 [![Build Status](https://travis-ci.org/ohmtech/flip-public.svg?branch=master)](https://travis-ci.org/ohmtech/flip-public)
+[![Build status](https://ci.appveyor.com/api/projects/status/99hiikd9m563au5t/branch/master?svg=true)](https://ci.appveyor.com/project/ohmtech-rdi/flip-public/branch/master)
 
 Flip is a data model library, designed as a framework, real-time collaboration-oriented, transactional, portable and compact.
 
