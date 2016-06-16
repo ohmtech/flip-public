@@ -45,12 +45,6 @@ def parse_args ():
       help = 'The build configuration to use. Defaults to Release'
    )
 
-   arg_parser.add_argument(
-      '-t', '--target',
-      default = '',
-      help = 'The build configuration to use. Defaults to Release'
-   )
-
    if platform.system () == 'Windows':
       arg_parser.add_argument(
          '-p', '--platform',
@@ -92,10 +86,7 @@ Name : build_ninja
 def build_ninja (args):
    cmd = 'ninja -C %s ' % os.path.join (PATH_FLIP_PROJECTS, 'out', args.configuration)
 
-   if args.target:
-      cmd += '%s ' % args.target
-
-   if (platform.system () == 'Darwin') and not args.target:
+   if (platform.system () == 'Darwin'):
       cmd += '&& install_name_tool -change '
       cmd += '/usr/local/lib/libflip_dll_cpp_entity_strict_type.dylib '
       cmd += '@loader_path/libflip_dll_cpp_entity_strict_type.dylib '
