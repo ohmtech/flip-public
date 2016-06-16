@@ -1,0 +1,28 @@
+clone_depth: 50
+
+os: Visual Studio 2013
+
+environment:
+   matrix:
+      - CONFIGURATION: Debug
+        PLATFORM: Win32
+      - CONFIGURATION: Debug
+        PLATFORM: x64
+      - CONFIGURATION: Release
+        PLATFORM: Win32
+      - CONFIGURATION: Release
+        PLATFORM: x64
+
+
+
+install:
+   - set PATH=C:\Python27;%PATH%
+   - git clone https://chromium.googlesource.com/external/gyp.git gyp
+   - set PYTHONPATH=gyp/pylib;%PYTHONPATH%
+
+build_script:
+   - python configure.py
+   - python build.py -c %CONFIGURATION% -p %PLATFORM%
+
+test_script:
+   - python run.py -c %CONFIGURATION%
