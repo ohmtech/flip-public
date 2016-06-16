@@ -123,7 +123,6 @@ def build_osx (args):
    cmd += '-alltargets '
    cmd += '-parallelizeTargets '
    cmd += 'SYMROOT=%s ' % os.path.join (PATH_FLIP_PROJECTS, 'build')
-   cmd += '| xcpretty -c && exit ${PIPESTATUS[0]}'
 
    return subprocess.check_call (cmd, shell = True)
 
