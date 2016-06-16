@@ -131,26 +131,14 @@ def build_win (args):
    if not os.path.exists (msbuild_path):
       msbuild_path = os.getenv ('PROGRAMFILES(X86)') + '/MSBuild/14.0/Bin/MSBuild.exe'
 
-   if args.target:
-         msbuild_cmd = [
-         msbuild_path,
-         os.path.join (PATH_FLIP_PROJECTS, 'flip.sln'),
-         '/property:Configuration=%s' % args.configuration,
-         '/property:Platform=%s' % args.platform,
-         '/target:%s' % args.target,
-         '/verbosity:minimal',
-         '/maxcpucount',
-      ]
-
-   else:
-      msbuild_cmd = [
-         msbuild_path,
-         os.path.join (PATH_FLIP_PROJECTS, 'flip.sln'),
-         '/property:Configuration=%s' % args.configuration,
-         '/property:Platform=%s' % args.platform,
-         '/verbosity:minimal',
-         '/maxcpucount',
-      ]
+   msbuild_cmd = [
+      msbuild_path,
+      os.path.join (PATH_FLIP_PROJECTS, 'flip.sln'),
+      '/property:Configuration=%s' % args.configuration,
+      '/property:Platform=%s' % args.platform,
+      '/verbosity:minimal',
+      '/maxcpucount',
+   ]
 
    return subprocess.check_call (msbuild_cmd)
 
