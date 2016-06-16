@@ -14,13 +14,10 @@
          ##### Debug
          'Debug': {
             'msvs_configuration_platform': 'Win32',
-            'defines': [
-               '_SCL_SECURE_NO_WARNINGS',
-            ],
             'msvs_settings': {
                'VCCLCompilerTool': {
                   'Optimization': 0, # Disabled (/Od)
-                  'RuntimeLibrary': 3, # Multi-threaded Debug DLL (/MDd)
+                  'RuntimeLibrary': 2, # Multi-threaded DLL (/MD)
                },
             },
          },
@@ -43,13 +40,10 @@
                ##### Debug_x64
                'Debug_x64': {
                   'msvs_configuration_platform': 'x64',
-                  'defines': [
-                     '_SCL_SECURE_NO_WARNINGS',
-                  ],
                   'msvs_settings': {
                      'VCCLCompilerTool': {
                         'Optimization': 0, # Disabled (/Od)
-                        'RuntimeLibrary': 3, # Multi-threaded Debug DLL (/MDd)
+                        'RuntimeLibrary': 2, # Multi-threaded DLL (/MD)
                      },
                   },
                },
