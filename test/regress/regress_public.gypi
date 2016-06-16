@@ -35,12 +35,28 @@
             'src.gypi',
          ],
 
-         'msvs_settings': {
-            'VCLinkerTool': {
-               'AdditionalDependencies': [
-                  '../../lib/windows/Visual Studio 2013/Win32/flip.lib',
-                  '../../lib/windows/Visual Studio 2013/x64/flip.lib',
-               ],
+         'configurations': {
+
+            ##### Debug
+            'Debug': {
+               'msvs_settings': {
+                  'VCLinkerTool': {
+                     'AdditionalDependencies': [
+                        '../lib/windows/Visual Studio 2013/Win32/flip.lib',
+                     ],
+                  },
+               },
+            },
+
+            ##### Release
+            'Release': {
+               'msvs_settings': {
+                  'VCLinkerTool': {
+                     'AdditionalDependencies': [
+                        '../lib/windows/Visual Studio 2013/Win32/flip.lib',
+                     ],
+                  },
+               },
             },
          },
 
@@ -50,6 +66,32 @@
                   'libraries': [
                      '../../lib/macos/libflip.a',
                   ],
+               },
+            }],
+
+            ['OS=="win"', {
+               'configurations': {
+                  ##### Debug_x64
+                  'Debug_x64': {
+                     'msvs_settings': {
+                        'VCLinkerTool': {
+                           'AdditionalDependencies': [
+                              '../lib/windows/Visual Studio 2013/x64/flip.lib',
+                           ],
+                        },
+                     },
+                  },
+
+                  ##### Release_x64
+                  'Release_x64': {
+                     'msvs_settings': {
+                        'VCLinkerTool': {
+                           'AdditionalDependencies': [
+                              '../lib/windows/Visual Studio 2013/x64/flip.lib',
+                           ],
+                        },
+                     },
+                  },
                },
             }],
          ],
