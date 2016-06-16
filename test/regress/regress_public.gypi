@@ -38,8 +38,8 @@
          'msvs_settings': {
             'VCLinkerTool': {
                'AdditionalDependencies': [
-                  '../../bin/flip_win32.lib',
-                  '../../bin/flip_x64.lib',
+                  '../../lib/windows/Visual Studio 2013/Win32/flip.lib',
+                  '../../lib/windows/Visual Studio 2013/x64/flip.lib',
                ],
             },
          },
@@ -48,7 +48,7 @@
             ['OS=="mac"', {
                'link_settings': {
                   'libraries': [
-                     '../../bin/flip_macos.a',
+                     '../../lib/macos/libflip.a',
                   ],
                },
             }],
