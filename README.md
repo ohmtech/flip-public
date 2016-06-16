@@ -22,10 +22,29 @@ When this is set up, run `configure.py`. This will create a `projects` at the ro
 ## Integrating
 
 The following distribution of `flip` comes as headers in the `include` directory as well as
-precompiled platform specific binaries in the `bin` directory.
+precompiled platform specific binaries in the `lib` directory.
 
 The directory `include` must be part of your header paths.
 See [`regress_public.gypi`](/test/regress/regress_public.gypi) gyp file as an example for your IDE configuration.
+
+The directory `lib` contains different libraries depending on your platform/compiler :
+
+```
+lib/
+   macos/
+      libflip.a      Universal binary i386/x86_64 using XCode 6 clang compiler
+   windows/
+      Visual Studio 2013/
+         Win32/
+            flip.lib
+         x64/
+            flip.lib
+      Visual Studio 2015/
+         Win32/
+            flip.lib
+         x64/
+            flip.lib
+```
 
 This distribution comes with the default configuration of precompiler flags except for `flip_FATAL_MODE` which is set to `flip_FATAL_MODE_THROW` to allow the regression tests to run.
 See [Flip Configuration Guide](/documentation/markdown/config/README.md) for more details.
