@@ -45,11 +45,6 @@ def parse_args ():
       help = 'The build configuration to use. Defaults to Release'
    )
 
-   arg_parser.add_argument(
-      '-t', '--target',
-      help = 'The build target to use'
-   )
-
    arg_parser.add_argument (
       '-q', '--quiet',
       dest = 'logging_level', default = logging.INFO,
@@ -82,7 +77,7 @@ Name : run_ninja
 
 def run_ninja (args):
    return subprocess.check_call (
-      [os.path.join (PATH_FLIP_PROJECTS, 'out', args.configuration, args.target)],
+      [os.path.join (PATH_FLIP_PROJECTS, 'out', args.configuration, 'regress')],
       cwd = os.path.join (PATH_FLIP_PROJECTS, 'out', args.configuration)
    )
 
@@ -95,7 +90,7 @@ Name : run_osx
 """
 
 def run_osx (args):
-   run_path = os.path.join (PATH_FLIP_PROJECTS, 'build', args.configuration, args.target)
+   run_path = os.path.join (PATH_FLIP_PROJECTS, 'build', args.configuration, 'regress')
 
    run_cmd = [
       run_path,
@@ -113,7 +108,7 @@ Name : run_win
 """
 
 def run_win (args):
-   run_path = os.path.join (PATH_FLIP_PROJECTS, args.configuration, args.target)
+   run_path = os.path.join (PATH_FLIP_PROJECTS, args.configuration, 'regress')
 
    run_cmd = [
       run_path,
