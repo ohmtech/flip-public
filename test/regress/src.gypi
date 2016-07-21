@@ -98,6 +98,8 @@
       'TestServer.h',
       'TestServerHttp.cpp',
       'TestServerHttp.h',
+      'TestServerSimple.cpp',
+      'TestServerSimple.h',
       'TestSignal.cpp',
       'TestSignal.h',
       'TestStreamBin.cpp',

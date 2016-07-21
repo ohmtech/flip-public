@@ -61,6 +61,9 @@ public:
 
 /*\\\ INTERNAL \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
 
+   const std::set <PortBase *> &
+                  ports () const;
+
    // PortFactoryListener
    virtual void   port_factory_add (PortBase & port) override;
    virtual void   port_factory_remove (PortBase & port) override;

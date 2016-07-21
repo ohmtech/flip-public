@@ -92,11 +92,11 @@ hr { display: block; height: 1px; border: 0; border-top: 1px solid #eee; margin:
 
 <h1>Threading System</h1>
 
-<p>When programming with Flip, only one transaction can be started at one specific time. This does not allow for concurrent change on the model. However, Flip comes with a threading system that allow for concurrent change.</p>
+<p>When programming with Flip, only one transaction can be started at a time. This does not allow for concurrent changes of the model. However, Flip comes with a threading system that allows for concurrent modifications.</p>
 
-<p>Threading in Flip allows to have multiple copies of the document (one per each Flip thread) and therefore concurrent change on those copies. Concurrent conflictual changes are resolved in the exact same way as for the server, so the client do not have to take care of it.</p>
+<p>Threading in Flip allows one to have multiple copies of the document (one per each Flip thread), and therefore concurrently change those copies. Conflicting concurrent changes are resolved in the exact same way as they are on the server, so the client does not have to take care of this.</p>
 
-<p>However threads in Flip are distinct from Operating System threads. Two flip threads can live in the same Operating System thread, in two different Operating System threads, and even in two Operating System processes.</p>
+<p>However, threads in Flip are different than operating system threads. Two Flip threads can live in the same operating system thread, in multiple operating system threads, and even in multiple operating system processes.</p>
 
 <div class="nav" align="right">
 <a href="undo.html">previous</a><span>&nbsp;</span><a href="document.html">next</a></div>

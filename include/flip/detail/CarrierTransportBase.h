@@ -19,6 +19,7 @@
 
 #include <functional>
 #include <set>
+#include <string>
 #include <vector>
 
 #include <cstddef>
@@ -39,7 +40,7 @@ class flip_API CarrierTransportBase
 
 public:
 
-                  CarrierTransportBase (CarrierListener & listener);
+                  CarrierTransportBase (CarrierListener & listener, uint64_t session_id, std::string metadata);
    virtual        ~CarrierTransportBase () = default;
 
    template <class Type>
@@ -79,6 +80,10 @@ public:  // gcc has a bug with accessibility from lambdas
 /*\\\ PRIVATE \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*/
 
 private:
+
+   const uint64_t _session_id;
+   const std::string
+                  _metadata;
 
    std::set <std::pair <uint32_t, uint32_t>>
                   _signal_passthrough_set;

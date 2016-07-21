@@ -359,6 +359,7 @@
 #elif defined (__GNUC__)
    #define flip_DISABLE_WARNINGS_CAST \
       _Pragma ("GCC diagnostic push") \
+      _Pragma ("GCC diagnostic ignored \"-Wstrict-aliasing\"")
 
    #define flip_DISABLE_WARNINGS_BINARY_LITERALS \
       _Pragma ("GCC diagnostic push") \
@@ -380,6 +381,9 @@
       _Pragma ("GCC diagnostic push") \
 
    #define flip_DISABLE_WARNINGS_SYSTEM_HEADERS \
+      _Pragma ("GCC diagnostic push")
+
+   #define flip_DISABLE_WARNINGS_THROW_FROM_DTOR \
       _Pragma ("GCC diagnostic push")
 
    #define flip_RESTORE_WARNINGS \
