@@ -17,6 +17,7 @@
 #include "flip/detail/def.h"
 
 #include <memory>
+#include <tuple>
 #include <vector>
 
 #include <cstdint>
@@ -46,7 +47,7 @@ public:
 
    virtual        ~Codec () = default;
 
-   static void    encode_user_id (StreamBinOut & sbo, uint64_t user_id);
+   static void    encode_greet (StreamBinOut & sbo, uint64_t user_id, uint64_t session_id, std::string metadata);
    static void    encode_backend (StreamBinOut & sbo, const BackEndIR & backend);
    static void    encode_tx (StreamBinOut & sbo, const Transaction & tx);
    static void    encode_tx_ack (StreamBinOut & sbo, const TxId & tx_id);
@@ -57,8 +58,8 @@ public:
 
    static uint32_t
                   decode_msg (StreamBinIn & sbi);
-   static uint64_t
-                  decode_user_id (StreamBinIn & sbi);
+   static std::tuple <uint64_t, uint64_t, std::string>
+                  decode_greet (StreamBinIn & sbi);
    static BackEndIR
                   decode_backend (StreamBinIn & sbi);
    static Transaction
@@ -73,7 +74,7 @@ public:
                   decode_signal (StreamBinIn & sbi);
 
    static const uint32_t
-                  msg_user_id = flip_CC4 ('u', 's', 'e', 'r');
+                  msg_greet = flip_CC4 ('h', 'e', 'l', 'o');
    static const uint32_t
                   msg_backend = flip_CC4 ('b', 'b', 'i', 'n');
    static const uint32_t

@@ -49,7 +49,8 @@ public:
                   CNX_IO,        // received data is corrupted
    };
 
-                  CarrierTransportSocketTcp (CarrierListener & listener, const std::string & host, uint16_t port);
+                  CarrierTransportSocketTcp (CarrierListener & listener, uint64_t session_id, const std::string & host, uint16_t port);
+                  CarrierTransportSocketTcp (CarrierListener & listener, uint64_t session_id, const std::string & metadata, const std::string & host, uint16_t port);
    virtual        ~CarrierTransportSocketTcp ();
 
    Socket::Id     socket () const;
