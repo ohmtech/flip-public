@@ -64,38 +64,54 @@ with a remote server.
 
 Documents connect to a remote a server through a \emph {Transport}. Flip can
 support many transports methods through its transport abstraction.
+
 For a simple TCP socket, one can use
-\code {TransportSimpleSocket} in \code {flip/contrib}. This will be the class
+\code {CarrierTransportSocketTcp} in \code {flip/contrib/transport_tcp}. This will be the class
 used in the following examples.
 
+A client is assigned a \emph {user identifier}. This user identifier must be unique
+for every user connecting to the same session. Typically this can be a facebook user
+number or an OpenId unique identifier. For a quick test, using a random generator
+might be good enough.
+
+Then the client is going to connect to a session, with a \emph {session identifier}.
+A session represents a document on the server side, and is usually meant to be
+persistent.
+
 \codeblock [language=c++] ***
-#include "flip/contrib/TransportSimpleServer.h"
+#include "flip/contrib/transport_tcp/CarrierTransportSocketTcp.h"
 
-void  run ()
+void  run (uint64_t user_id, uint64_t session_id)
 {
-   Document document (Model::use (), 123456789ULL, 'OmSt', 'gui ');
-   TransportListener listener;
-   TransportSimpleSocket transport (listener, document, "localhost", 9000);   (1)
+   Document document (Model::use (), user_id, 'appl', 'gui ');                   (1)
+   CarrierTransportSocketTcp carrier (document, session_id, "localhost", 9000);  (2)
 
-   transport.process ();                                                      (2)
+   carrier.process ();                                                           (3)
 
-   document.pull ();                                                          (3)
+   document.pull ();                                                             (4)
 
    Root & root = document.root <Root> ();
    root.happiness_level = 100.0;
    document.commit ();
 
-   document.push ();                                                          (4)
+   document.push ();                                                             (5)
 
-   transport.process ();
+   carrier.process ();
 }
 ***
 
 \enumerate {
-\item {Connect to \code {localhost} on port \code {9000}. A listener can be attached to listen on different transport events like document downloading progress, I/O errors, etc.}
+\item {Create a new document for \code {user_id}. \code {user_id} must be unique for every
+   user connecting to the session}
+\item {Connect to \code {localhost} on port \code {9000}, for \code {session_id}}
 \item {\code {process} allows for this transport implementation to write and read from the socket as needed}
 \item {this call to \code {pull} will replace the current document with the one from the remote server}
-\item {this call to \code {push} will send the hapinnes level change to the document server}
+\item {this call to \code {push} will send the happiness level change to the document server}
+}
+
+\note {
+   The code above is simplified, as a single \code {process} code on a transport carrier
+   does not guarantee that the socket will be able to send or receive all data.
 }
 
 The code above implies that a Flip server is running on \code {localhost} port \code {9000}. The
@@ -109,34 +125,75 @@ next section will show how to set up this server.
 
 \section [id=server] {Working with a Remote document, Server Part}
 
-In this example, the server side of \code {TransportSimpleSocket} is used.
+In this example, \code {ServerSimple} from \code {flip/contrib} is used.
+It is a simple server that allows to host multiple sessions, and is running all in one process.
+This is probably not suitable for production quality, but nethertheless very handy to set up a flip server quickly.
 
 \codeblock [language=c++] ***
+#include "flip/contrib/DataConsumerFile.h"
+#include "flip/contrib/DataProviderFile.h"
+#include "flip/contrib/ServerSimple.h"
+#include "flip/BackEndBinary.h"
+
+
+std::string path (uint64_t session_id)
+{
+   return std::string ("/sessions/") + std::to_string (session_id);
+}
+
 void run ()
 {
-   DocumentValidatorVoid validator;                         (1)
-   DocumentServer document (Model::use (), validator);      (2)
+   ServerSimple server (Model::use (), 9000);               (1)
 
-   Root & root = document.root <Root> ();
-   root.happiness_level = 42.0;
+   server.bind_validator_factory ([](uint64_t session_id){
+      return std::make_unique <MyModelValidator> ();        (2)
+   });
 
-   document.commit ();                                      (3)
+   server.bind_init ([](uint64_t session_id, DocumentBase & document){
+      Root & root = document.root <Root> ();
+      root.happiness_level = 42.0;                          (3)
+   });
 
-   TransportSimpleServer transport (*this, document, 9000); (4)
+   server.bind_read ([](uint64_t session_id){
+      BackEndIR backend;
 
-   for (;;)
-   {
-      transport.process ();                                 (5)
-   }
+      auto session_path = path (session_id);
+
+      if (path_exists (session_path))
+      {
+         DataProviderFile provider (session_path.c_str ());
+
+         backend.register_backend <BackEndBinary> ();
+         backend.read (provider);
+      }
+
+      return backend;                                       (4)
+   });
+
+   server.bind_write ([](uint64_t session_id, const BackEndIR & backend){
+      auto session_path = path (session_id);
+
+      DataConsumerFile consumer (session_path.c_str ());
+
+      backend.write <BackEndBinary> (consumer);             (5)
+   });
+
+   server.run ();                                           (6)
 }
 ***
 
 \enumerate {
-\item {Set up a validator. Validator are used to ensure that the document is always in a valid state. This will be discussed in the next section}
-\item {Set up a \code {DocumentServer}. A document server is a special kind of \code {Document} already setup for server use}
-\item {The document was prepared with an initial value for happinness, but it could have been loaded from a location, modified, converted, etc.}
-\item {Set up the server socket and start listening for clients}
-\item {Allows the server to process incoming client request}
+\item {Set up the server to listen on port \code {9000}}
+\item {Bind the validator factory. This is run every time a new session is opened}
+\item {Bind the document initiator. When no session is already present (see 4. below),
+   it will create a non-empty initial document, should it be needed.}
+\item {Bind the document reader. Here it is using a \code {DataProviderFile}
+   with the \code {BackEndBinary} production document format.
+   If the returned backend is empty, then the document initiator (see 3. above) is called.
+   This is also where you would convert your document to the current model version if needed.}
+\item {Bind the document writer. Here it is using a \code {DataConsumerFile}
+   with the \code {BackEndBinary} production document format}
+\item {Finally run the server. This function will allow the server to process incoming client request}
 }
 
 
@@ -175,6 +232,8 @@ The convenience macro \code {flip_VALIDATION_FAILED} is provided for this matter
 Validators are declared in a similar way to observers :
 
 \codeblock [language=c++] ***
+#include "flip/DocumentValidator.h"
+
 class Validator : public flip::DocumentValidator <Song>                       (1)
 {
 public:
@@ -183,18 +242,21 @@ public:
 
 void  run ()
 {
-   Validator validator;
-   DocumentServer document (Model::use (), validator);                        (3)
+   ServerSimple server (Model::use (), 9000);
+
+   server.bind_validator_factory ([](uint64_t session_id){
+      return std::make_unique <Validator> ();                                 (3)
+   });
 }
 ***
 
 \enumerate {
 \item {Make a validator by inheriting from \code {DocumentValidator}}
 \item {Override the pure virtual function declared in \code {DocumentValidator}}
-\item {Attach the observer to the document}
+\item {Create a new \code {Validator} that will be attached to every new document created by the server}
 }
 
-Now, every time the document will be changed and the server receives this modification,
+Now, every time the document session will be changed and the server receives this modification,
 \code {validate} will be fired.
 
 
