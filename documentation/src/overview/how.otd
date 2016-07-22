@@ -9,7 +9,7 @@
 
 \section [id=build] {Building a Transaction}
 
-The client of the Flip framework will directly modify the model by either :
+The client of the Flip framework will directly modify the model by either:
 
 \itemize {
 \item {modifying a value by assigning it}
@@ -23,8 +23,9 @@ follows the same kind of prototypes as found in the standard library
 (\code {insert}, \code {erase}, etc.) which makes the use of Flip quite natural.
 
 In the background, each operation is translated in real-time in a simple
-assembler. When the client of the library manipulate the model, Flip will apply and record
-all the changes made to the model and will make a program in that assembler.
+assembler. When the client manipulates the model, Flip will apply and record
+all the changes made to the model and will make a program in this assembler
+language.
 
 This program is also a transaction in the sense that applying a transaction
 will transform the model from a valid state to another valid state.
@@ -37,10 +38,10 @@ will transform the model from a valid state to another valid state.
 
 \section [id=validation] {Validation}
 
-This transaction is then sent to the server. The server will interpret the
-assembler to make the changes to its own model. The transaction is then
-validated by the server. Validation ensure that the model is consistent and
-is done in two steps :
+This transaction is then sent to the server. The server interprets the
+assembler and makes changes to its own model. The transaction is then
+validated by the server. Validation ensures that the model is consistent and
+is done in two steps:
 
 \enumerate {
 \item {structural validation}
@@ -51,21 +52,21 @@ is done in two steps :
 
 \subsection [id=structural] {Structural Validation}
 
-Structure validation is handled by Flip. It ensures that an object can be
+Structural validation is handled by Flip. It ensures that an object can be
 either modified, inserted or erased.
-For example structure validation may fail if two clients tries to erase an
-object concurrently. In that case the second transaction is rejected.
-Another example would be to reject a transaction where a client tries to
-change a value of an object that was erased concurrently.
+For example, structural validation may fail if two clients try to erase an
+object concurrently. In this case, the second transaction is rejected.
+Another example of this is where a client tries to change the value of an
+object that was erased concurrently, in which case the transaction would also
+be rejected.
 
 \subsection [id=logical] {Logical Validation}
 
 Logical validation is handled by the client. It ensures that the model
-is consistent relative to the meaning that the the client assign virtually
-to the model structures. For example the client might want to ensure that
-for a container which the client assign the meaning of length, that its
-element which could be defined with a position and length do not go passed
-the length of container, that is to ensure :
+is consistent relative to the meaning that the client assigned to the model's
+structure. For example, the client might have a container which represents the
+length. The client must then ensure that an element's position and length do
+not exceed the container's length:
 
 \codeblock [language=c++] ***
 element._position + element._length <= container._length
@@ -78,10 +79,10 @@ element._position + element._length <= container._length
 
 This kind of validation is possible in Flip, as it is dynamic (it is a
 program that the client writes) rather than static or semi-static
-(like a XML/DTD)
+(like an XML/DTD document).
 
-The architecture of Flip allows to write validators very quickly, in a tree
-parsing fashion.
+The architecture of Flip allows one to write validators very quickly and in a
+tree-parsing fashion.
 
 
 
@@ -93,9 +94,9 @@ parsing fashion.
 
 \image [path=how.valid.ok.pdf] {}
 
-When the two staged validation is good, the transaction is considered as
-accepted. The server will broadcast the transaction for execution to the
-other clients, and will send an approval to the original client.
+If the two-stage validation passes, the transaction is considered to be
+accepted. The server will broadcast the transaction to be executed by
+other clients, and will also send an approval message to the original client.
 
 
 
@@ -107,11 +108,11 @@ other clients, and will send an approval to the original client.
 
 \image [path=how.valid.fail.pdf] {}
 
-When the two stages validation is wrong, the transaction is considered
-as refused. The server will send a disapproval to the original client
-which will rollback the transaction.
+If the two-stage validation fails, the transaction is considered to be refused.
+The server will send a disapproval message to the original client, which rolls
+back the transaction.
 
-When another client execute the transaction, it will make all the changes
+When another client executes the transaction, it will make all the changes
 needed by that transaction. When it is done and succesfully applied,
-the client observers are called.
+the client's observers are called.
 

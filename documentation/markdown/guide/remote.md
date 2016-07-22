@@ -26,70 +26,112 @@
 
 <h2 id="remote">Working with a Remote Server, Client Part</h2>
 
-<p>Documents connect to a remote a server through a <em>Transport</em>. Flip can support many transports methods through its transport abstraction. For a simple TCP socket, one can use <code>TransportSimpleSocket</code> in <code>flip/contrib</code>. This will be the class used in the following examples.</p>
+<p>Documents connect to a remote a server through a <em>Transport</em>. Flip can support many transports methods through its transport abstraction.</p>
+
+<p>For a simple TCP socket, one can use <code>CarrierTransportSocketTcp</code> in <code>flip/contrib/transport_tcp</code>. This will be the class used in the following examples.</p>
+
+<p>A client is assigned a <em>user identifier</em>. This user identifier must be unique for every user connecting to the same session. Typically this can be a facebook user number or an OpenId unique identifier. For a quick test, using a random generator might be good enough.</p>
+
+<p>Then the client is going to connect to a session, with a <em>session identifier</em>. A session represents a document on the server side, and is usually meant to be persistent.</p>
 
 ```c++
-#include "flip/contrib/TransportSimpleServer.h"
+#include "flip/contrib/transport_tcp/CarrierTransportSocketTcp.h"
 
-void  run ()
+void  run (uint64_t user_id, uint64_t session_id)
 {
-   Document document (Model::use (), 123456789ULL, 'OmSt', 'gui ');
-   TransportListener listener;
-   TransportSimpleSocket transport (listener, document, "localhost", 9000);   (1)
+   Document document (Model::use (), user_id, 'appl', 'gui ');                   (1)
+   CarrierTransportSocketTcp carrier (document, session_id, "localhost", 9000);  (2)
 
-   transport.process ();                                                      (2)
+   carrier.process ();                                                           (3)
 
-   document.pull ();                                                          (3)
+   document.pull ();                                                             (4)
 
    Root & root = document.root <Root> ();
    root.happiness_level = 100.0;
    document.commit ();
 
-   document.push ();                                                          (4)
+   document.push ();                                                             (5)
 
-   transport.process ();
+   carrier.process ();
 }
 ```
 
 <ol>
-<li>Connect to <code>localhost</code> on port <code>9000</code>. A listener can be attached to listen on different transport events like document downloading progress, I/O errors, etc.</li>
+<li>Create a new document for <code>user_id</code>. <code>user_id</code> must be unique for every    user connecting to the session</li>
+<li>Connect to <code>localhost</code> on port <code>9000</code>, for <code>session_id</code></li>
 <li><code>process</code> allows for this transport implementation to write and read from the socket as needed</li>
 <li>this call to <code>pull</code> will replace the current document with the one from the remote server</li>
-<li>this call to <code>push</code> will send the hapinnes level change to the document server</li>
+<li>this call to <code>push</code> will send the happiness level change to the document server</li>
 </ol>
+
+<blockquote><h6>Note</h6> The code above is simplified, as a single <code>process</code> code on a transport carrier    does not guarantee that the socket will be able to send or receive all data.</blockquote>
 
 <p>The code above implies that a Flip server is running on <code>localhost</code> port <code>9000</code>. The next section will show how to set up this server.</p>
 
 <h2 id="server">Working with a Remote document, Server Part</h2>
 
-<p>In this example, the server side of <code>TransportSimpleSocket</code> is used.</p>
+<p>In this example, <code>ServerSimple</code> from <code>flip/contrib</code> is used. It is a simple server that allows to host multiple sessions, and is running all in one process. This is probably not suitable for production quality, but nethertheless very handy to set up a flip server quickly.</p>
 
 ```c++
+#include "flip/contrib/DataConsumerFile.h"
+#include "flip/contrib/DataProviderFile.h"
+#include "flip/contrib/ServerSimple.h"
+#include "flip/BackEndBinary.h"
+
+
+std::string path (uint64_t session_id)
+{
+   return std::string ("/sessions/") + std::to_string (session_id);
+}
+
 void run ()
 {
-   DocumentValidatorVoid validator;                         (1)
-   DocumentServer document (Model::use (), validator);      (2)
+   ServerSimple server (Model::use (), 9000);               (1)
 
-   Root & root = document.root <Root> ();
-   root.happiness_level = 42.0;
+   server.bind_validator_factory ([](uint64_t session_id){
+      return std::make_unique <MyModelValidator> ();        (2)
+   });
 
-   document.commit ();                                      (3)
+   server.bind_init ([](uint64_t session_id, DocumentBase & document){
+      Root & root = document.root <Root> ();
+      root.happiness_level = 42.0;                          (3)
+   });
 
-   TransportSimpleServer transport (*this, document, 9000); (4)
+   server.bind_read ([](uint64_t session_id){
+      BackEndIR backend;
 
-   for (;;)
-   {
-      transport.process ();                                 (5)
-   }
+      auto session_path = path (session_id);
+
+      if (path_exists (session_path))
+      {
+         DataProviderFile provider (session_path.c_str ());
+
+         backend.register_backend <BackEndBinary> ();
+         backend.read (provider);
+      }
+
+      return backend;                                       (4)
+   });
+
+   server.bind_write ([](uint64_t session_id, const BackEndIR & backend){
+      auto session_path = path (session_id);
+
+      DataConsumerFile consumer (session_path.c_str ());
+
+      backend.write <BackEndBinary> (consumer);             (5)
+   });
+
+   server.run ();                                           (6)
 }
 ```
 
 <ol>
-<li>Set up a validator. Validator are used to ensure that the document is always in a valid state. This will be discussed in the next section</li>
-<li>Set up a <code>DocumentServer</code>. A document server is a special kind of <code>Document</code> already setup for server use</li>
-<li>The document was prepared with an initial value for happinness, but it could have been loaded from a location, modified, converted, etc.</li>
-<li>Set up the server socket and start listening for clients</li>
-<li>Allows the server to process incoming client request</li>
+<li>Set up the server to listen on port <code>9000</code></li>
+<li>Bind the validator factory. This is run every time a new session is opened</li>
+<li>Bind the document initiator. When no session is already present (see 4. below),    it will create a non-empty initial document, should it be needed.</li>
+<li>Bind the document reader. Here it is using a <code>DataProviderFile</code>    with the <code>BackEndBinary</code> production document format.    If the returned backend is empty, then the document initiator (see 3. above) is called.    This is also where you would convert your document to the current model version if needed.</li>
+<li>Bind the document writer. Here it is using a <code>DataConsumerFile</code>    with the <code>BackEndBinary</code> production document format</li>
+<li>Finally run the server. This function will allow the server to process incoming client request</li>
 </ol>
 
 <h2 id="validate">Validating Transactions</h2>
@@ -105,6 +147,8 @@ void run ()
 <p>Validators are declared in a similar way to observers :</p>
 
 ```c++
+#include "flip/DocumentValidator.h"
+
 class Validator : public flip::DocumentValidator <Song>                       (1)
 {
 public:
@@ -113,18 +157,21 @@ public:
 
 void  run ()
 {
-   Validator validator;
-   DocumentServer document (Model::use (), validator);                        (3)
+   ServerSimple server (Model::use (), 9000);
+
+   server.bind_validator_factory ([](uint64_t session_id){
+      return std::make_unique <Validator> ();                                 (3)
+   });
 }
 ```
 
 <ol>
 <li>Make a validator by inheriting from <code>DocumentValidator</code></li>
 <li>Override the pure virtual function declared in <code>DocumentValidator</code></li>
-<li>Attach the observer to the document</li>
+<li>Create a new <code>Validator</code> that will be attached to every new document created by the server</li>
 </ol>
 
-<p>Now, every time the document will be changed and the server receives this modification, <code>validate</code> will be fired.</p>
+<p>Now, every time the document session will be changed and the server receives this modification, <code>validate</code> will be fired.</p>
 
 <h2 id="validator">Writing Validation Code</h2>
 

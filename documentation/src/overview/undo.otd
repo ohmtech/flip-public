@@ -6,15 +6,15 @@ Flip is simple as giving a name (or any metadata) to a transaction.
 
 \image [path=undo.pdf] {}
 
-Flip will then replay the transaction in its reversed way (undo) or
-in it original way (redo). In the case where a transaction would fail
+Flip will then replay the transaction in reverse (undo) or as originally
+intended (redo). In the case where a transaction would fail
 structural validation, Flip will modify the transaction so that it
 can be replayed.
 
-Therefore, clients do not need to code “action classes” or anything similar
-for every single action on the model. The only thing to do is to describe
-what metadata the client want to attach to a transaction (generally a string
-describing the name of the action).
+Therefore, clients do not need to code "action classes" (or anything similar)
+for every single action applied to the model. The only thing needed is to describe
+what metadata the client wants to attach to a transaction. Usually this is just a
+string describing the action.
 
 When the client calls \code {undo ()} or \code {redo ()} on the document history,
 the exact same code path is used. The transaction or its inverse is sent
