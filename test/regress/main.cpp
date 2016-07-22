@@ -54,6 +54,7 @@ flip_DISABLE_WARNINGS_TEST
 #include "TestRepresentative.h"
 #include "TestServer.h"
 #include "TestServerHttp.h"
+#include "TestServerSimple.h"
 #include "TestSignal.h"
 #include "TestStreamBin.h"
 #include "TestTransaction.h"
@@ -84,7 +85,6 @@ flip_DISABLE_WARNINGS_TEST
 
 void  playground ();
 void  run_test ();
-void  run_perf ();
 
 
 
@@ -109,7 +109,6 @@ Name : run_test
 
 void  run_test ()
 {
-#if 1
    using namespace flip;
 
    std::cout << "Running Regression Tests..." << std::endl;
@@ -472,6 +471,13 @@ void  run_test ()
    }
 
 
+   std::cout << "   Running TestServerSimple..." << std::endl;
+
+   {
+      TestServerSimple test;
+      test.run ();
+   }
+
    std::cout << "   Running TestMulticastService..." << std::endl;
 
    {
@@ -504,8 +510,18 @@ void  run_test ()
    }*/
 #endif
 
-   std::cout << "OK" << std::endl;
+#if (flip_PLATFORM == flip_PLATFORM_MACOS)
+   int err = system (
+      "leaks -q --nocontext --nostacks " __TARGET_NAME__ " 2>&1 "
+      "| grep \" 0 leaks\" "
+      "> /dev/null"
+   );
+
+   if (err != 0) flip_FATAL;
+
 #endif
+
+   std::cout << "OK" << std::endl;
 }
 
 

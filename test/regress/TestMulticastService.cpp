@@ -111,21 +111,26 @@ void  TestMulticastService::run_000 ()
       loop_flag = explorer.begin () == explorer.end ();
    }
 
-   flip_TEST (std::distance (explorer.begin (), explorer.end ()) == 1);
+   flip_TEST (std::count_if (explorer.begin (), explorer.end (), [](const MulticastServiceExplorer::Session & session){
+      return
+         (session.ip != 0)
+         && (session.port == 1234)
+         && (session.version == "test.multicast")
+         ;
+   }) == 1);
 
    for (auto && session : explorer)
    {
-      flip_TEST (session.ip != 0);
-      flip_TEST (session.port == 1234);
-      flip_TEST (session.version == "test.multicast");
+      if (session.version == "test.multicast")
+      {
+         auto it = session.metadata.find ("name");
+         flip_TEST (it != session.metadata.end ());
+         flip_TEST (it->second == "Some test session");
 
-      auto it = session.metadata.find ("name");
-      flip_TEST (it != session.metadata.end ());
-      flip_TEST (it->second == "Some test session");
-
-      auto it2 = session.metadata.find ("date");
-      flip_TEST (it2 != session.metadata.end ());
-      flip_TEST (it2->second == "2015/05/06");
+         auto it2 = session.metadata.find ("date");
+         flip_TEST (it2 != session.metadata.end ());
+         flip_TEST (it2->second == "2015/05/06");
+      }
    }
 }
 

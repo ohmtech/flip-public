@@ -121,7 +121,7 @@ void  TestDntDirect::run_001 ()
    Document document1 (Model::use (), 123456789ULL, 'appl', 'gui ');
    CarrierDirect carrier1 (document1, port1);
 
-   Document document2 (Model::use (), 123456789ULL, 'appl', 'gui ');
+   Document document2 (Model::use (), 123456790ULL, 'appl', 'gui ');
    CarrierDirect carrier2 (document2, port2);
 
    {
@@ -169,7 +169,7 @@ void  TestDntDirect::run_002 ()
    Document document1 (Model::use (), 123456789ULL, 'appl', 'gui ');
    CarrierDirect carrier1 (document1, port1);
 
-   Document document2 (Model::use (), 123456789ULL, 'appl', 'gui ');
+   Document document2 (Model::use (), 123456790ULL, 'appl', 'gui ');
    CarrierDirect carrier2 (document2, port2);
 
    document1.pull ();
@@ -235,7 +235,7 @@ void  TestDntDirect::run_003 ()
    Document document1 (Model::use (), 123456789ULL, 'appl', 'gui ');
    CarrierDirect carrier1 (document1, port1);
 
-   Document document2 (Model::use (), 123456789ULL, 'appl', 'gui ');
+   Document document2 (Model::use (), 123456790ULL, 'appl', 'gui ');
    CarrierDirect carrier2 (document2, port2);
 
    document1.pull ();

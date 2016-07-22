@@ -80,7 +80,7 @@ Name : Carrier::ctor
 */
 
 TestTransportBase::Carrier::Carrier (CarrierListener & listener)
-:  CarrierTransportBase (listener)
+:  CarrierTransportBase (listener, 987654321ULL, "")
 {
 }
 
