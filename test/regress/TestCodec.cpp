@@ -84,6 +84,8 @@ Name : run_000
 void  TestCodec::run_000 ()
 {
    uint64_t user_id = 0x0123456789abcdefULL;
+   uint64_t session_id = 0xfedcba9876543210ULL;
+   std::string metadata = "this is a test";
    std::vector <uint8_t> data;
 
    {
@@ -91,17 +93,19 @@ void  TestCodec::run_000 ()
 
       StreamBinOut sbo (data);
 
-      Codec::encode_user_id (sbo, document.user ());
+      Codec::encode_greet (sbo, document.user (), session_id, metadata);
    }
 
    {
       StreamBinIn sbi (data);
 
       uint32_t msg = Codec::decode_msg (sbi);
-      flip_TEST (msg == Codec::msg_user_id);
+      flip_TEST (msg == Codec::msg_greet);
 
-      uint64_t sub_user_id = Codec::decode_user_id (sbi);
-      flip_TEST (sub_user_id == user_id);
+      auto tuple = Codec::decode_greet (sbi);
+      flip_TEST (std::get <0> (tuple) == user_id);
+      flip_TEST (std::get <1> (tuple) == session_id);
+      flip_TEST (std::get <2> (tuple) == metadata);
    }
 }
 

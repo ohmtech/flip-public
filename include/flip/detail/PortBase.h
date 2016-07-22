@@ -17,6 +17,8 @@
 
 #include <cstdint>
 
+#include <string>
+
 
 
 namespace flip
@@ -51,6 +53,8 @@ public:
    virtual void   receive_signal (const SignalData & data) = 0;
 
    uint64_t       user () const;
+   uint64_t       session () const;
+   std::string    metadata () const;
 
 
 
@@ -67,7 +71,7 @@ public:
 
 protected:
 
-   void           greet (uint64_t user_id);
+   void           greet (uint64_t user_id, uint64_t session_id, std::string metadata);
    void           commit (const Transaction & tx);
    void           squash (const TxIdRange & range, const Transaction & tx);
    void           push (const Transaction & tx);
@@ -82,6 +86,8 @@ private:
    PortListener * _listener_ptr = nullptr;
 
    uint64_t       _user_id = 0ULL;
+   uint64_t       _session_id = 0ULL;
+   std::string    _metadata;
    bool           _active_flag = false;
 
 

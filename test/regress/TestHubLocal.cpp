@@ -1105,7 +1105,7 @@ void  TestHubLocal::run_007 ()
 
    CarrierDirect carrier3 (hub, port3);
 
-   Document document3 (Model::use (), 123456789ULL, 'appl', 'gui2');
+   Document document3 (Model::use (), 123456790ULL, 'appl', 'gui2');
    CarrierDirect carrier4 (document3, port4);
 
    document.pull ();
@@ -1265,24 +1265,25 @@ void  TestHubLocal::run_009 ()
 
    CarrierDirect carrier3 (hub, port3);
 
+   Document * document_ptr = nullptr;
+   CarrierSocketTcp * carrier_ptr = nullptr;
+
    {
-      Document document (Model::use (), 123456789ULL, 'appl', 'gui ');
+      document_ptr = new Document (Model::use (), 123456789ULL, 'appl', 'gui ');
+      carrier_ptr = new CarrierSocketTcp (*document_ptr, 9090);
 
-      // explicit leak for test
-      auto carrier_ptr = new CarrierSocketTcp (document, 9090);
+      wait_connect (port, *carrier_ptr, *document_ptr);
 
-      wait_connect (port, *carrier_ptr, document);
+      document_ptr->pull ();
 
-      document.pull ();
-
-      auto & root = document.root <Root> ();
+      auto & root = document_ptr->root <Root> ();
       root._int = 2LL;
-      document.commit ();
-      document.push ();
+      document_ptr->commit ();
+      document_ptr->push ();
 
       flip_TEST (root._int == 2LL);
 
-      wait_pending_txs (port, *carrier_ptr, document);
+      wait_pending_txs (port, *carrier_ptr, *document_ptr);
 
       flip_TEST (root._int == 2LL);
 
@@ -1314,6 +1315,12 @@ void  TestHubLocal::run_009 ()
    }
 
    server.port_factory_remove (port3);
+
+   delete carrier_ptr;
+   carrier_ptr = nullptr;
+
+   delete document_ptr;
+   document_ptr = nullptr;
 }
 
 
