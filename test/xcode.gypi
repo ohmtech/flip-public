@@ -28,6 +28,10 @@
          },
       },
 
+      'defines': [
+         '__TARGET_NAME__=\">(_target_name)\"'
+      ],
+
       'conditions': [
          ['OS=="mac"', {
             'configurations': {
