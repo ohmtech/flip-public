@@ -237,7 +237,13 @@ Type *   Class <T>::impl_create (DocumentBase & document, Ref ref) const
 
    // default constructor contains flip object modification
    // use (Default &) constructor in 'T' declaration
-   if (!tx.empty ()) flip_FATAL;
+   if (!tx.empty ())
+   {
+      delete obj_ptr;
+      obj_ptr = nullptr;
+
+      flip_FATAL;
+   }
 #endif
 
    return obj_ptr;

@@ -41,6 +41,7 @@ public:
    virtual        ~PortTransportServerTcp ();
 
    void           process ();
+   void           reset ();
 
 
 
